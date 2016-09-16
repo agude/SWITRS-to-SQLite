@@ -43,7 +43,7 @@ def test_set_values(csvrow):
 
 def test_set_columns(csvrow):
     csvrow.set_columns()
-    assert csvrow.columns[0] == ("first", "INTEGER", "PRIMARY KEY")
+    assert csvrow.columns[0] == ("first", "INTEGER")
     assert csvrow.columns[1] == ("second", "TEXT")
     assert csvrow.columns[2] == ("third", "REAL")
     assert csvrow.columns[3] == ("forth", "INTEGER")
@@ -59,6 +59,12 @@ def test_insert_statement(csvrow):
 def test_create_table_statement(csvrow):
     csvrow.set_variables()
     csvrow.set_values()
+    # Test without self.set_primary
+    csvrow.set_columns()
+    statement = csvrow.create_table_statement()
+    assert statement == "CREATE TABLE Test (first INTEGER, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
+    # Test with self.set_primary
+    csvrow.set_primary = True
     csvrow.set_columns()
     statement = csvrow.create_table_statement()
     assert statement == "CREATE TABLE Test (first INTEGER PRIMARY KEY, second TEXT, third REAL, forth INTEGER, blank INTEGER)"

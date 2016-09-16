@@ -65,6 +65,7 @@ class CSVRow(object):
         self.NULLS = ["-", ""]
         self.row = row
         self.table_name = None
+        self.set_primary = False
         self.__datatype_convert = {
             DataType.INTEGER: int,
             DataType.REAL: float,
@@ -113,7 +114,7 @@ class CSVRow(object):
     def set_columns(self):
         self.columns = []
         for i_csv, name, dtype, _, _ in self.members:
-            if i_csv == 0:
+            if i_csv == 0 and self.set_primary:
                 entry = (name, dtype.value, "PRIMARY KEY")
             else:
                 entry = (name, dtype.value)
@@ -215,6 +216,7 @@ class CollisionRow(CSVRow):
         super().__init__(row)
 
         self.table_name = "Collision"
+        self.set_primary = True
 
     def set_members(self):
         # Set the member variables
