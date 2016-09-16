@@ -41,9 +41,20 @@ def test_set_values(csvrow):
     assert csvrow.values[3] == True
     assert csvrow.values[4] == None
 
-def test_set_columns(csvrow):
+def test_set_columns_without_set_primary(csvrow):
+    csvrow.set_primary = False
     csvrow.set_columns()
-    assert csvrow.columns[0] == ("first", "INTEGER")
+    assert csvrow.columns[0] == ("id", "INTEGER", "PRIMARY KEY")
+    assert csvrow.columns[1] == ("first", "INTEGER")
+    assert csvrow.columns[2] == ("second", "TEXT")
+    assert csvrow.columns[3] == ("third", "REAL")
+    assert csvrow.columns[4] == ("forth", "INTEGER")
+    assert csvrow.columns[5] == ("blank", "INTEGER")
+
+def test_set_columns_with_set_primary(csvrow):
+    csvrow.set_primary = True
+    csvrow.set_columns()
+    assert csvrow.columns[0] == ("first", "INTEGER", "PRIMARY KEY")
     assert csvrow.columns[1] == ("second", "TEXT")
     assert csvrow.columns[2] == ("third", "REAL")
     assert csvrow.columns[3] == ("forth", "INTEGER")
@@ -56,15 +67,18 @@ def test_insert_statement(csvrow):
     statement = csvrow.insert_statement()
     assert statement == "INSERT INTO Test VALUES (?, ?, ?, ?, ?)"
 
-def test_create_table_statement(csvrow):
+def test_create_table_statement_without_set_primary(csvrow):
+    csvrow.set_primary = False
     csvrow.set_variables()
     csvrow.set_values()
-    # Test without self.set_primary
     csvrow.set_columns()
     statement = csvrow.create_table_statement()
-    assert statement == "CREATE TABLE Test (first INTEGER, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
-    # Test with self.set_primary
+    assert statement == "CREATE TABLE Test (id INTEGER PRIMARY KEY, first INTEGER, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
+
+def test_create_table_statement_with_set_primary(csvrow):
     csvrow.set_primary = True
+    csvrow.set_variables()
+    csvrow.set_values()
     csvrow.set_columns()
     statement = csvrow.create_table_statement()
     assert statement == "CREATE TABLE Test (first INTEGER PRIMARY KEY, second TEXT, third REAL, forth INTEGER, blank INTEGER)"

@@ -114,10 +114,17 @@ class CSVRow(object):
     def set_columns(self):
         self.columns = []
         for i_csv, name, dtype, _, _ in self.members:
-            if i_csv == 0 and self.set_primary:
-                entry = (name, dtype.value, "PRIMARY KEY")
-            else:
-                entry = (name, dtype.value)
+            entry = (name, dtype.value)
+            # The first item is special, it is either the "PRIMARY KEY", or we
+            # need to add an ID column before it
+            if i_csv == 0:
+                if self.set_primary:
+                    entry = (name, dtype.value, "PRIMARY KEY")
+                else:
+                    zeroth_id_column = ("id", "INTEGER", "PRIMARY KEY")
+                    self.columns.append(zeroth_id_column)
+
+            # Add the entry
             self.columns.append(entry)
 
     def insert_statement(self):
