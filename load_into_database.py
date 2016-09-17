@@ -65,7 +65,8 @@ class CSVRow(object):
         self.NULLS = ["-", ""]
         self.row = row
         self.table_name = None
-        self.set_primary = False
+        self.members = None
+        self.has_primary_column = False
         self.__datatype_convert = {
             DataType.INTEGER: int,
             DataType.REAL: float,
@@ -74,7 +75,7 @@ class CSVRow(object):
             DataType.NULL: None,
         }
 
-        self.set_members()
+        self.override_parent()
 
         if self.members is not None:
             # The CSV file is malformed, so extend it to avoid KeyErrors
@@ -85,8 +86,8 @@ class CSVRow(object):
             self.set_values()
             self.set_columns()
 
-    def set_members(self):
-        self.members = None
+    def override_parent(self):
+        pass
 
     def set_variables(self):
         for i_csv, name, datatype, nulls, func in self.members:
@@ -108,6 +109,10 @@ class CSVRow(object):
 
     def set_values(self):
         self.values = []
+        # If there is no column in the data that is a primary key, than we have
+        # an automatic first column which needs a NULL inserted to increment.
+        if not self.has_primary_column:
+            self.values.append(None)
         for _, name, _, _, _ in self.members:
             self.values.append(getattr(self, name))
 
@@ -118,7 +123,7 @@ class CSVRow(object):
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
             if i_csv == 0:
-                if self.set_primary:
+                if self.has_primary_column:
                     entry = (name, dtype.value, "PRIMARY KEY")
                 else:
                     zeroth_id_column = ("id", "INTEGER", "PRIMARY KEY")
@@ -157,9 +162,9 @@ class VictimRow(CSVRow):
     def __init__(self, row):
         super().__init__(row)
 
+    def override_parent(self):
         self.table_name = "Victim"
 
-    def set_members(self):
         # Set the member variables
         self.members = (
             (0, "Case_ID", DataType.TEXT, None, convert),
@@ -179,9 +184,9 @@ class PartyRow(CSVRow):
     def __init__(self, row):
         super().__init__(row)
 
+    def override_parent(self):
         self.table_name = "Party"
 
-    def set_members(self):
         # Set the member variables
         self.members = (
             (0, "Case_ID", DataType.TEXT, None, convert),
@@ -222,10 +227,10 @@ class CollisionRow(CSVRow):
     def __init__(self, row):
         super().__init__(row)
 
+    def override_parent(self):
         self.table_name = "Collision"
-        self.set_primary = True
+        self.has_primary_column = True
 
-    def set_members(self):
         # Set the member variables
         self.members = (
             (0, "Case_ID", DataType.TEXT, None, convert),

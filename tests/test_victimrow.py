@@ -8,19 +8,19 @@ import pytest
 # (row, answer)
 ROWS = (
     (
-        #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
-        ['097293',   '1',          '2',         'M',        '20',       '0',                     '3',                     'G',                       'T',                       '0'],
-        ['097293',   1,            '2',         'M',        20,         '0',                     '3',                     'G',                       'T',                       '0'],
+               #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
+        [      '097293',   '1',          '2',         'M',        '20',       '0',                     '3',                     'G',                       'T',                       '0'],
+        [None, '097293',   1,            '2',         'M',        20,         '0',                     '3',                     'G',                       'T',                       '0'],
     ),
     (
-        #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
-        ['965874',   '2',          '2',         '-',        '998',      '2',                     'A',                     '-',                       '-',                       '2'],
-        ['965874',   2,            '2',         None,       None,       '2',                     'A',                     None,                      None,                      '2'],
+               #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
+        [      '965874',   '2',          '2',         '-',        '998',      '2',                     'A',                     '-',                       '-',                       '2'],
+        [None, '965874',   2,            '2',         None,       None,       '2',                     'A',                     None,                      None,                      '2'],
     ),
     (
-        #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
-        ['0000003',  '6',          '2',         'F',        '999',      '1',                     '3',                     'T',                       '-',                       '-'],
-        ['0000003',  6,            '2',         'F',        999,        '1',                     '3',                     'T',                       None,                      None],
+               #Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
+        [      '0000003',  '6',          '2',         'F',        '999',      '1',                     '3',                     'T',                       '-',                       '-'],
+        [None, '0000003',  6,            '2',         'F',        999,        '1',                     '3',                     'T',                       None,                      None],
     ),
 )
 

@@ -32,7 +32,19 @@ def test_set_variables(csvrow):
     assert csvrow.forth == True
     assert csvrow.blank == None
 
-def test_set_values(csvrow):
+def test_set_values_without_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = False
+    csvrow.set_variables()
+    csvrow.set_values()
+    assert csvrow.values[0] == None
+    assert csvrow.values[1] == 9
+    assert csvrow.values[2] == "a"
+    assert csvrow.values[3] == 1.
+    assert csvrow.values[4] == True
+    assert csvrow.values[5] == None
+
+def test_set_values_with_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = True
     csvrow.set_variables()
     csvrow.set_values()
     assert csvrow.values[0] == 9
@@ -41,8 +53,8 @@ def test_set_values(csvrow):
     assert csvrow.values[3] == True
     assert csvrow.values[4] == None
 
-def test_set_columns_without_set_primary(csvrow):
-    csvrow.set_primary = False
+def test_set_columns_without_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = False
     csvrow.set_columns()
     assert csvrow.columns[0] == ("id", "INTEGER", "PRIMARY KEY")
     assert csvrow.columns[1] == ("first", "INTEGER")
@@ -51,8 +63,8 @@ def test_set_columns_without_set_primary(csvrow):
     assert csvrow.columns[4] == ("forth", "INTEGER")
     assert csvrow.columns[5] == ("blank", "INTEGER")
 
-def test_set_columns_with_set_primary(csvrow):
-    csvrow.set_primary = True
+def test_set_columns_with_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = True
     csvrow.set_columns()
     assert csvrow.columns[0] == ("first", "INTEGER", "PRIMARY KEY")
     assert csvrow.columns[1] == ("second", "TEXT")
@@ -67,16 +79,16 @@ def test_insert_statement(csvrow):
     statement = csvrow.insert_statement()
     assert statement == "INSERT INTO Test VALUES (?, ?, ?, ?, ?)"
 
-def test_create_table_statement_without_set_primary(csvrow):
-    csvrow.set_primary = False
+def test_create_table_statement_without_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = False
     csvrow.set_variables()
     csvrow.set_values()
     csvrow.set_columns()
     statement = csvrow.create_table_statement()
     assert statement == "CREATE TABLE Test (id INTEGER PRIMARY KEY, first INTEGER, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
 
-def test_create_table_statement_with_set_primary(csvrow):
-    csvrow.set_primary = True
+def test_create_table_statement_with_has_primary_column_in_data(csvrow):
+    csvrow.has_primary_column_in_data = True
     csvrow.set_variables()
     csvrow.set_values()
     csvrow.set_columns()
