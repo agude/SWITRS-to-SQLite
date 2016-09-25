@@ -258,6 +258,8 @@ class CSVRow(object):
 
 
 class VictimRow(CSVRow):
+    """Parse CSV rows from the VictimRecords file."""
+
     def __init__(self, row):
         super().__init__(row)
 
@@ -280,6 +282,8 @@ class VictimRow(CSVRow):
 
 
 class PartyRow(CSVRow):
+    """Parse CSV rows from the PartyRecords file."""
+
     def __init__(self, row):
         super().__init__(row)
 
@@ -322,6 +326,14 @@ class PartyRow(CSVRow):
 
 
 class CollisionRow(CSVRow):
+    """Parse CSV rows from the CollisionRecords file.
+
+    This class sets special_members to handle setting up the date fields. It
+    uses the method __convert_dates() to fill these fields, and modifies
+    set_variables(), set_values(), and set_columns() to add the dates to the
+    class objects.
+
+    """
 
     def __init__(self, row):
         super().__init__(row)
@@ -429,6 +441,8 @@ class CollisionRow(CSVRow):
             self.columns.append((name, dtype.value))
 
     def __convert_dates(self):
+        """Converts the various date and time fields into two date and one time
+        field. """
         # Set up the processing date
         process_obj = datetime.strptime(self.row[2], "%Y%m%d")
         self.Process_Date = process_obj.date().isoformat()
