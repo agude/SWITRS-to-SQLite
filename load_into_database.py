@@ -477,3 +477,63 @@ def open_record_file(file_name):
     if file_name.endswith(".gz"):
         return gzip.open(file_name, "rt")
     return open(file_name, "rt")
+
+
+if __name__ == "__main__":
+    # We only need to parse command line flags if running as the main script
+    import argparse
+
+    import csv
+    import sqlite3
+
+    argparser = argparse.ArgumentParser(
+        description="Convert SWITRS text files to a SQLite3 database"
+    )
+    # The list of input files
+    argparser.add_argument(
+        "collision_record",
+        type=str,
+        help="the CollisionRecords.txt file or the same file gzipped"
+    )
+    argparser.add_argument(
+        "party_record",
+        type=str,
+        help="the PartyRecords.txt file or the same file gzipped"
+    )
+    argparser.add_argument(
+        "victim_record",
+        type=str,
+        help="the VictimRecords.txt file or the same file gzipped"
+    )
+    argparser.add_argument(
+        "-o",
+        "--output-file",
+        help="file to save the database to",
+        default="switrs.sqlite3"
+    )
+
+    args = argparser.parse_args()
+
+    pairs = (
+        (CollisionRow, args.collision_record),
+        (PartyRow, args.party_record),
+        (VictimRow, args.victim_record),
+    )
+
+    with sqlite3.connect(args.output_file) as con:
+        cursor = con.cursor()
+        for RowClass, file_name in pairs:
+            with open_record_file(file_name) as f:
+                reader = csv.reader(f)
+                # Skip the header
+                next(reader)
+                added_table = False
+                for row in reader:
+                    c = RowClass(row)
+                    # Add the table the first time
+                    if not added_table:
+                        cursor.execute(c.create_table_statement())
+                        added_table = True
+
+                    # Insert the row
+                    cursor.execute(c.insert_statement(), c.values)
