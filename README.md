@@ -5,7 +5,8 @@ provided by the California Highway Patrol's [Statewide Integrated Traffic
 Records System (SWITRS)](http://iswitrs.chp.ca.gov/Reports/jsp/userLogin.jsp)
 and convert them to an [SQLite3](https://www.sqlite.org/) database.
 
-Instructions to download the SWITRS data can be found [here]().
+Instructions to **download the SWITRS data** can be found
+[here](requesting_data.md).
 
 ## Installation
 
