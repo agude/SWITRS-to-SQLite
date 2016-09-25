@@ -56,6 +56,52 @@ def convert(**kwargs):
     else:
         return val
 
+def negative(**kwargs):
+    """Convert a value to a dtype and then multiplies by -1.
+
+    A list of nulls may optionally be provided, in which case if the input
+    value matches one of the strings in the list, None is returned.
+
+    Negative calls val.strip() before performing any other work.
+
+    Args:
+        **kwargs: Two specific keywords must be passed, a third is optional:
+            - val (str): A value to convert to dtype.
+            - dtype (callable): A callable object that returns the desired
+                type, if None then the val is passed through unchanged. The
+                returned object should allow multiplication by -1, or None will
+                be returned instead.
+            - nulls (iterable, optional): An iterable containing strings to check
+                against. If val if found to be equal to a string in this list,
+                None is returned.
+
+    Returns:
+        converted_val: Returns dtype(val) if val is not in nulls, otherwise
+            None. If dtype(val) raises a ValueError, None is returned.
+    """
+    # Get the arguments
+    val = kwargs.get("val")
+    dtype = kwargs.get("dtype")
+    nulls = kwargs.get("nulls", None)
+
+    # Strip spaces
+    sval = val.strip()
+
+    # Return None if the val matches a string in nulls
+    if nulls is not None:
+        if sval in nulls:
+            return None
+
+    # Otherwise return the converted value
+    if dtype is not None:
+        try:
+            return -1 * dtype(sval)
+        except ValueError:
+            return None
+    # Note: val and not sval because this is the identity operation
+    else:
+        return val
+
 
 def string_to_bool(**kwargs):
     """Convert Y/N or y/n to a True/False, or None if in a list of nulls.
@@ -415,7 +461,7 @@ class CollisionRow(CSVRow):
             (72, "Primary_Ramp", DataType.TEXT, None, convert),
             (73, "Secondary_Ramp", DataType.TEXT, None, convert),
             (74, "Latitude", DataType.REAL, None, convert),
-            (75, "Longitude", DataType.REAL, None, convert),
+            (75, "Longitude", DataType.REAL, None, negative),
         )
 
         self.special_members = (
