@@ -6,6 +6,7 @@ from enum import Enum, unique
 
 @unique
 class DataType(Enum):
+    """A class used to encode the types allowed in SQLite."""
     INTEGER = "INTEGER"
     REAL = "REAL"
     TEXT = "TEXT"
@@ -49,7 +50,18 @@ def convert(val, dtype, nulls=None):
 
 
 def bool_yes_no(val, nulls=None):
-    """Convert Y/N or y/n to a True/False, or None if in a list of nulls."""
+    """Convert Y/N or y/n to a True/False, or None if in a list of nulls.
+
+    Args:
+        val (str): A value to convert to a bool.
+        nulls (iterable): An iterable containing strings to check against. If
+            val if found to be equal to a string in this list, None is
+            returned.
+
+    Returns:
+        converted_val: Returns a bool if val is not in nulls, otherwise None.
+
+    """
     if nulls is not None:
         if val in nulls:
             return None
@@ -60,8 +72,52 @@ def bool_yes_no(val, nulls=None):
 
 
 class CSVRow(object):
+    """The base class for all row parsing classes.
+
+    Derived classes should define override_parent() to change any
+    values. Specifically, they are expected to set table_name and
+    members. The members attribute is used to layout the table, determine how
+    to insert values, and how to parse the strings in the row attribute.
+
+    Attributes:
+        NULLS (list): A list of string values that are always to be considered
+            as NULL for all values in the row.
+        row (list): A list of strings containing the information from the CSV
+            row, as returned by csv.reader().
+        table_name (str): The name of the table this parser fills. Used to
+            create the table in SQLite.
+        has_primary_column (bool): If True, then the first tuple in the members
+            attribute is set to a "PRIMARY KEY", otherwise a self-incrementing
+            index column is created.
+        members (list): A list of tuples indicating how to parse each
+            field in the CSV row. The form of each tuple is as follows:
+                - int: The position of the field to parse.
+                - str: The name to use for the field in the table.
+                - DataType: The type to use to store the field value in the
+                    table.
+                - List OR None: List of additional values to consider NULL.
+                    None if no additional values are needed.
+                - function: A function to convert the value from the string it
+                    is read as to its final form.
+
+        Additional attributes are set based on the names provided in the
+        members tuples. They contain the values returned by the function in the
+        tuple.
+
+    """
 
     def __init__(self, row):
+        """Set up the class and parse the CSV row.
+
+        This method should be called by all derived classes within their own
+        __init__() functions, like so:
+
+            super().__init__(row)
+
+        Args:
+            row (list): A list of strings containing the information from the
+                CSV row, as returned by csv.reader().
+        """
         self.NULLS = ["-", ""]
         self.row = row
         self.table_name = None
@@ -87,9 +143,19 @@ class CSVRow(object):
             self.set_columns()
 
     def override_parent(self):
+        """Called before any class logic is executed, should be defined by
+        derived classes.
+
+        At a minimum, table_name and members should be defined here.
+
+        """
         pass
 
     def set_variables(self):
+        """Set attributes and convert CSV values using the names and functions
+        defined in members.
+
+        """
         for i_csv, name, datatype, nulls, func in self.members:
             dtype = self.__datatype_convert[datatype]
 
@@ -108,6 +174,10 @@ class CSVRow(object):
             setattr(self, name, val)
 
     def set_values(self):
+        """Creates a list of the attributes set in set_variables() in the
+        proper order for reading into the SQLite table.
+
+        """
         self.values = []
         # If there is no column in the data that is a primary key, than we have
         # an automatic first column which needs a NULL inserted to increment.
@@ -117,6 +187,7 @@ class CSVRow(object):
             self.values.append(getattr(self, name))
 
     def set_columns(self):
+        """Creates a list of column names and types for the SQLite table."""
         self.columns = []
         for i_csv, name, dtype, _, _ in self.members:
             entry = (name, dtype.value)
@@ -133,6 +204,7 @@ class CSVRow(object):
             self.columns.append(entry)
 
     def insert_statement(self):
+        """Creates an insert statement used to fill a row in the SQLite table."""
         vals = ['?'] * len(self.values)
         query = "INSERT INTO {table} VALUES ({values})".format(
             table=self.table_name,
@@ -142,6 +214,16 @@ class CSVRow(object):
         return query
 
     def create_table_statement(self):
+        """Creates a string that can be used to create the correct table in SQLite.
+
+        Use as follows:
+
+            with sqlite3.connect(output_file) as con:
+                cursor = con.cursor()
+                c = RowClass(row)
+                cursor.execute(c.create_table_statement())
+
+        """
         cols = []
         for tup in self.columns:
             cols.append(" ".join(tup))
@@ -151,6 +233,12 @@ class CSVRow(object):
         )
 
     def extend_row(self):
+        """Extend the length of the row attribute with NULL fields.
+
+        Some rows in the CSV are incomplete and are missing columns at the end.
+        This function pads these rows with NULLs so they parse correctly.
+
+        """
         # The CSV file is malformed, not ever row is the same length, so we
         # extent it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
