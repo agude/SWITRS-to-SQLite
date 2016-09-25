@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import convert, bool_yes_no
+from load_into_database import convert, string_to_bool
 import pytest
 
 # Test the convert function
@@ -39,7 +39,7 @@ def test_convert():
         assert convert(val, dtype, nulls) == res
 
 
-# Test the bool_yes_no function
+# Test the string_to_bool function
 def test_bools():
     bools = (
         ("Y", True),
@@ -48,7 +48,7 @@ def test_bools():
         ("n", False),
     )
     for val, res in bools:
-        assert bool_yes_no(val) == res
+        assert string_to_bool(val) == res
 
 def test_nulls():
     nones = (
@@ -60,4 +60,4 @@ def test_nulls():
         ("1", ["1"]),
     )
     for val, nulls in nones:
-        assert bool_yes_no(val, nulls) is None
+        assert string_to_bool(val, nulls) is None

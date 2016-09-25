@@ -49,7 +49,7 @@ def convert(val, dtype, nulls=None):
         return val
 
 
-def bool_yes_no(val, nulls=None):
+def string_to_bool(val, nulls=None):
     """Convert Y/N or y/n to a True/False, or None if in a list of nulls.
 
     Args:
@@ -168,7 +168,7 @@ class CSVRow(object):
             # Convert the CSV field to a value for SQL
             if func is convert:
                 val = func(self.row[i_csv], dtype, our_nulls)
-            elif func is bool_yes_no:
+            elif func is string_to_bool:
                 val = func(self.row[i_csv], our_nulls)
 
             setattr(self, name, val)
@@ -280,7 +280,7 @@ class PartyRow(CSVRow):
             (0, "Case_ID", DataType.TEXT, None, convert),
             (1, "Party_Number", DataType.INTEGER, None, convert),
             (2, "Party_Type", DataType.TEXT, None, convert),
-            (3, "At_Fault", DataType.TEXT, None, bool_yes_no),
+            (3, "At_Fault", DataType.TEXT, None, string_to_bool),
             (4, "Party_Sex", DataType.TEXT, None, convert),
             (5, "Party_Age", DataType.INTEGER, ["998"], convert),
             (6, "Party_Sobriety", DataType.TEXT, None, convert),
@@ -338,10 +338,10 @@ class CollisionRow(CSVRow):
             (19, "Secondary_Road", DataType.TEXT, None, convert),
             (20, "Distance", DataType.REAL, None, convert),
             (21, "Direction", DataType.TEXT, None, convert),
-            (22, "Intersection", DataType.TEXT, None, bool_yes_no),
+            (22, "Intersection", DataType.TEXT, None, string_to_bool),
             (23, "Weather_1", DataType.TEXT, None, convert),
             (24, "Weather_2", DataType.TEXT, None, convert),
-            (25, "State_Highway_Indicator", DataType.INTEGER, None, bool_yes_no),
+            (25, "State_Highway_Indicator", DataType.INTEGER, None, string_to_bool),
             (26, "Caltrans_County", DataType.TEXT, None, convert),
             (27, "Caltrans_District", DataType.INTEGER, None, convert),
             (28, "State_Route", DataType.INTEGER, None, convert),
@@ -351,7 +351,7 @@ class CollisionRow(CSVRow):
             (32, "Location_Type", DataType.TEXT, None, convert),
             (33, "Ramp_Intersection", DataType.INTEGER, None, convert),
             (34, "Side_Of_Highway", DataType.TEXT, None, convert),
-            (35, "Tow_Away", DataType.INTEGER, None, bool_yes_no),
+            (35, "Tow_Away", DataType.INTEGER, None, string_to_bool),
             (36, "Collision_Severity", DataType.INTEGER, None, convert),
             (37, "Killed_Victims", DataType.INTEGER, None, convert),
             (38, "Injured_Victims", DataType.INTEGER, None, convert),
@@ -371,12 +371,12 @@ class CollisionRow(CSVRow):
             (52, "Lighting", DataType.TEXT, None, convert),
             (53, "Control_Device", DataType.TEXT, None, convert),
             (54, "CHP_Road_Type", DataType.TEXT, None, convert),
-            (55, "Pedestrian_Collision", DataType.INTEGER, None, bool_yes_no),
-            (56, "Bicycle_Collision", DataType.INTEGER, None, bool_yes_no),
-            (57, "Motorcycle_Collision", DataType.INTEGER, None, bool_yes_no),
-            (58, "Truck_Collision", DataType.INTEGER, None, bool_yes_no),
-            (59, "Not_Private_Property", DataType.INTEGER, None, bool_yes_no),
-            (60, "Alcohol_Involved", DataType.INTEGER, None, bool_yes_no),
+            (55, "Pedestrian_Collision", DataType.INTEGER, None, string_to_bool),
+            (56, "Bicycle_Collision", DataType.INTEGER, None, string_to_bool),
+            (57, "Motorcycle_Collision", DataType.INTEGER, None, string_to_bool),
+            (58, "Truck_Collision", DataType.INTEGER, None, string_to_bool),
+            (59, "Not_Private_Property", DataType.INTEGER, None, string_to_bool),
+            (60, "Alcohol_Involved", DataType.INTEGER, None, string_to_bool),
             (61, "Statewide_Vehicle_Type_At_Fault", DataType.TEXT, None, convert),
             (62, "CHP_Vehicle_Type_At_Fault", DataType.TEXT, ["99"], convert),
             (63, "Severe_Injury_Count", DataType.INTEGER, None, convert),
