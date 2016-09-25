@@ -36,7 +36,7 @@ def test_convert():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert convert(val, dtype, nulls) == res
+        assert convert(val=val, dtype=dtype, nulls=nulls) == res
 
 
 # Test the string_to_bool function
@@ -48,7 +48,7 @@ def test_bools():
         ("n", False),
     )
     for val, res in bools:
-        assert string_to_bool(val) == res
+        assert string_to_bool(val=val) == res
 
 def test_nulls():
     nones = (
@@ -60,4 +60,4 @@ def test_nulls():
         ("1", ["1"]),
     )
     for val, nulls in nones:
-        assert string_to_bool(val, nulls) is None
+        assert string_to_bool(val=val, nulls=nulls) is None

@@ -14,26 +14,33 @@ class DataType(Enum):
     NULL = "NULL"
 
 
-def convert(val, dtype, nulls=None):
+def convert(**kwargs):
     """Convert a value to a dtype, but turn certain values to None.
 
     Convert calls val.strip() before performing any other work.
 
     Args:
-        val (str): A value to convert to dtype.
-        dtype (callable): A callable object that returns the desired type, if
-            None then the val is passed through unchanged.
-        nulls (iterable): An iterable containing strings to check against. If
-            val if found to be equal to a string in this list, None is
-            returned.
+        **kwargs: Two specific keywords must be passed, a third is optional:
+            - val (str): A value to convert to dtype.
+            - dtype (callable): A callable object that returns the desired
+                type, if None then the val is passed through unchanged.
+            - nulls (iterable, optional): An iterable containing strings to check
+                against. If val if found to be equal to a string in this list,
+                None is returned.
 
     Returns:
         converted_val: Returns dtype(val) if val is not in nulls, otherwise
             None. If dtype(val) raises a ValueError, None is returned.
     """
+    # Get the arguments
+    val = kwargs.get("val")
+    dtype = kwargs.get("dtype")
+    nulls = kwargs.get("nulls", None)
+
+    # Strip spaces
     sval = val.strip()
 
-    # Return None if the val matches an object in
+    # Return None if the val matches a string in nulls
     if nulls is not None:
         if sval in nulls:
             return None
@@ -49,23 +56,30 @@ def convert(val, dtype, nulls=None):
         return val
 
 
-def string_to_bool(val, nulls=None):
+def string_to_bool(**kwargs):
     """Convert Y/N or y/n to a True/False, or None if in a list of nulls.
 
     Args:
-        val (str): A value to convert to a bool.
-        nulls (iterable): An iterable containing strings to check against. If
-            val if found to be equal to a string in this list, None is
-            returned.
+        **kwargs: One specific keywords must be passed, a second is optional:
+            - val (str): A value to convert to a bool.
+            - nulls (iterable, optional): An iterable containing strings to check
+                against. If val if found to be equal to a string in this list,
+                None is returned.
 
     Returns:
         converted_val: Returns a bool if val is not in nulls, otherwise None.
 
     """
+    # Get the arguments
+    val = kwargs.get("val")
+    nulls = kwargs.get("nulls", None)
+
+    # Return None if the val matches a string in nulls
     if nulls is not None:
         if val in nulls:
             return None
 
+    # Check if val is True, otherwise return False
     if val.lower() == "y":
         return True
     return False
@@ -166,10 +180,7 @@ class CSVRow(object):
                 our_nulls += nulls
 
             # Convert the CSV field to a value for SQL
-            if func is convert:
-                val = func(self.row[i_csv], dtype, our_nulls)
-            elif func is string_to_bool:
-                val = func(self.row[i_csv], our_nulls)
+            val = func(val=self.row[i_csv], nulls=our_nulls, dtype=dtype)
 
             setattr(self, name, val)
 
