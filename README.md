@@ -62,7 +62,7 @@ usage: load_into_database.py [-h] [-o OUTPUT_FILE]
 Convert SWITRS text files to a SQLite database
 
 positional arguments:
-  collision_record      the CollisionRecords.txt file or the same file gzipped 
+  collision_record      the CollisionRecords.txt file or the same file gzipped
   party_record          the PartyRecords.txt file or the same file gzipped
   victim_record         the VictimRecords.txt file or the same file gzipped
 
@@ -70,4 +70,13 @@ optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
                         file to save the database to
+```
+
+## Unit Tests
+
+SWITRS-2-SQLite uses `pytest` to run unit tests (contained in the `tests`
+folders). To run the tests, run this command from the base directory:
+
+```bash
+python3 -m pytest -v
 ```

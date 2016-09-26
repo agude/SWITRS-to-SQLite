@@ -3,6 +3,7 @@
 from load_into_database import CSVRow, DataType, convert, string_to_bool
 import pytest
 
+
 @pytest.fixture(scope="module")
 def csvrow():
     row = ["9", "a", "1.", "Y"]
@@ -20,17 +21,20 @@ def csvrow():
 
     return csvrow
 
+
 def test_extend_row(csvrow):
     csvrow.extend_row()
     assert len(csvrow.row) == 5
+
 
 def test_set_variables(csvrow):
     csvrow.set_variables()
     assert csvrow.first == 9
     assert csvrow.second == "a"
     assert csvrow.third == 1.
-    assert csvrow.forth == True
-    assert csvrow.blank == None
+    assert csvrow.forth is True
+    assert csvrow.blank is None
+
 
 def test_set_values_without_has_primary_column(csvrow):
     csvrow.has_primary_column = False
@@ -43,6 +47,7 @@ def test_set_values_without_has_primary_column(csvrow):
     assert csvrow.values[4] == True
     assert csvrow.values[5] == None
 
+
 def test_set_values_with_has_primary_column(csvrow):
     csvrow.has_primary_column = True
     csvrow.set_variables()
@@ -52,6 +57,7 @@ def test_set_values_with_has_primary_column(csvrow):
     assert csvrow.values[2] == 1.
     assert csvrow.values[3] == True
     assert csvrow.values[4] == None
+
 
 def test_set_columns_without_has_primary_column(csvrow):
     csvrow.has_primary_column = False
@@ -63,6 +69,7 @@ def test_set_columns_without_has_primary_column(csvrow):
     assert csvrow.columns[4] == ("forth", "INTEGER")
     assert csvrow.columns[5] == ("blank", "INTEGER")
 
+
 def test_set_columns_with_has_primary_column(csvrow):
     csvrow.has_primary_column = True
     csvrow.set_columns()
@@ -72,12 +79,14 @@ def test_set_columns_with_has_primary_column(csvrow):
     assert csvrow.columns[3] == ("forth", "INTEGER")
     assert csvrow.columns[4] == ("blank", "INTEGER")
 
+
 def test_insert_statement(csvrow):
     csvrow.set_variables()
     csvrow.set_values()
     csvrow.set_columns()
     statement = csvrow.insert_statement()
     assert statement == "INSERT INTO Test VALUES (?, ?, ?, ?, ?)"
+
 
 def test_create_table_statement_without_has_primary_column(csvrow):
     csvrow.has_primary_column = False
@@ -86,6 +95,7 @@ def test_create_table_statement_without_has_primary_column(csvrow):
     csvrow.set_columns()
     statement = csvrow.create_table_statement()
     assert statement == "CREATE TABLE Test (id INTEGER PRIMARY KEY, first INTEGER, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
+
 
 def test_create_table_statement_with_has_primary_column(csvrow):
     csvrow.has_primary_column = True
