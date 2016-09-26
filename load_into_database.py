@@ -56,13 +56,13 @@ def convert(**kwargs):
     else:
         return val
 
+
 def negative(**kwargs):
-    """Convert a value to a dtype and then multiplies by -1.
+    """Use convert() to convert a value, and then return it multiplied by -1.
 
-    A list of nulls may optionally be provided, in which case if the input
-    value matches one of the strings in the list, None is returned.
-
-    Negative calls val.strip() before performing any other work.
+    This function uses convert() to perform the conversion and so passes
+    through all arguments. If convert() returns None, than this function will
+    also.
 
     Args:
         **kwargs: Two specific keywords must be passed, a third is optional:
@@ -76,31 +76,17 @@ def negative(**kwargs):
                 None is returned.
 
     Returns:
-        converted_val: Returns dtype(val) if val is not in nulls, otherwise
-            None. If dtype(val) raises a ValueError, None is returned.
+        converted_val: Returns -1 * convert(kwargs), unless convert() returns
+            None, in which case None is returned.
     """
-    # Get the arguments
-    val = kwargs.get("val")
-    dtype = kwargs.get("dtype")
-    nulls = kwargs.get("nulls", None)
+    # Use convert to do the conversion
+    out_val = convert(**kwargs)
 
-    # Strip spaces
-    sval = val.strip()
+    # If convert succeeded, return the value times -1
+    if out_val is not None:
+        return -1 * out_val
 
-    # Return None if the val matches a string in nulls
-    if nulls is not None:
-        if sval in nulls:
-            return None
-
-    # Otherwise return the converted value
-    if dtype is not None:
-        try:
-            return -1 * dtype(sval)
-        except ValueError:
-            return None
-    # Note: val and not sval because this is the identity operation
-    else:
-        return val
+    return None
 
 
 def string_to_bool(**kwargs):
