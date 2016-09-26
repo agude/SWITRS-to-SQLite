@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from load_into_database import convert, string_to_bool
+from load_into_database import convert, negative, string_to_bool
 import pytest
+
 
 # Test the convert function
 def test_convert():
@@ -39,6 +40,42 @@ def test_convert():
         assert convert(val=val, dtype=dtype, nulls=nulls) == res
 
 
+# Test the negative function
+def test_negative():
+    convert_vals = (
+        # Pass through
+        ("9", None, None, ""),
+        ("a", None, None, ""),
+        ("1.", None, None, ""),
+        # Standard dtypes
+        ("9", int, None, -9),
+        ("a", str, None, ""),
+        ("1", float, None, -1.),
+        # With spaces
+        ("9 ", int, None, -9),
+        ("a ", str, None, ""),
+        ("1 ", float, None, -1.),
+        (" 9", int, None, -9),
+        (" a", str, None, ""),
+        (" 1", float, None, -1.),
+        # Nulls that do nothing
+        ("9", int, [""], -9),
+        ("a", str, [""], ""),
+        ("1", float, [""], -1.),
+        # Nulls that return None
+        ("9", int, ["9"], None),
+        ("a", str, ["a"], None),
+        ("1.", float, ["1."], None),
+        ("9", None, ["9"], None),
+        ("a", None, ["a"], None),
+        ("1.", None, ["1."], None),
+        # Conversion failure
+        ("a", int, None, None),
+    )
+    for val, dtype, nulls, res in convert_vals:
+        assert negative(val=val, dtype=dtype, nulls=nulls) == res
+
+
 # Test the string_to_bool function
 def test_bools():
     bools = (
@@ -49,6 +86,7 @@ def test_bools():
     )
     for val, res in bools:
         assert string_to_bool(val=val) == res
+
 
 def test_nulls():
     nones = (
