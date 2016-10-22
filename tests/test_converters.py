@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import convert, negative, string_to_bool
+from switrs_to_sqlite import convert, negative, string_to_bool
 import pytest
 
 

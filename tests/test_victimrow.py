@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import VictimRow
+from switrs_to_sqlite import VictimRow
 import pytest
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and

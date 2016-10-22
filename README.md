@@ -1,6 +1,6 @@
-# SWITRS-2-SQLite
+# SWITRS-to-SQLite
 
-SWITRS-2-SQLite is a Python3 script that will convert the CSV files
+SWITRS-to-SQLite is a Python3 script that will convert the CSV files
 provided by the California Highway Patrol's [Statewide Integrated Traffic
 Records System (SWITRS)](http://iswitrs.chp.ca.gov/Reports/jsp/userLogin.jsp)
 and convert them to an [SQLite3](https://www.sqlite.org/) database.
@@ -10,23 +10,23 @@ Instructions to **download the SWITRS data** can be found
 
 ## Installation
 
-To install SWITRS-2-SQLite clone this repository:
+To install SWITRS-to-SQLite clone this repository:
 
 ```bash
-git clone https://github.com/agude/SWITRS-2-SQLite.git
-cd SWITRS-2-SQLite
-./load_into_database.py --help
+git clone https://github.com/agude/SWITRS-to-SQLite.git
+cd SWITRS-to-SQLite
+./switrs_to_sqliteg.py --help
 ```
 
-SWITRS-2-SQLite requires only Python3.
+SWITRS-to-SQLite requires only Python3.
 
 ## Usage
 
-Using SWITRS-2-SQLite is simple, just point it to the unzipped files from
+Using SWITRS-to-SQLite is simple, just point it to the unzipped files from
 SWITRS and it will run the conversion:
 
 ```bash
-./load_into_database.py \
+./switrs_to_sqliteg.py \
 CollisionRecords.txt \
 PartyRecords.txt \
 VictimRecords.txt
@@ -35,7 +35,7 @@ VictimRecords.txt
 The script also supports reading `gzip`ed records files:
 
 ```bash
-./load_into_database.py \
+./switrs_to_sqliteg.py \
 CollisionRecords.txt.gz \
 PartyRecords.txt.gz \
 VictimRecords.txt.gz
@@ -46,7 +46,7 @@ default is saved to a file named `switrs.sqlite3`. The output file can be
 changed as follows:
 
 ```bash
-./load_into_database.py \
+./switrs_to_sqliteg.py \
 CollisionRecords.txt \
 PartyRecords.txt \
 VictimRecords.txt \
@@ -56,7 +56,7 @@ VictimRecords.txt \
 The program provides the following help menu when called with `--help`:
 
 ```bash
-usage: load_into_database.py [-h] [-o OUTPUT_FILE]
+usage: switrs_to_sqliteg.py [-h] [-o OUTPUT_FILE]
                              collision_record party_record victim_record
 
 Convert SWITRS text files to a SQLite database
@@ -74,7 +74,7 @@ optional arguments:
 
 ## Unit Tests
 
-SWITRS-2-SQLite uses `pytest` to run unit tests (contained in the `tests`
+SWITRS-to-SQLite uses `pytest` to run unit tests (contained in the `tests`
 folders). To run the tests, run this command from the base directory:
 
 ```bash

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import CollisionRow
+from switrs_to_sqlite import CollisionRow
 import pytest
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and

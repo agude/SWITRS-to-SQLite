@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import open_record_file
+from switrs_to_sqlite import open_record_file
 import gzip
 import pytest
 

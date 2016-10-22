@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from load_into_database import CSVRow, DataType, convert, string_to_bool
+from switrs_to_sqlite import CSVRow, DataType, convert, string_to_bool
 import pytest
 
 
