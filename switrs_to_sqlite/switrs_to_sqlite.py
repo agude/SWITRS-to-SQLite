@@ -2,7 +2,10 @@
 
 from datetime import datetime
 from enum import Enum, unique
+import argparse
+import csv
 import gzip
+import sqlite3
 
 
 @unique
@@ -511,13 +514,10 @@ def open_record_file(file_name):
     return open(file_name, "rt")
 
 
-if __name__ == "__main__":
+def main():
+    """Runs the conversion."""
+
     # We only need to parse command line flags if running as the main script
-    import argparse
-
-    import csv
-    import sqlite3
-
     argparser = argparse.ArgumentParser(
         description="Convert SWITRS text files to a SQLite3 database"
     )
@@ -569,3 +569,7 @@ if __name__ == "__main__":
 
                     # Insert the row
                     cursor.execute(c.insert_statement(), c.values)
+
+
+if __name__ == "__main__":
+    main()
