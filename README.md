@@ -10,7 +10,7 @@ Instructions to **download the SWITRS data** can be found
 
 ## Installation
 
- The best way tin install SWITRS-to-SQLite is with `pip`:
+The best way to install SWITRS-to-SQLite is with `pip`:
 
 ```bash
 pip install switrs-to-sqlite
@@ -27,7 +27,7 @@ You can also clone this repository:
 ```bash
 git clone https://github.com/agude/SWITRS-to-SQLite.git
 cd SWITRS-to-SQLite
-./switrs_to_sqlitswitrs_to_sqlite --help
+./switrs_to_sqlite/switrs_to_sqlite --help
 ```
 
 If you clone the repository, SWITRS-to-SQLite can be installed as a local
