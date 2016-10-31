@@ -10,13 +10,37 @@ Instructions to **download the SWITRS data** can be found
 
 ## Installation
 
-To install SWITRS-to-SQLite clone this repository:
+ The best way tin install SWITRS-to-SQLite is with `pip`:
+
+```bash
+pip install switrs-to-sqlite
+```
+
+This will give you access to the script simply by calling:
+
+```bash
+switrs_to_sqlite --help
+```
+
+You can also clone this repository:
 
 ```bash
 git clone https://github.com/agude/SWITRS-to-SQLite.git
 cd SWITRS-to-SQLite
-./switrs_to_sqliteg.py --help
+./switrs_to_sqlitswitrs_to_sqlite --help
 ```
+
+If you clone the repository, SWITRS-to-SQLite can be installed as a local
+application using the `setup.py` script:
+
+```bash
+git clone https://github.com/agude/SWITRS-to-SQLite.git
+cd SWITRS-to-SQLite
+./setup.py install
+```
+
+Which, like using `pip`, will give you access to the script by calling
+`switrs_to_sqlite`.
 
 SWITRS-to-SQLite requires only Python3.
 
@@ -26,7 +50,7 @@ Using SWITRS-to-SQLite is simple, just point it to the unzipped files from
 SWITRS and it will run the conversion:
 
 ```bash
-./switrs_to_sqliteg.py \
+switrs_to_sqlite \
 CollisionRecords.txt \
 PartyRecords.txt \
 VictimRecords.txt
@@ -35,7 +59,7 @@ VictimRecords.txt
 The script also supports reading `gzip`ed records files:
 
 ```bash
-./switrs_to_sqliteg.py \
+switrs_to_sqlite \
 CollisionRecords.txt.gz \
 PartyRecords.txt.gz \
 VictimRecords.txt.gz
@@ -46,7 +70,7 @@ default is saved to a file named `switrs.sqlite3`. The output file can be
 changed as follows:
 
 ```bash
-./switrs_to_sqliteg.py \
+switrs_to_sqlite \
 CollisionRecords.txt \
 PartyRecords.txt \
 VictimRecords.txt \
@@ -56,7 +80,7 @@ VictimRecords.txt \
 The program provides the following help menu when called with `--help`:
 
 ```bash
-usage: switrs_to_sqliteg.py [-h] [-o OUTPUT_FILE]
+usage: switrs_to_sqlite [-h] [-o OUTPUT_FILE]
                              collision_record party_record victim_record
 
 Convert SWITRS text files to a SQLite database
