@@ -8,6 +8,10 @@ import gzip
 import sqlite3
 
 
+# Library version
+__version__ = "1.0.0"
+
+
 @unique
 class DataType(Enum):
     """A class used to encode the types allowed in SQLite."""
