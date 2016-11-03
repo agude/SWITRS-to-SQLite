@@ -1,0 +1,8 @@
+language: python
+
+python:
+  - "3.4"
+  - "3.5"
+
+# Run the unit tests
+script: python3 -m pytest -v
