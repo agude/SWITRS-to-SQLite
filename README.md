@@ -1,5 +1,7 @@
 # SWITRS-to-SQLite
 
+[![Build Status](https://travis-ci.org/agude/SWITRS-to-SQLite.svg?branch=master)](https://travis-ci.org/agude/SWITRS-to-SQLite)
+
 SWITRS-to-SQLite is a Python3 script that will convert the CSV files
 provided by the California Highway Patrol's [Statewide Integrated Traffic
 Records System (SWITRS)](http://iswitrs.chp.ca.gov/Reports/jsp/userLogin.jsp)
