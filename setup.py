@@ -47,11 +47,14 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: Utilities",
     ],
     keywords=[
         "switrs",
         "sqlite",
         "data",
-    ]
+    ],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
 )
