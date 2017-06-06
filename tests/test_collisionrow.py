@@ -25,7 +25,7 @@ ROWS = (
 )
 
 
-def test_victimrows():
+def test_collisionrows():
     for row, answer in ROWS:
         c = CollisionRow(row)
         assert c.values == answer
