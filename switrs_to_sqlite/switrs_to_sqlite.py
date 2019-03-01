@@ -3,11 +3,11 @@
 from datetime import datetime
 import argparse
 import csv
-import gzip
 import sqlite3
 
-from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
 from switrs_to_sqlite.converters import convert, negative, string_to_bool
+from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
+from switrs_to_sqlite.open_record import open_record_file
 
 
 # Library version
@@ -386,19 +386,6 @@ class CollisionRow(CSVRow):
 
             collision_time_obj = datetime.strptime(collision_time, "%H%M")
             self.Collision_Time = collision_time_obj.time().isoformat()
-
-
-def open_record_file(file_name):
-    """Open a Record file, even if GZipped.
-
-    Args:
-        file_name (str): The name of a file. If the file ends in ".gz" it will
-            be read a gzipped file, otherwise it will be assumed to be text.
-
-    """
-    if file_name.endswith(".gz"):
-        return gzip.open(file_name, "rt")
-    return open(file_name, "rt")
 
 
 def main():
