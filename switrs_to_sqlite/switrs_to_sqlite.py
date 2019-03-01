@@ -12,7 +12,7 @@ from switrs_to_sqlite.row_types import COLLISION_ROW, PARTY_ROW, VICTIM_ROW
 
 
 # Library version
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 
 
 class CSVRow(object):
