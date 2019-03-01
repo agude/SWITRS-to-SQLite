@@ -1,25 +1,16 @@
 #!/usr/bin/env python3
 
 from datetime import datetime
-from enum import Enum, unique
 import argparse
 import csv
 import gzip
 import sqlite3
 
+from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
 
 # Library version
 __version__ = "1.0.2"
 
-
-@unique
-class DataType(Enum):
-    """A class used to encode the types allowed in SQLite."""
-    INTEGER = "INTEGER"
-    REAL = "REAL"
-    TEXT = "TEXT"
-    BLOB = "BLOB"
-    NULL = "NULL"
 
 
 def convert(**kwargs):
@@ -177,13 +168,7 @@ class CSVRow(object):
         self.table_name = None
         self.members = None
         self.has_primary_column = False
-        self.__datatype_convert = {
-            DataType.INTEGER: int,
-            DataType.REAL: float,
-            DataType.TEXT: str,
-            DataType.BLOB: str,
-            DataType.NULL: None,
-        }
+        self.__datatype_convert = DATATPYE_MAP
 
         self.override_parent()
 
