@@ -27,5 +27,5 @@ ROWS = (
 
 def test_partyrows():
     for row, answer in ROWS:
-        c = PartyRow(row)
-        assert c.values == answer
+        parsed_row = PartyRow.parse_row(row)
+        assert parsed_row == answer

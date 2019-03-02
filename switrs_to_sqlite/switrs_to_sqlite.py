@@ -15,8 +15,8 @@ from switrs_to_sqlite.row_types import COLLISION_ROW, PARTY_ROW, VICTIM_ROW
 __version__ = "1.1.0"
 
 
-class CSVRow(object):
-    """The base class for all row parsing classes.
+class CSVParser:
+    """The base class for all parsing classes.
 
     Derived classes should define override_parent() to change any
     values. Specifically, they are expected to set table_name and
@@ -50,7 +50,7 @@ class CSVRow(object):
 
     """
 
-    def __init__(self, row):
+    def __init__(self, parsing_table, table_name, has_primary_column):
         """Set up the class and parse the CSV row.
 
         This method should be called by all derived classes within their own
@@ -63,38 +63,32 @@ class CSVRow(object):
                 CSV row, as returned by csv.reader().
         """
         self.NULLS = ["-", ""]
-        self.row = row
-        self.table_name = None
-        self.members = None
-        self.has_primary_column = False
+
+        self.parsing_table = parsing_table
+        self.table_name = table_name
+        self.has_primary_column = has_primary_column
         self.__datatype_convert = DATATPYE_MAP
 
-        self.override_parent()
+    def parse_row(self, row):
+        # The CSV file is malformed, so extend it to avoid KeyErrors
+        new_row = self.extend_row(row)
 
-        if self.members is not None:
-            # The CSV file is malformed, so extend it to avoid KeyErrors
-            self.extend_row()
+        # Set up list of variables for insertion
+        return self.__set_values(row)
 
-            # Set up list of variables for insertion
-            self.set_variables()
-            self.set_values()
-            self.set_columns()
-
-    def override_parent(self):
-        """Called before any class logic is executed, should be defined by
-        derived classes.
-
-        At a minimum, table_name and members should be defined here.
+    def __set_values(self, row):
+        """Creates a list of the attributes set in set_variables() in the
+        proper order for reading into the SQLite table.
 
         """
-        pass
+        values = []
+        # If there is no column in the data that is a primary key, than we have
+        # to add an automatic first column which needs a NULL inserted
+        if self.has_primary_column:
+            values.append(None)
 
-    def set_variables(self):
-        """Set attributes and convert CSV values using the names and functions
-        defined in members.
-
-        """
-        for i_csv, name, datatype, nulls, func in self.members:
+        # Parse each item in the row
+        for i_csv, name, datatype, nulls, func in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
 
             # Set up the nulls for this field
@@ -103,28 +97,18 @@ class CSVRow(object):
             if nulls is not None:
                 our_nulls += nulls
 
-            # Convert the CSV field to a value for SQL
-            val = func(val=self.row[i_csv], nulls=our_nulls, dtype=dtype)
+            # Convert the CSV field to a value for SQL using the associated
+            # conversion function
+            val = func(val=row[i_csv], nulls=our_nulls, dtype=dtype)
 
-            setattr(self, name, val)
+            values.append(val)
 
-    def set_values(self):
-        """Creates a list of the attributes set in set_variables() in the
-        proper order for reading into the SQLite table.
-
-        """
-        self.values = []
-        # If there is no column in the data that is a primary key, than we have
-        # an automatic first column which needs a NULL inserted to increment.
-        if not self.has_primary_column:
-            self.values.append(None)
-        for _, name, _, _, _ in self.members:
-            self.values.append(getattr(self, name))
+        return values
 
     def set_columns(self):
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
-        for i_csv, name, dtype, _, _ in self.members:
+        for i_csv, name, dtype, _, _ in self.parsing_table:
             entry = (name, dtype.value)
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
@@ -167,7 +151,7 @@ class CSVRow(object):
             cols=", ".join(cols),
         )
 
-    def extend_row(self):
+    def extend_row(self, row):
         """Extend the length of the row attribute with NULL fields.
 
         Some rows in the CSV are incomplete and are missing columns at the end.
@@ -177,34 +161,24 @@ class CSVRow(object):
         # The CSV file is malformed, not ever row is the same length, so we
         # extent it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
-        extend = (self.members[-1][0] + 1) - len(self.row)
-        self.row += extend * [""]  # "" maps to null
+        extend = (self.parsing_table[-1][0] + 1) - len(row)
+        row += extend * [""]  # "" maps to null
+
+        return row
 
 
-class VictimRow(CSVRow):
-    """Parse CSV rows from the VictimRecords file."""
-
-    def __init__(self, row):
-        super().__init__(row)
-
-    def override_parent(self):
-        self.table_name = "Victim"
-
-        # Set the member variables
-        self.members = VICTIM_ROW
+VictimRow = CSVParser(
+    VICTIM_ROW,
+    table_name="Victim",
+    has_primary_column=True,
+)
 
 
-class PartyRow(CSVRow):
-    """Parse CSV rows from the PartyRecords file."""
-
-    def __init__(self, row):
-        super().__init__(row)
-
-    def override_parent(self):
-        self.table_name = "Party"
-
-        # Set the member variables
-        self.members = PARTY_ROW
+PartyRow = CSVParser(
+    PARTY_ROW,
+    table_name="Party",
+    has_primary_column=True,
+)
 
 
 class CollisionRow(CSVRow):

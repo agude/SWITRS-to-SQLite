@@ -27,5 +27,5 @@ ROWS = (
 
 def test_victimrows():
     for row, answer in ROWS:
-        c = VictimRow(row)
-        assert c.values == answer
+        parsed_row = VictimRow.parse_row(row)
+        assert parsed_row == answer
