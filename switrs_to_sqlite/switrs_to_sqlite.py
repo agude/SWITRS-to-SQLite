@@ -74,19 +74,25 @@ class CSVParser:
         new_row = self.extend_row(row)
 
         # Set up list of variables for insertion
-        return self.__set_values(row)
+        values = self.__set_values(row)
+
+        new_values = []
+        # If there is no column in the data that is a primary key, than we have
+        # to add an automatic first column which needs a NULL inserted
+        if self.has_primary_column:
+            new_values.append(None)
+
+        for _, name, _, _, _ in self.parsing_table:
+            new_values.append(values[name])
+
+        return new_values
 
     def __set_values(self, row):
         """Creates a list of the attributes set in set_variables() in the
         proper order for reading into the SQLite table.
 
         """
-        values = []
-        # If there is no column in the data that is a primary key, than we have
-        # to add an automatic first column which needs a NULL inserted
-        if self.has_primary_column:
-            values.append(None)
-
+        values = {}
         # Parse each item in the row
         for i_csv, name, datatype, nulls, func in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
@@ -101,7 +107,14 @@ class CSVParser:
             # conversion function
             val = func(val=row[i_csv], nulls=our_nulls, dtype=dtype)
 
-            values.append(val)
+            values[name] = val
+
+        # Convert dates as well
+        if False:
+            process_date, collision_date, collision_time = self.__convert_dates(row)
+            values["Process_Date"] = process_date
+            values["Collision_Date"] = collision_date
+            values["Collision_Time"] = collision_time
 
         return values
 
