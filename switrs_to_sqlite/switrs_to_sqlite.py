@@ -289,14 +289,14 @@ def main():
                 next(reader)
                 added_table = False
                 for row in reader:
-                    c = RowClass(row)
+                    parsed_row = RowClass.parse_row(row)
                     # Add the table the first time
                     if not added_table:
-                        cursor.execute(c.create_table_statement())
+                        cursor.execute(RowClass.create_table_statement())
                         added_table = True
 
                     # Insert the row
-                    cursor.execute(c.insert_statement(), c.values)
+                    cursor.execute(RowClass.insert_statement(parsed_row), parsed_row)
 
 
 if __name__ == "__main__":
