@@ -251,6 +251,11 @@ def main():
     )
     # The list of input files
     argparser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s {version}".format(version=__version__),
+    )
+    argparser.add_argument(
         "collision_record",
         type=str,
         help="the CollisionRecords.txt file or the same file gzipped"
