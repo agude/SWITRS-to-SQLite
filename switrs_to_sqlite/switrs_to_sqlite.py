@@ -281,7 +281,6 @@ def main():
     )
 
     with sqlite3.connect(args.output_file) as con:
-        cursor = con.cursor()
         for RowClass, file_name in pairs:
             with open_record_file(file_name) as f:
                 reader = csv.reader(f)
@@ -290,13 +289,14 @@ def main():
                 added_table = False
                 for row in reader:
                     parsed_row = RowClass.parse_row(row)
+
                     # Add the table the first time
                     if not added_table:
-                        cursor.execute(RowClass.create_table_statement())
+                        con.execute(RowClass.create_table_statement())
                         added_table = True
 
                     # Insert the row
-                    cursor.execute(RowClass.insert_statement(parsed_row), parsed_row)
+                    con.execute(RowClass.insert_statement(parsed_row), parsed_row)
 
 
 if __name__ == "__main__":
