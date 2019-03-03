@@ -4,11 +4,12 @@ from datetime import datetime
 import argparse
 import csv
 import sqlite3
+from collections import OrderedDict
 
 from switrs_to_sqlite.converters import convert, negative, string_to_bool
 from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.row_types import COLLISION_ROW, PARTY_ROW, VICTIM_ROW
+from switrs_to_sqlite.row_types import COLLISION_ROW, COLLISION_DATE_TABLE, PARTY_ROW, VICTIM_ROW
 
 
 # Library version
@@ -50,7 +51,7 @@ class CSVParser:
 
     """
 
-    def __init__(self, parsing_table, table_name, has_primary_column):
+    def __init__(self, parsing_table, table_name, has_primary_column, date_parsing_table):
         """Set up the class and parse the CSV row.
 
         This method should be called by all derived classes within their own
@@ -67,32 +68,33 @@ class CSVParser:
         self.parsing_table = parsing_table
         self.table_name = table_name
         self.has_primary_column = has_primary_column
+        self.date_parsing_table = date_parsing_table
+
         self.__datatype_convert = DATATPYE_MAP
+
+        # Set up column names
+        self.__set_columns()
 
     def parse_row(self, row):
         # The CSV file is malformed, so extend it to avoid KeyErrors
-        new_row = self.extend_row(row)
+        new_row = self.__extend_row(row)
 
         # Set up list of variables for insertion
         values = self.__set_values(row)
 
-        new_values = []
-        # If there is no column in the data that is a primary key, than we have
-        # to add an automatic first column which needs a NULL inserted
-        if self.has_primary_column:
-            new_values.append(None)
-
-        for _, name, _, _, _ in self.parsing_table:
-            new_values.append(values[name])
-
-        return new_values
+        return list(values.values())
 
     def __set_values(self, row):
         """Creates a list of the attributes set in set_variables() in the
         proper order for reading into the SQLite table.
 
         """
-        values = {}
+        values = OrderedDict()
+        # If there is no column in the data that is a primary key, than we have
+        # to add an automatic first column which needs a NULL inserted
+        if not self.has_primary_column:
+            values["PRIMARY_COLUMN"] = None
+
         # Parse each item in the row
         for i_csv, name, datatype, nulls, func in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
@@ -110,19 +112,49 @@ class CSVParser:
             values[name] = val
 
         # Convert dates as well
-        if False:
-            process_date, collision_date, collision_time = self.__convert_dates(row)
-            values["Process_Date"] = process_date
-            values["Collision_Date"] = collision_date
-            values["Collision_Time"] = collision_time
+        if self.date_parsing_table:
+            values["Collision_Date"] = self.__convert_date(row, "Collision_Date")
+            values["Collision_Time"] = self.__convert_time(row)
+            values["Process_Date"] = self.__convert_date(row, "Process_Date")
 
         return values
 
-    def set_columns(self):
+    def __convert_date(self, row, test_name):
+        # Set up the processing date
+        for i, name, _ in self.date_parsing_table:
+            if name == test_name:
+                obj = datetime.strptime(row[i], "%Y%m%d")
+                return obj.date().isoformat()
+
+    def __convert_time(self, row):
+        # Find the correct index for the
+        index = None
+        for i, name, _ in self.date_parsing_table:
+            if name == "Collision_Time":
+                index = i
+                break
+
+        # Set up the collision time
+        # 2500 is used as NULL in the source
+        collision_time_str = row[index]
+        if collision_time_str == "2500":
+            time = None
+        else:
+            # The source data is not always 0 padded
+            if len(collision_time_str) == 3:
+                collision_time_str = '0' + collision_time_str
+
+            collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
+            time = collision_time_obj.time().isoformat()
+
+        return time
+
+    def __set_columns(self):
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
         for i_csv, name, dtype, _, _ in self.parsing_table:
             entry = (name, dtype.value)
+
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
             if i_csv == 0:
@@ -135,9 +167,29 @@ class CSVParser:
             # Add the entry
             self.columns.append(entry)
 
-    def insert_statement(self):
+        # If we have extra time columns, set those as well
+        if self.date_parsing_table:
+            for _, name, dtype in self.date_parsing_table:
+                self.columns.append((name, dtype.value))
+
+    def __extend_row(self, row):
+        """Extend the length of the row attribute with NULL fields.
+
+        Some rows in the CSV are incomplete and are missing columns at the end.
+        This function pads these rows with NULLs so they parse correctly.
+
+        """
+        # The CSV file is malformed, not ever row is the same length, so we
+        # extent it with "" which maps to null in the conversion. The +1
+        # converts the final index to length.
+        extend = (self.parsing_table[-1][0] + 1) - len(row)
+        row += extend * [""]  # "" maps to null
+
+        return row
+
+    def insert_statement(self, values):
         """Creates an insert statement used to fill a row in the SQLite table."""
-        vals = ['?'] * len(self.values)
+        vals = ['?'] * len(values)
         query = "INSERT INTO {table} VALUES ({values})".format(
             table=self.table_name,
             values=", ".join(vals),
@@ -159,107 +211,35 @@ class CSVParser:
         cols = []
         for tup in self.columns:
             cols.append(" ".join(tup))
+
         return "CREATE TABLE {table} ({cols})".format(
             table=self.table_name,
             cols=", ".join(cols),
         )
 
-    def extend_row(self, row):
-        """Extend the length of the row attribute with NULL fields.
-
-        Some rows in the CSV are incomplete and are missing columns at the end.
-        This function pads these rows with NULLs so they parse correctly.
-
-        """
-        # The CSV file is malformed, not ever row is the same length, so we
-        # extent it with "" which maps to null in the conversion. The +1
-        # converts the final index to length.
-        extend = (self.parsing_table[-1][0] + 1) - len(row)
-        row += extend * [""]  # "" maps to null
-
-        return row
-
 
 VictimRow = CSVParser(
-    VICTIM_ROW,
+    parsing_table=VICTIM_ROW,
     table_name="Victim",
-    has_primary_column=True,
+    has_primary_column=False,
+    date_parsing_table=None,
 )
 
 
 PartyRow = CSVParser(
-    PARTY_ROW,
+    parsing_table=PARTY_ROW,
     table_name="Party",
-    has_primary_column=True,
+    has_primary_column=False,
+    date_parsing_table=None,
 )
 
 
-class CollisionRow(CSVRow):
-    """Parse CSV rows from the CollisionRecords file.
-
-    This class sets special_members to handle setting up the date fields. It
-    uses the method __convert_dates() to fill these fields, and modifies
-    set_variables(), set_values(), and set_columns() to add the dates to the
-    class objects.
-
-    """
-
-    def __init__(self, row):
-        super().__init__(row)
-
-    def override_parent(self):
-        self.table_name = "Collision"
-        self.has_primary_column = True
-
-        # Set the member variables
-        self.members = COLLISION_ROW
-
-        self.special_members = (
-            ("Collision_Date", DataType.TEXT),
-            ("Collision_Time", DataType.TEXT),
-            ("Process_Date", DataType.TEXT),
-        )
-
-    def set_variables(self):
-        super().set_variables()
-
-        # Set variables that need non-trivial processing
-        # self.Collision_Date and self.Collision_Time:
-        self.__convert_dates()
-
-    def set_values(self):
-        super().set_values()
-        for name, _ in self.special_members:
-            self.values.append(getattr(self, name))
-
-    def set_columns(self):
-        super().set_columns()
-        for name, dtype in self.special_members:
-            self.columns.append((name, dtype.value))
-
-    def __convert_dates(self):
-        """Converts the various date and time fields into two date and one time
-        field. """
-        # Set up the processing date
-        process_obj = datetime.strptime(self.row[2], "%Y%m%d")
-        self.Process_Date = process_obj.date().isoformat()
-
-        # Set up the collision date
-        collision_obj = datetime.strptime(self.row[4], "%Y%m%d")
-        self.Collision_Date = collision_obj.date().isoformat()
-
-        # Set up the collision time
-        # 2500 is used as NULL in the source
-        collision_time = self.row[5]
-        if collision_time == "2500":
-            self.Collision_Time = None
-        else:
-            # The source data is not always 0 padded
-            if len(collision_time) == 3:
-                collision_time = '0' + collision_time
-
-            collision_time_obj = datetime.strptime(collision_time, "%H%M")
-            self.Collision_Time = collision_time_obj.time().isoformat()
+CollisionRow = CSVParser(
+    parsing_table=COLLISION_ROW,
+    table_name="Collision",
+    has_primary_column=True,
+    date_parsing_table=COLLISION_DATE_TABLE,
+)
 
 
 def main():

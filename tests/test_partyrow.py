@@ -29,3 +29,38 @@ def test_partyrows():
     for row, answer in ROWS:
         parsed_row = PartyRow.parse_row(row)
         assert parsed_row == answer
+
+def test_partyrow_columns():
+    assert PartyRow.columns == [
+        ("id", "INTEGER", "PRIMARY KEY"),
+        ("Case_ID", "TEXT"),
+        ("Party_Number", "INTEGER"),
+        ("Party_Type", "TEXT"),
+        ("At_Fault", "TEXT"),
+        ("Party_Sex", "TEXT"),
+        ("Party_Age", "INTEGER"),
+        ("Party_Sobriety", "TEXT"),
+        ("Party_Drug_Physical", "TEXT"),
+        ("Direction_Of_Travel", "TEXT"),
+        ("Party_Safety_Equipment_1", "TEXT"),
+        ("Party_Safety_Equipment_2", "TEXT"),
+        ("Financial_Responsibility", "TEXT"),
+        ("Hazardous_Materials", "TEXT"),
+        ("Cellphone_Use", "TEXT"),
+        ("School_Bus_Related", "TEXT"),
+        ("OAF_Violation_Code", "TEXT"),
+        ("OAF_Violation_Category", "TEXT"),
+        ("OAF_Violation_Section", "INTEGER"),
+        ("OAF_Violation_Suffix", "TEXT"),
+        ("Other_Associate_Factor_1", "TEXT"),
+        ("Other_Associate_Factor_2", "TEXT"),
+        ("Party_Number_Killed", "INTEGER"),
+        ("Party_Number_Injured", "INTEGER"),
+        ("Movement_Preceding_Collision", "TEXT"),
+        ("Vehicle_Year", "INTEGER"),
+        ("Vehicle_Make", "TEXT"),
+        ("Statewide_Vehicle_Type", "TEXT"),
+        ("CHP_Vehicle_Type_Towing", "TEXT"),
+        ("CHP_Vehicle_Type_Towed", "TEXT"),
+        ("Party_Race", "TEXT"),
+    ]
