@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.switrs_to_sqlite import PartyRow
+from switrs_to_sqlite.parsers import PartyRow
 import pytest
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and

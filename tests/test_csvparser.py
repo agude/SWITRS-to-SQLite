@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.switrs_to_sqlite import CSVParser, DataType, convert, string_to_bool
+from switrs_to_sqlite.converters import convert, string_to_bool
+from switrs_to_sqlite.datatypes import DataType
+from switrs_to_sqlite.parsers import CSVParser
+
 import pytest
 
 
