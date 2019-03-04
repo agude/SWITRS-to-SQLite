@@ -12,6 +12,13 @@ matrix:
     - python: '3.7'
       dist: xenial  # required for Python >= 3.7 (travis-ci/travis-ci#9069)
 
+addons:
+  apt_packages:
+    - pandoc  # Required to convert the README to a Pypi description
+
+install:
+  - pip install pypandoc
+
 # Run the unit tests
 script: python -m pytest -v
 
