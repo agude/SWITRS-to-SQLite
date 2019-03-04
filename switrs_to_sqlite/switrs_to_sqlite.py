@@ -49,6 +49,7 @@ def main():
 
     args = argparser.parse_args()
 
+    # Match the parsers with the files they read
     pairs = (
         (CollisionRow, args.collision_record),
         (PartyRow, args.party_record),
@@ -57,20 +58,17 @@ def main():
 
     with sqlite3.connect(args.output_file) as con:
         for RowClass, file_name in pairs:
+            # Add the table to the database
+            con.execute(RowClass.create_table_statement())
+
+            # Read in the CSV and process each row
             with open_record_file(file_name) as f:
                 reader = csv.reader(f)
-                # Skip the header
-                next(reader)
-                added_table = False
+                next(reader)  # Skip the header
+
+                # Parse each row and insert it into the database
                 for row in reader:
                     parsed_row = RowClass.parse_row(row)
-
-                    # Add the table the first time
-                    if not added_table:
-                        con.execute(RowClass.create_table_statement())
-                        added_table = True
-
-                    # Insert the row
                     con.execute(RowClass.insert_statement(parsed_row), parsed_row)
 
 
