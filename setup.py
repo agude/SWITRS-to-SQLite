@@ -8,14 +8,15 @@ from setuptools import setup
 version = re.search(
     '^__version__\s*=\s*"(.*)"',
     open("switrs_to_sqlite/switrs_to_sqlite.py").read(),
-    re.M
+    re.M,
 ).group(1)
 
 
 # Try to import pypandoc to convert the readme, otherwise ignore it
 try:
     import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
+
+    long_description = pypandoc.convert("README.md", "rst")
 except ImportError:
     long_description = ""
 
@@ -33,8 +34,8 @@ setup(
     platforms=["any"],
     packages=["switrs_to_sqlite"],
     entry_points={
-        'console_scripts': [
-            'switrs_to_sqlite = switrs_to_sqlite.switrs_to_sqlite:main'
+        "console_scripts": [
+            "switrs_to_sqlite = switrs_to_sqlite.switrs_to_sqlite:main"
         ],
     },
     classifiers=[
@@ -55,6 +56,6 @@ setup(
         "sqlite",
         "data",
     ],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
 )

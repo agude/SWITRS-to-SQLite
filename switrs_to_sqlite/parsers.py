@@ -2,7 +2,12 @@ from collections import OrderedDict
 from datetime import datetime
 
 from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
-from switrs_to_sqlite.row_types import COLLISION_ROW, COLLISION_DATE_TABLE, PARTY_ROW, VICTIM_ROW
+from switrs_to_sqlite.row_types import (
+    COLLISION_ROW,
+    COLLISION_DATE_TABLE,
+    PARTY_ROW,
+    VICTIM_ROW,
+)
 
 
 class CSVParser:
@@ -40,7 +45,9 @@ class CSVParser:
 
     """
 
-    def __init__(self, parsing_table, table_name, has_primary_column, date_parsing_table):
+    def __init__(
+        self, parsing_table, table_name, has_primary_column, date_parsing_table
+    ):
         """Set up the class and parse the CSV row.
 
         This method should be called by all derived classes within their own
@@ -131,7 +138,7 @@ class CSVParser:
         else:
             # The source data is not always 0 padded
             if len(collision_time_str) == 3:
-                collision_time_str = '0' + collision_time_str
+                collision_time_str = "0" + collision_time_str
 
             collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
             time = collision_time_obj.time().isoformat()
@@ -178,10 +185,9 @@ class CSVParser:
 
     def insert_statement(self, values):
         """Creates an insert statement used to fill a row in the SQLite table."""
-        vals = ['?'] * len(values)
+        vals = ["?"] * len(values)
         query = "INSERT INTO {table} VALUES ({values})".format(
-            table=self.table_name,
-            values=", ".join(vals),
+            table=self.table_name, values=", ".join(vals)
         )
 
         return query
@@ -202,8 +208,7 @@ class CSVParser:
             cols.append(" ".join(tup))
 
         return "CREATE TABLE {table} ({cols})".format(
-            table=self.table_name,
-            cols=", ".join(cols),
+            table=self.table_name, cols=", ".join(cols)
         )
 
 

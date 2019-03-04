@@ -1,8 +1,10 @@
 from enum import Enum, unique
 
+
 @unique
 class DataType(Enum):
     """A class used to encode the types allowed in SQLite."""
+
     INTEGER = "INTEGER"
     REAL = "REAL"
     TEXT = "TEXT"

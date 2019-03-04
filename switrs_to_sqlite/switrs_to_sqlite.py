@@ -9,7 +9,7 @@ from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 
 # Library version
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 
 
 def main():
@@ -28,23 +28,23 @@ def main():
     argparser.add_argument(
         "collision_record",
         type=str,
-        help="the CollisionRecords.txt file or the same file gzipped"
+        help="the CollisionRecords.txt file or the same file gzipped",
     )
     argparser.add_argument(
         "party_record",
         type=str,
-        help="the PartyRecords.txt file or the same file gzipped"
+        help="the PartyRecords.txt file or the same file gzipped",
     )
     argparser.add_argument(
         "victim_record",
         type=str,
-        help="the VictimRecords.txt file or the same file gzipped"
+        help="the VictimRecords.txt file or the same file gzipped",
     )
     argparser.add_argument(
         "-o",
         "--output-file",
         help="file to save the database to",
-        default="switrs.sqlite3"
+        default="switrs.sqlite3",
     )
 
     args = argparser.parse_args()

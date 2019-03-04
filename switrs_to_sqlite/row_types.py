@@ -13,7 +13,7 @@ COLLISION_ROW = (
     (12, "Special_Condition", DataType.TEXT, None, convert),
     (13, "Beat_Type", DataType.TEXT, None, convert),
     (14, "CHP_Beat_Type", DataType.TEXT, None, convert),
-    (15, "City_Division_LAPD", DataType.TEXT, ['0'], convert),
+    (15, "City_Division_LAPD", DataType.TEXT, ["0"], convert),
     (16, "CHP_Beat_Class", DataType.TEXT, None, convert),
     (17, "Beat_Number", DataType.TEXT, None, convert),
     (18, "Primary_Road", DataType.TEXT, None, convert),
