@@ -76,6 +76,12 @@ COLLISION_ROW = (
     (75, "Longitude", DataType.REAL, None, negative),
 )
 
+COLLISION_DATE_TABLE = (
+    (4, "Collision_Date", DataType.TEXT),
+    (5, "Collision_Time", DataType.TEXT),
+    (2, "Process_Date", DataType.TEXT),
+)
+
 PARTY_ROW = (
     (0, "Case_ID", DataType.TEXT, None, convert),
     (1, "Party_Number", DataType.INTEGER, None, convert),

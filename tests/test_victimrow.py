@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.switrs_to_sqlite import VictimRow
+from switrs_to_sqlite.parsers import VictimRow
 import pytest
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and
@@ -27,5 +27,38 @@ ROWS = (
 
 def test_victimrows():
     for row, answer in ROWS:
-        c = VictimRow(row)
-        assert c.values == answer
+        parsed_row = VictimRow.parse_row(row)
+        assert parsed_row == answer
+
+def test_vicitimrow_create_table():
+    assert VictimRow.create_table_statement() == (
+        "CREATE TABLE "
+        "Victim ("
+        "id INTEGER PRIMARY KEY, "
+        "Case_ID TEXT, "
+        "Party_Number INTEGER, "
+        "Victim_Role TEXT, "
+        "Victim_Sex TEXT, "
+        "Victim_Age INTEGER, "
+        "Victim_Degree_Of_Injury TEXT, "
+        "Victim_Seating_Position TEXT, "
+        "Victim_Safety_Equipment_1 TEXT, "
+        "Victim_Safety_Equipment_2 TEXT, "
+        "Victim_Ejected TEXT"
+        ")"
+    )
+
+def test_victimrow_columns():
+    assert VictimRow.columns == [
+        ("id", "INTEGER", "PRIMARY KEY"),
+        ("Case_ID", "TEXT"),
+        ("Party_Number", "INTEGER"),
+        ("Victim_Role", "TEXT"),
+        ("Victim_Sex", "TEXT"),
+        ("Victim_Age", "INTEGER"),
+        ("Victim_Degree_Of_Injury", "TEXT"),
+        ("Victim_Seating_Position", "TEXT"),
+        ("Victim_Safety_Equipment_1", "TEXT"),
+        ("Victim_Safety_Equipment_2", "TEXT"),
+        ("Victim_Ejected", "TEXT"),
+    ]
