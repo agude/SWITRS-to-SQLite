@@ -36,3 +36,11 @@ statewide_vehicle_type = {
     "N": "pedestrian",
     "O": "moped",
 }
+
+degree_of_injury = {
+    "0": "no injury",
+    "1": "killed",
+    "2": "severe injury",
+    "3": "other visible injury",
+    "4": "complaint of pain",
+}

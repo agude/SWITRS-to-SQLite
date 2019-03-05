@@ -122,7 +122,7 @@ VICTIM_ROW = (
     (2, "Victim_Role", DataType.TEXT, None, convert, None),
     (3, "Victim_Sex", DataType.TEXT, None, convert, None),
     (4, "Victim_Age", DataType.INTEGER, ["998"], convert, None),
-    (5, "Victim_Degree_Of_Injury", DataType.TEXT, None, convert, None),
+    (5, "Victim_Degree_Of_Injury", DataType.TEXT, None, convert, vm.degree_of_injury),
     (6, "Victim_Seating_Position", DataType.TEXT, None, convert, None),
     (7, "Victim_Safety_Equipment_1", DataType.TEXT, None, convert, None),
     (8, "Victim_Safety_Equipment_2", DataType.TEXT, None, convert, None),
