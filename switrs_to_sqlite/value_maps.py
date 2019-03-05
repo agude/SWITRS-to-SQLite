@@ -108,3 +108,13 @@ INVOLVED_WITH = {
     "I": "fixed object",
     "J": "other object",
 }
+
+PEDESTRIAN_ACTION = {
+    "A": "no pedestrian involved",
+    "B": "crossing in intersection crosswalk",
+    "C": "crossing non-intersection crosswalk",
+    "D": "crossing not in crosswalk",
+    "E": "in road",
+    "F": "not in road",
+    "G": "using school bus",
+}
