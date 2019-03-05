@@ -1,4 +1,4 @@
-movement_preceding = {
+MOVEMENT_PRECEDING = {
     "A": "stopped",
     "B": "proceeding straight",
     "C": "ran off road",
@@ -19,7 +19,7 @@ movement_preceding = {
     "R": "other",
 }
 
-statewide_vehicle_type = {
+STATEWIDE_VEHICLE_TYPE = {
     "A": "passenger car",
     "B": "passenger car with trailer",
     "C": "motorcycle or scooter",
@@ -37,7 +37,7 @@ statewide_vehicle_type = {
     "O": "moped",
 }
 
-degree_of_injury = {
+DEGREE_OF_INJURY = {
     "0": "no injury",
     "1": "killed",
     "2": "severe injury",
@@ -45,7 +45,7 @@ degree_of_injury = {
     "4": "complaint of pain",
 }
 
-party_type = {
+PARTY_TYPE = {
     "1": "driver",
     "2": "pedestrian",
     "3": "parked vehicle",
@@ -53,7 +53,7 @@ party_type = {
     "5": "other",
 }
 
-sex = {
+SEX = {
     "M": "male",
     "F": "female",
 }
