@@ -84,3 +84,14 @@ CHP_BEAT_TYPE = {
     "11": "administrative",
     "A": "administrative",
 }
+
+COLLISION_TYPE = {
+    "A": "head-on",
+    "B": "sideswipe",
+    "C": "rear end",
+    "D": "broadside",
+    "E": "hit object",
+    "F": "overturned",
+    "G": "pedestrian",
+    "H": "other",
+}
