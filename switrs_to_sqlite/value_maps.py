@@ -18,3 +18,21 @@ movement_preceding_map = {
     "Q": "traveling wrong way",
     "R": "other",
 }
+
+statewide_vehicle_type = {
+    "A": "passenger car",
+    "B": "passenger car with trailer",
+    "C": "motorcycle or scooter",
+    "D": "pickup or panel truck",
+    "E": "pickup or panel truck with trailer",
+    "F": "truck or truck tractor",
+    "G": "truck or truck tractor with trailer",
+    "H": "schoolbus",
+    "I": "other bus",
+    "J": "emergency vehicle",
+    "K": "highway construction equipment",
+    "L": "bicycle",
+    "M": "other vehicle",
+    "N": "pedestrian",
+    "O": "moped",
+}
