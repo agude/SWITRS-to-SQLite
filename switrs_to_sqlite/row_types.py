@@ -46,7 +46,7 @@ COLLISION_ROW = (
     (44, "PCF_Violation_Subsection", DataType.TEXT, None, convert, None),
     (45, "Hit_And_Run", DataType.TEXT, None, convert, None),
     (46, "Type_Of_Collision", DataType.TEXT, ["M"], convert, vm.COLLISION_TYPE),
-    (47, "Motor_Vehicle_Involved_With", DataType.TEXT, None, convert, None),
+    (47, "Motor_Vehicle_Involved_With", DataType.TEXT, None, convert, vm.INVOLVED_WITH),
     (48, "Ped_Action", DataType.TEXT, None, convert, None),
     (49, "Road_Surface", DataType.TEXT, None, convert, None),
     (50, "Road_Condition_1", DataType.TEXT, None, convert, None),

@@ -95,3 +95,16 @@ COLLISION_TYPE = {
     "G": "pedestrian",
     "H": "other",
 }
+
+INVOLVED_WITH = {
+    "A": "non-collision",
+    "B": "pedestrian",
+    "C": "other motor vehicle",
+    "D": "motor vehicle on other roadway",
+    "E": "parked motor vehicle",
+    "F": "train",
+    "G": "bicycle",
+    "H": "animal",
+    "I": "fixed object",
+    "J": "other object",
+}
