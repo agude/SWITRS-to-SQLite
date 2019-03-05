@@ -92,7 +92,7 @@ class CSVParser:
             values["PRIMARY_COLUMN"] = None
 
         # Parse each item in the row
-        for i_csv, name, datatype, nulls, func in self.parsing_table:
+        for i_csv, name, datatype, nulls, func, val_map in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
 
             # Set up the nulls for this field
@@ -104,6 +104,12 @@ class CSVParser:
             # Convert the CSV field to a value for SQL using the associated
             # conversion function
             val = func(val=row[i_csv], nulls=our_nulls, dtype=dtype)
+
+            # If there is a val_map, then use that to convert the value to a
+            # return value. This is mainly used to convert "Enums" in the
+            # database into human readable values, like 'A' -> 'Stopped'.
+            if val_map is not None:
+                val = val_map.get(val, val)
 
             values[name] = val
 
@@ -148,7 +154,7 @@ class CSVParser:
     def __set_columns(self):
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
-        for i_csv, name, dtype, _, _ in self.parsing_table:
+        for i_csv, name, dtype, _, _, _ in self.parsing_table:
             entry = (name, dtype.value)
 
             # The first item is special, it is either the "PRIMARY KEY", or we

@@ -14,11 +14,11 @@ def row():
 @pytest.fixture(scope="module")
 def parsing_table():
     return (
-        (0, "first", DataType.INTEGER, None, convert),
-        (1, "second", DataType.TEXT, None, convert),
-        (2, "third", DataType.REAL, None, convert),
-        (3, "forth", DataType.INTEGER, None, string_to_bool),
-        (4, "blank", DataType.INTEGER, (""), convert),
+        (0, "first", DataType.INTEGER, None, convert, None),
+        (1, "second", DataType.TEXT, None, convert, None),
+        (2, "third", DataType.REAL, None, convert, None),
+        (3, "forth", DataType.INTEGER, None, string_to_bool, None),
+        (4, "blank", DataType.INTEGER, (""), convert, None),
     )
 
 @pytest.fixture(scope="function")
