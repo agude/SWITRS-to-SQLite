@@ -67,3 +67,20 @@ WEATHER = {
     "F": "other",
     "G": "wind",
 }
+
+CHP_BEAT_TYPE = {
+    "0": "not chp",
+    "1": "interstate",
+    "2": "us highway",
+    "3": "state route",
+    "4": "county road line",
+    "5": "county road area",
+    "6": "us highway",
+    "7": "state route",
+    "8": "county road line",
+    "9": "county road area",
+    "10": "safety services program",
+    "S": "safety services program",
+    "11": "administrative",
+    "A": "administrative",
+}
