@@ -57,3 +57,13 @@ SEX = {
     "M": "male",
     "F": "female",
 }
+
+WEATHER = {
+    "A": "clear",
+    "B": "cloudy",
+    "C": "raining",
+    "D": "snowing",
+    "E": "fog",
+    "F": "other",
+    "G": "wind",
+}
