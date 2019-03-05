@@ -86,7 +86,7 @@ COLLISION_DATE_TABLE = (
 PARTY_ROW = (
     (0, "Case_ID", DataType.TEXT, None, convert, None),
     (1, "Party_Number", DataType.INTEGER, None, convert, None),
-    (2, "Party_Type", DataType.TEXT, None, convert, None),
+    (2, "Party_Type", DataType.TEXT, None, convert, vm.party_type),
     (3, "At_Fault", DataType.TEXT, None, string_to_bool, None),
     (4, "Party_Sex", DataType.TEXT, None, convert, None),
     (5, "Party_Age", DataType.INTEGER, ["998"], convert, None),
@@ -107,7 +107,7 @@ PARTY_ROW = (
     (20, "Other_Associate_Factor_2", DataType.TEXT, None, convert, None),
     (21, "Party_Number_Killed", DataType.INTEGER, None, convert, None),
     (22, "Party_Number_Injured", DataType.INTEGER, None, convert, None),
-    (23, "Movement_Preceding_Collision", DataType.TEXT, None, convert, vm.movement_preceding_map),
+    (23, "Movement_Preceding_Collision", DataType.TEXT, None, convert, vm.movement_preceding),
     (24, "Vehicle_Year", DataType.INTEGER, ["9999"], convert, None),
     (25, "Vehicle_Make", DataType.TEXT, None, convert, None),
     (26, "Statewide_Vehicle_Type", DataType.TEXT, None, convert, vm.statewide_vehicle_type),

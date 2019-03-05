@@ -1,4 +1,4 @@
-movement_preceding_map = {
+movement_preceding = {
     "A": "stopped",
     "B": "proceeding straight",
     "C": "ran off road",
@@ -43,4 +43,12 @@ degree_of_injury = {
     "2": "severe injury",
     "3": "other visible injury",
     "4": "complaint of pain",
+}
+
+party_type = {
+    "1": "driver",
+    "2": "pedestrian",
+    "3": "parked vehicle",
+    "4": "bicyclist",
+    "5": "other",
 }
