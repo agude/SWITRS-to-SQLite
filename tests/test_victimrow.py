@@ -10,7 +10,7 @@ ROWS = (
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
         [      '097293',   '1',          '2',         'M',        '20',       '0',                     '3',                     'G',                       'T',                       '0'],
-        [None, '097293',   1,            '2',         'M',        20,         'no injury',             '3',                     'G',                       'T',                       '0'],
+        [None, '097293',   1,            '2',         'male',     20,         'no injury',             '3',                     'G',                       'T',                       '0'],
     ),
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
@@ -20,7 +20,7 @@ ROWS = (
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1  Victim_Safety_Equipment_2  Victim_Ejected
         [      '0000003',  '6',          '2',         'F',        '999',      '1',                     '3',                     'T',                       '-',                       '-'],
-        [None, '0000003',  6,            '2',         'F',        999,        'killed',                '3',                     'T',                       None,                      None],
+        [None, '0000003',  6,            '2',         'female',   999,        'killed',                '3',                     'T',                       None,                      None],
     ),
 )
 

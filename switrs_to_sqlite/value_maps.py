@@ -52,3 +52,8 @@ party_type = {
     "4": "bicyclist",
     "5": "other",
 }
+
+sex = {
+    "M": "male",
+    "F": "female",
+}
