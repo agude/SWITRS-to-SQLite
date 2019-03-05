@@ -20,7 +20,7 @@ COLLISION_ROW = (
     (18, "Primary_Road", DataType.TEXT, None, convert, None),
     (19, "Secondary_Road", DataType.TEXT, None, convert, None),
     (20, "Distance", DataType.REAL, None, convert, None),
-    (21, "Direction", DataType.TEXT, None, convert, None),
+    (21, "Direction", DataType.TEXT, None, convert, vm.DIRECTION),
     (22, "Intersection", DataType.TEXT, None, string_to_bool, None),
     (23, "Weather_1", DataType.TEXT, ['N', 'Y'], convert, vm.WEATHER),
     (24, "Weather_2", DataType.TEXT, ['N', 'Y'], convert, vm.WEATHER),

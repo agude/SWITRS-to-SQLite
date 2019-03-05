@@ -118,3 +118,10 @@ PEDESTRIAN_ACTION = {
     "F": "not in road",
     "G": "using school bus",
 }
+
+DIRECTION = {
+    "N": "north",
+    "E": "east",
+    "S": "south",
+    "W": "west",
+}
