@@ -51,7 +51,7 @@ def test_collisionrow_create_table():
         "Secondary_Road TEXT, "
         "Distance REAL, "
         "Direction TEXT, "
-        "Intersection TEXT, "
+        "Intersection INTEGER, "
         "Weather_1 TEXT, "
         "Weather_2 TEXT, "
         "State_Highway_Indicator INTEGER, "
@@ -130,7 +130,7 @@ def test_partyrow_columns():
         ("Secondary_Road", "TEXT"),
         ("Distance", "REAL"),
         ("Direction", "TEXT"),
-        ("Intersection", "TEXT"),
+        ("Intersection", "INTEGER"),
         ("Weather_1", "TEXT"),
         ("Weather_2", "TEXT"),
         ("State_Highway_Indicator", "INTEGER"),
