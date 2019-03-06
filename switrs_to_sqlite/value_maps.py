@@ -161,3 +161,11 @@ ROAD_CONDITION = {
     "G": "other",
     "H": "normal",
 }
+
+LIGHTING = {
+    "A": "daylight",
+    "B": "dusk or dawn",
+    "C": "dark with street lights",
+    "D": "dark with no street lights",
+    "E": "dark with street lights not functioning",
+}
