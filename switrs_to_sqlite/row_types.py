@@ -15,7 +15,7 @@ COLLISION_ROW = (
     (13, "Beat_Type", DataType.TEXT, None, convert, None),
     (14, "CHP_Beat_Type", DataType.TEXT, None, convert, vm.CHP_BEAT_TYPE),
     (15, "City_Division_LAPD", DataType.TEXT, ["0"], convert, None),
-    (16, "CHP_Beat_Class", DataType.TEXT, None, convert, None),
+    (16, "CHP_Beat_Class", DataType.TEXT, None, convert, vm.CHP_BEAT_CLASS),
     (17, "Beat_Number", DataType.TEXT, None, convert, None),
     (18, "Primary_Road", DataType.TEXT, None, convert, None),
     (19, "Secondary_Road", DataType.TEXT, None, convert, None),

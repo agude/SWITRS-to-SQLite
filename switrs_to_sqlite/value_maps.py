@@ -131,3 +131,9 @@ LOCATION_TYPE = {
     "I": "intersection",
     "R": "ramp",
 }
+
+CHP_BEAT_CLASS = {
+    "1": "chp primary",
+    "2": "chp other",
+    "0": "not chp",
+}
