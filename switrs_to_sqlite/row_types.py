@@ -39,7 +39,7 @@ COLLISION_ROW = (
     (37, "Killed_Victims", DataType.INTEGER, None, convert, None),
     (38, "Injured_Victims", DataType.INTEGER, None, convert, None),
     (39, "Party_Count", DataType.INTEGER, None, convert, None),
-    (40, "Primary_Collision_Factor", DataType.TEXT, None, convert, None),
+    (40, "Primary_Collision_Factor", DataType.TEXT, None, convert, vm.PRIMARY_COLLISION_FACTOR),
     (41, "PCF_Violation_Code", DataType.TEXT, None, convert, None),
     (42, "PCF_Violation_Category", DataType.TEXT, None, convert, None),
     (43, "PCF_Violation", DataType.INTEGER, None, convert, None),

@@ -183,3 +183,11 @@ SIDE_OF_HIGHWAY = {
     "E": "eastbound",
     "W": "westbound",
 }
+
+PRIMARY_COLLISION_FACTOR = {
+    "A": "vehicle code violation",
+    "B": "other improper driving",
+    "C": "other than driver",
+    "D": "unknown",
+    "E": "fell asleep",
+}
