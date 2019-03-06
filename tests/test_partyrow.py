@@ -38,7 +38,7 @@ def test_partyrow_create_table():
         "Case_ID TEXT, "
         "Party_Number INTEGER, "
         "Party_Type TEXT, "
-        "At_Fault TEXT, "
+        "At_Fault INTEGER, "
         "Party_Sex TEXT, "
         "Party_Age INTEGER, "
         "Party_Sobriety TEXT, "
@@ -74,7 +74,7 @@ def test_partyrow_columns():
         ("Case_ID", "TEXT"),
         ("Party_Number", "INTEGER"),
         ("Party_Type", "TEXT"),
-        ("At_Fault", "TEXT"),
+        ("At_Fault", "INTEGER"),
         ("Party_Sex", "TEXT"),
         ("Party_Age", "INTEGER"),
         ("Party_Sobriety", "TEXT"),

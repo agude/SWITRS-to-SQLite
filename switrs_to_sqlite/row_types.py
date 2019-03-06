@@ -87,7 +87,7 @@ PARTY_ROW = (
     (0, "Case_ID", DataType.TEXT, None, convert, None),
     (1, "Party_Number", DataType.INTEGER, None, convert, None),
     (2, "Party_Type", DataType.TEXT, None, convert, vm.PARTY_TYPE),
-    (3, "At_Fault", DataType.TEXT, None, string_to_bool, None),
+    (3, "At_Fault", DataType.INTEGER, None, string_to_bool, None),
     (4, "Party_Sex", DataType.TEXT, None, convert, vm.SEX),
     (5, "Party_Age", DataType.INTEGER, ["998"], convert, None),
     (6, "Party_Sobriety", DataType.TEXT, None, convert, None),
