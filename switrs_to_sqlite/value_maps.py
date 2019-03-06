@@ -191,3 +191,14 @@ PRIMARY_COLLISION_FACTOR = {
     "D": "unknown",
     "E": "fell asleep",
 }
+
+PCF_VIOLATION_CODE = {
+    "B": "business",
+    "C": "vehicle",
+    "H": "city health",
+    "I": "city ordinance",
+    "O": "county ordinance",
+    "P": "penal",
+    "S": "streets",
+    "W": "welfare",
+}
