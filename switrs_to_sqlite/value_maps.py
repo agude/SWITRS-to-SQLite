@@ -95,3 +95,118 @@ COLLISION_TYPE = {
     "G": "pedestrian",
     "H": "other",
 }
+
+INVOLVED_WITH = {
+    "A": "non-collision",
+    "B": "pedestrian",
+    "C": "other motor vehicle",
+    "D": "motor vehicle on other roadway",
+    "E": "parked motor vehicle",
+    "F": "train",
+    "G": "bicycle",
+    "H": "animal",
+    "I": "fixed object",
+    "J": "other object",
+}
+
+PEDESTRIAN_ACTION = {
+    "A": "no pedestrian involved",
+    "B": "crossing in intersection crosswalk",
+    "C": "crossing non-intersection crosswalk",
+    "D": "crossing not in crosswalk",
+    "E": "in road",
+    "F": "not in road",
+    "G": "using school bus",
+}
+
+DIRECTION = {
+    "N": "north",
+    "E": "east",
+    "S": "south",
+    "W": "west",
+}
+
+LOCATION_TYPE = {
+    "H": "highway",
+    "I": "intersection",
+    "R": "ramp",
+}
+
+CHP_BEAT_CLASS = {
+    "1": "chp primary",
+    "2": "chp other",
+    "0": "not chp",
+}
+
+HIT_AND_RUN = {
+    "F": "felony",
+    "M": "misdemeanor",
+    "N": "not hit and run",
+}
+
+ROAD_SURFACE = {
+    "A": "dry",
+    "B": "wet",
+    "C": "snowy",
+    "D": "slippery",
+}
+
+ROAD_CONDITION = {
+    "A": "holes",
+    "B": "loose material",
+    "C": "obstruction",
+    "D": "construction",
+    "E": "reduced width",
+    "F": "flooded",
+    "G": "other",
+    "H": "normal",
+}
+
+LIGHTING = {
+    "A": "daylight",
+    "B": "dusk or dawn",
+    "C": "dark with street lights",
+    "D": "dark with no street lights",
+    "E": "dark with street lights not functioning",
+}
+
+CONTROL_DEVICE = {
+    "A": "functioning",
+    "B": "not functioning",
+    "C": "obscured",
+    "D": "none",
+}
+
+SIDE_OF_HIGHWAY = {
+    "N": "northbound",
+    "S": "southbound",
+    "E": "eastbound",
+    "W": "westbound",
+}
+
+PRIMARY_COLLISION_FACTOR = {
+    "A": "vehicle code violation",
+    "B": "other improper driving",
+    "C": "other than driver",
+    "D": "unknown",
+    "E": "fell asleep",
+}
+
+PCF_VIOLATION_CODE = {
+    "B": "business",
+    "C": "vehicle",
+    "H": "city health",
+    "I": "city ordinance",
+    "O": "county ordinance",
+    "P": "penal",
+    "S": "streets",
+    "W": "welfare",
+}
+
+RACE = {
+    "A": "asian",
+    "B": "black",
+    "H": "hispanic",
+    "O": "other",
+    "W": "white",
+}
