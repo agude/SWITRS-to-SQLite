@@ -150,3 +150,14 @@ ROAD_SURFACE = {
     "C": "snowy",
     "D": "slippery",
 }
+
+ROAD_CONDITION = {
+    "A": "holes",
+    "B": "loose material",
+    "C": "obstruction",
+    "D": "construction",
+    "E": "reduced width",
+    "F": "flooded",
+    "G": "other",
+    "H": "normal",
+}
