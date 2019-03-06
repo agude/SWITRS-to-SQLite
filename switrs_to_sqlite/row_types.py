@@ -113,7 +113,7 @@ PARTY_ROW = (
     (26, "Statewide_Vehicle_Type", DataType.TEXT, None, convert, vm.STATEWIDE_VEHICLE_TYPE),
     (27, "CHP_Vehicle_Type_Towing", DataType.TEXT, ["99"], convert, None),
     (28, "CHP_Vehicle_Type_Towed", DataType.TEXT, ["99"], convert, None),
-    (29, "Party_Race", DataType.TEXT, None, convert, None),
+    (29, "Party_Race", DataType.TEXT, None, convert, vm.RACE),
 )
 
 VICTIM_ROW = (

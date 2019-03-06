@@ -202,3 +202,11 @@ PCF_VIOLATION_CODE = {
     "S": "streets",
     "W": "welfare",
 }
+
+RACE = {
+    "A": "asian",
+    "B": "black",
+    "H": "hispanic",
+    "O": "other",
+    "W": "white",
+}
