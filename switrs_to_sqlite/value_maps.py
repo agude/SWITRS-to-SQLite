@@ -169,3 +169,10 @@ LIGHTING = {
     "D": "dark with no street lights",
     "E": "dark with street lights not functioning",
 }
+
+CONTROL_DEVICE = {
+    "A": "functioning",
+    "B": "not functioning",
+    "C": "obscured",
+    "D": "none",
+}
