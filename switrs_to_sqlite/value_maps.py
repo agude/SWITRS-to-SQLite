@@ -143,3 +143,10 @@ HIT_AND_RUN = {
     "M": "misdemeanor",
     "N": "not hit and run",
 }
+
+ROAD_SURFACE = {
+    "A": "dry",
+    "B": "wet",
+    "C": "snowy",
+    "D": "slippery",
+}
