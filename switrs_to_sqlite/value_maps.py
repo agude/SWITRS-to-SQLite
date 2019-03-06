@@ -137,3 +137,9 @@ CHP_BEAT_CLASS = {
     "2": "chp other",
     "0": "not chp",
 }
+
+HIT_AND_RUN = {
+    "F": "felony",
+    "M": "misdemeanor",
+    "N": "not hit and run",
+}
