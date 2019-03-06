@@ -176,3 +176,10 @@ CONTROL_DEVICE = {
     "C": "obscured",
     "D": "none",
 }
+
+SIDE_OF_HIGHWAY = {
+    "N": "northbound",
+    "S": "southbound",
+    "E": "eastbound",
+    "W": "westbound",
+}
