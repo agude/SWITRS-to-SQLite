@@ -125,3 +125,9 @@ DIRECTION = {
     "S": "south",
     "W": "west",
 }
+
+LOCATION_TYPE = {
+    "H": "highway",
+    "I": "intersection",
+    "R": "ramp",
+}
