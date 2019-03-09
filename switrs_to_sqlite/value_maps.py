@@ -210,3 +210,11 @@ RACE = {
     "O": "other",
     "W": "white",
 }
+
+COLLISION_SEVERITY = {
+    "0": "property damage only",
+    "1": "fatal",
+    "2": "severe injury",
+    "3": "other injury",
+    "4": "pain",
+}

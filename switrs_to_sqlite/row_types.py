@@ -35,7 +35,7 @@ COLLISION_ROW = (
     (33, "Ramp_Intersection", DataType.INTEGER, None, convert, None),
     (34, "Side_Of_Highway", DataType.TEXT, None, convert, vm.SIDE_OF_HIGHWAY),
     (35, "Tow_Away", DataType.INTEGER, None, string_to_bool, None),
-    (36, "Collision_Severity", DataType.INTEGER, None, convert, None),
+    (36, "Collision_Severity", DataType.TEXT, None, convert, vm.COLLISION_SEVERITY),
     (37, "Killed_Victims", DataType.INTEGER, None, convert, None),
     (38, "Injured_Victims", DataType.INTEGER, None, convert, None),
     (39, "Party_Count", DataType.INTEGER, None, convert, None),
