@@ -3,7 +3,11 @@ language: python
 python:
   - "3.5"
   - "3.6"
-    # Also test pypy
+  # Default for Ubuntu 16.04
+  - "3.5.2"
+  # Default for Ubuntu 18.04
+  - "3.6.7"
+  # Also test pypy
   - "pypy3.5"
 
 matrix:
@@ -19,7 +23,10 @@ install:
   - pip install pypandoc
 
 # Run the unit tests
-script: python -m pytest -v
+script:
+  - python -m pytest -v
+  - pip install .
+  - switrs_to_sqlite --help
 
 # Automatic deployment to Pypi.org
 deploy:
