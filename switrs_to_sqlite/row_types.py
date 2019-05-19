@@ -41,7 +41,7 @@ COLLISION_ROW = (
     (39, "Party_Count", DataType.INTEGER, None, convert, None),
     (40, "Primary_Collision_Factor", DataType.TEXT, None, convert, vm.PRIMARY_COLLISION_FACTOR),
     (41, "PCF_Violation_Code", DataType.TEXT, None, convert, vm.PCF_VIOLATION_CODE),
-    (42, "PCF_Violation_Category", DataType.TEXT, None, convert, None),
+    (42, "PCF_Violation_Category", DataType.TEXT, None, convert, vm.PCF_VIOLATION_CATEGORY),
     (43, "PCF_Violation", DataType.INTEGER, None, convert, None),
     (44, "PCF_Violation_Subsection", DataType.TEXT, None, convert, None),
     (45, "Hit_And_Run", DataType.TEXT, None, convert, vm.HIT_AND_RUN),

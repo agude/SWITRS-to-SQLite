@@ -218,3 +218,30 @@ COLLISION_SEVERITY = {
     "3": "other injury",
     "4": "pain",
 }
+
+PCF_VIOLATION_CATEGORY = {
+    "00": "unknown",
+    "01": "dui",
+    "02": "impeding traffic",
+    "03": "speeding",
+    "04": "following too closely",
+    "05": "wrong side of road",
+    "06": "improper passing",
+    "07": "unsafe lane change",
+    "08": "improper turning",
+    "09": "automobile right of way",
+    "10": "pedestrian right of way",
+    "11": "pedestrian violation",
+    "12": "traffic signals and signs",
+    "13": "hazardous parking",
+    "14": "lights",
+    "15": "brakes",
+    "16": "other equipment",
+    "17": "other hazardous violation",
+    "18": "other than driver (or pedestrian)",
+    "21": "unsafe starting or backing",
+    "22": "other improper driving",
+    "23": "pedestrian dui",
+    "24": "fell asleep",
+}
+
