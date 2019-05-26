@@ -56,6 +56,10 @@ setup(
         "sqlite",
         "data",
     ],
-    setup_requires=["pytest-runner"],
+    setup_requires=[
+        "pypandoc",
+        "pytest-runner",
+    ],
     tests_require=["pytest"],
+    python_requires=">=3.5, <4",
 )
