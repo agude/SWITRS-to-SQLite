@@ -3,7 +3,6 @@
 from switrs_to_sqlite.open_record import open_record_file
 import gzip
 import os.path
-import pytest
 
 
 def test_read_gzipped_file(tmpdir):

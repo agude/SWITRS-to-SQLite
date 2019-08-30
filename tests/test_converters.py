@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from switrs_to_sqlite.converters import convert, negative, string_to_bool
-import pytest
 
 
 # Test the convert function

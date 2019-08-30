@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from switrs_to_sqlite.parsers import CollisionRow
-import pytest
+
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and
 # the answer that should be returned from doing so. The tuple is of the form
