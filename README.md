@@ -10,6 +10,30 @@ and convert them to an [SQLite3](https://www.sqlite.org/) database.
 Instructions to **download the SWITRS data** can be found
 [here](requesting_data.md).
 
+## Versioning
+
+This repository follows a modified [Semver][semver]:
+
+[semver]: https://semver.org/
+
+> Given a version number `MAJOR.MINOR.PATCH`, I increment the:
+> 
+> - `MAJOR` version when I make incompatible API changes to the **Python**
+>   script.
+> - `MINOR` version when I add functionality in a backwards compatible manner
+>   to the **Python** script, _**OR**_ change the **Output Database** format.
+> - `PATCH` version when I make backwards compatible bug fixes.
+
+For example, the exact same Python command will work for both [v2.2.0][v220]
+and [v2.3.0][v230], but the databases produced by each version will be
+slightly different. Specifically, the two versions handle `Collision_Severity`
+and `PCF_Violation_Category` different. v2.3.0 changed the values to string
+categoricals. For example, "driving under the influence" is now `"dui"`
+instead of the integer `1`.
+
+[v220]: https://github.com/agude/SWITRS-to-SQLite/releases/tag/2.2.0
+[v230]: https://github.com/agude/SWITRS-to-SQLite/releases/tag/2.3.0
+
 ## Installation
 
 The best way to install SWITRS-to-SQLite is with `pip`:
