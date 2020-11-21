@@ -33,72 +33,72 @@ def test_partyrows():
 def test_partyrow_create_table():
     assert PartyRow.create_table_statement() == (
         "CREATE TABLE "
-        "Party ("
+        "parties ("
         "id INTEGER PRIMARY KEY, "
-        "Case_ID TEXT, "
-        "Party_Number INTEGER, "
-        "Party_Type TEXT, "
-        "At_Fault INTEGER, "
-        "Party_Sex TEXT, "
-        "Party_Age INTEGER, "
-        "Party_Sobriety TEXT, "
-        "Party_Drug_Physical TEXT, "
-        "Direction_Of_Travel TEXT, "
-        "Party_Safety_Equipment_1 TEXT, "
-        "Party_Safety_Equipment_2 TEXT, "
-        "Financial_Responsibility TEXT, "
-        "Hazardous_Materials TEXT, "
-        "Cellphone_Use TEXT, "
-        "School_Bus_Related TEXT, "
-        "OAF_Violation_Code TEXT, "
-        "OAF_Violation_Category TEXT, "
-        "OAF_Violation_Section INTEGER, "
-        "OAF_Violation_Suffix TEXT, "
-        "Other_Associate_Factor_1 TEXT, "
-        "Other_Associate_Factor_2 TEXT, "
-        "Party_Number_Killed INTEGER, "
-        "Party_Number_Injured INTEGER, "
-        "Movement_Preceding_Collision TEXT, "
-        "Vehicle_Year INTEGER, "
-        "Vehicle_Make TEXT, "
-        "Statewide_Vehicle_Type TEXT, "
-        "CHP_Vehicle_Type_Towing TEXT, "
-        "CHP_Vehicle_Type_Towed TEXT, "
-        "Party_Race TEXT"
+        "case_id TEXT, "
+        "party_number INTEGER, "
+        "party_type TEXT, "
+        "at_fault INTEGER, "
+        "party_sex TEXT, "
+        "party_age INTEGER, "
+        "party_sobriety TEXT, "
+        "party_drug_physical TEXT, "
+        "direction_of_travel TEXT, "
+        "party_safety_equipment_1 TEXT, "
+        "party_safety_equipment_2 TEXT, "
+        "financial_responsibility TEXT, "
+        "hazardous_materials TEXT, "
+        "cellphone_use TEXT, "
+        "school_bus_related TEXT, "
+        "oaf_violation_code TEXT, "
+        "oaf_violation_category TEXT, "
+        "oaf_violation_section INTEGER, "
+        "oaf_violation_suffix TEXT, "
+        "other_associate_factor_1 TEXT, "
+        "other_associate_factor_2 TEXT, "
+        "party_number_killed INTEGER, "
+        "party_number_injured INTEGER, "
+        "movement_preceding_collision TEXT, "
+        "vehicle_year INTEGER, "
+        "vehicle_make TEXT, "
+        "statewide_vehicle_type TEXT, "
+        "chp_vehicle_type_towing TEXT, "
+        "chp_vehicle_type_towed TEXT, "
+        "party_race TEXT"
         ")"
     )
 
 def test_partyrow_columns():
     assert PartyRow.columns == [
         ("id", "INTEGER", "PRIMARY KEY"),
-        ("Case_ID", "TEXT"),
-        ("Party_Number", "INTEGER"),
-        ("Party_Type", "TEXT"),
-        ("At_Fault", "INTEGER"),
-        ("Party_Sex", "TEXT"),
-        ("Party_Age", "INTEGER"),
-        ("Party_Sobriety", "TEXT"),
-        ("Party_Drug_Physical", "TEXT"),
-        ("Direction_Of_Travel", "TEXT"),
-        ("Party_Safety_Equipment_1", "TEXT"),
-        ("Party_Safety_Equipment_2", "TEXT"),
-        ("Financial_Responsibility", "TEXT"),
-        ("Hazardous_Materials", "TEXT"),
-        ("Cellphone_Use", "TEXT"),
-        ("School_Bus_Related", "TEXT"),
-        ("OAF_Violation_Code", "TEXT"),
-        ("OAF_Violation_Category", "TEXT"),
-        ("OAF_Violation_Section", "INTEGER"),
-        ("OAF_Violation_Suffix", "TEXT"),
-        ("Other_Associate_Factor_1", "TEXT"),
-        ("Other_Associate_Factor_2", "TEXT"),
-        ("Party_Number_Killed", "INTEGER"),
-        ("Party_Number_Injured", "INTEGER"),
-        ("Movement_Preceding_Collision", "TEXT"),
-        ("Vehicle_Year", "INTEGER"),
-        ("Vehicle_Make", "TEXT"),
-        ("Statewide_Vehicle_Type", "TEXT"),
-        ("CHP_Vehicle_Type_Towing", "TEXT"),
-        ("CHP_Vehicle_Type_Towed", "TEXT"),
-        ("Party_Race", "TEXT"),
+        ("case_id", "TEXT"),
+        ("party_number", "INTEGER"),
+        ("party_type", "TEXT"),
+        ("at_fault", "INTEGER"),
+        ("party_sex", "TEXT"),
+        ("party_age", "INTEGER"),
+        ("party_sobriety", "TEXT"),
+        ("party_drug_physical", "TEXT"),
+        ("direction_of_travel", "TEXT"),
+        ("party_safety_equipment_1", "TEXT"),
+        ("party_safety_equipment_2", "TEXT"),
+        ("financial_responsibility", "TEXT"),
+        ("hazardous_materials", "TEXT"),
+        ("cellphone_use", "TEXT"),
+        ("school_bus_related", "TEXT"),
+        ("oaf_violation_code", "TEXT"),
+        ("oaf_violation_category", "TEXT"),
+        ("oaf_violation_section", "INTEGER"),
+        ("oaf_violation_suffix", "TEXT"),
+        ("other_associate_factor_1", "TEXT"),
+        ("other_associate_factor_2", "TEXT"),
+        ("party_number_killed", "INTEGER"),
+        ("party_number_injured", "INTEGER"),
+        ("movement_preceding_collision", "TEXT"),
+        ("vehicle_year", "INTEGER"),
+        ("vehicle_make", "TEXT"),
+        ("statewide_vehicle_type", "TEXT"),
+        ("chp_vehicle_type_towing", "TEXT"),
+        ("chp_vehicle_type_towed", "TEXT"),
+        ("party_race", "TEXT"),
     ]

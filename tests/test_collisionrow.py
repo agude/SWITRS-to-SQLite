@@ -33,158 +33,158 @@ def test_collisionrows():
 def test_collisionrow_create_table():
     assert CollisionRow.create_table_statement() == (
         "CREATE TABLE "
-        "Collision ("
-        "Case_ID TEXT PRIMARY KEY, "
-        "Jurisdiction INTEGER, "
-        "Officer_ID TEXT, "
-        "Reporting_District TEXT, "
-        "CHP_Shift TEXT, "
-        "Population TEXT, "
-        "County_City_Location TEXT, "
-        "Special_Condition TEXT, "
-        "Beat_Type TEXT, "
-        "CHP_Beat_Type TEXT, "
-        "City_Division_LAPD TEXT, "
-        "CHP_Beat_Class TEXT, "
-        "Beat_Number TEXT, "
-        "Primary_Road TEXT, "
-        "Secondary_Road TEXT, "
-        "Distance REAL, "
-        "Direction TEXT, "
-        "Intersection INTEGER, "
-        "Weather_1 TEXT, "
-        "Weather_2 TEXT, "
-        "State_Highway_Indicator INTEGER, "
-        "Caltrans_County TEXT, "
-        "Caltrans_District INTEGER, "
-        "State_Route INTEGER, "
-        "Route_Suffix TEXT, "
-        "Postmile_Prefix TEXT, "
-        "Postmile REAL, "
-        "Location_Type TEXT, "
-        "Ramp_Intersection INTEGER, "
-        "Side_Of_Highway TEXT, "
-        "Tow_Away INTEGER, "
-        "Collision_Severity TEXT, "
-        "Killed_Victims INTEGER, "
-        "Injured_Victims INTEGER, "
-        "Party_Count INTEGER, "
-        "Primary_Collision_Factor TEXT, "
-        "PCF_Violation_Code TEXT, "
-        "PCF_Violation_Category TEXT, "
-        "PCF_Violation INTEGER, "
-        "PCF_Violation_Subsection TEXT, "
-        "Hit_And_Run TEXT, "
-        "Type_Of_Collision TEXT, "
-        "Motor_Vehicle_Involved_With TEXT, "
-        "Pedestrian_Action TEXT, "
-        "Road_Surface TEXT, "
-        "Road_Condition_1 TEXT, "
-        "Road_Condition_2 TEXT, "
-        "Lighting TEXT, "
-        "Control_Device TEXT, "
-        "CHP_Road_Type TEXT, "
-        "Pedestrian_Collision INTEGER, "
-        "Bicycle_Collision INTEGER, "
-        "Motorcycle_Collision INTEGER, "
-        "Truck_Collision INTEGER, "
-        "Not_Private_Property INTEGER, "
-        "Alcohol_Involved INTEGER, "
-        "Statewide_Vehicle_Type_At_Fault TEXT, "
-        "CHP_Vehicle_Type_At_Fault TEXT, "
-        "Severe_Injury_Count INTEGER, "
-        "Other_Visible_Injury_Count INTEGER, "
-        "Complaint_Of_Pain_Injury_Count INTEGER, "
-        "Pedestrian_Killed_Count INTEGER, "
-        "Pedestrian_Injured_Count INTEGER, "
-        "Bicyclist_Killed_Count INTEGER, "
-        "Bicyclist_Injured_Count INTEGER, "
-        "Motorcyclist_Killed_Count INTEGER, "
-        "Motorcyclist_Injured_Count INTEGER, "
-        "Primary_Ramp TEXT, "
-        "Secondary_Ramp TEXT, "
-        "Latitude REAL, "
-        "Longitude REAL, "
-        "Collision_Date TEXT, "
-        "Collision_Time TEXT, "
-        "Process_Date TEXT"
+        "collisions ("
+        "case_id TEXT PRIMARY KEY, "
+        "jurisdiction INTEGER, "
+        "officer_id TEXT, "
+        "reporting_district TEXT, "
+        "chp_shift TEXT, "
+        "population TEXT, "
+        "county_city_location TEXT, "
+        "special_condition TEXT, "
+        "beat_type TEXT, "
+        "chp_beat_type TEXT, "
+        "city_division_lapd TEXT, "
+        "chp_beat_class TEXT, "
+        "beat_number TEXT, "
+        "primary_road TEXT, "
+        "secondary_road TEXT, "
+        "distance REAL, "
+        "direction TEXT, "
+        "intersection INTEGER, "
+        "weather_1 TEXT, "
+        "weather_2 TEXT, "
+        "state_highway_indicator INTEGER, "
+        "caltrans_county TEXT, "
+        "caltrans_district INTEGER, "
+        "state_route INTEGER, "
+        "route_suffix TEXT, "
+        "postmile_prefix TEXT, "
+        "postmile REAL, "
+        "location_type TEXT, "
+        "ramp_intersection INTEGER, "
+        "side_of_highway TEXT, "
+        "tow_away INTEGER, "
+        "collision_severity TEXT, "
+        "killed_victims INTEGER, "
+        "injured_victims INTEGER, "
+        "party_count INTEGER, "
+        "primary_collision_factor TEXT, "
+        "pcf_violation_code TEXT, "
+        "pcf_violation_category TEXT, "
+        "pcf_violation INTEGER, "
+        "pcf_violation_subsection TEXT, "
+        "hit_and_run TEXT, "
+        "type_of_collision TEXT, "
+        "motor_vehicle_involved_with TEXT, "
+        "pedestrian_action TEXT, "
+        "road_surface TEXT, "
+        "road_condition_1 TEXT, "
+        "road_condition_2 TEXT, "
+        "lighting TEXT, "
+        "control_device TEXT, "
+        "chp_road_type TEXT, "
+        "pedestrian_collision INTEGER, "
+        "bicycle_collision INTEGER, "
+        "motorcycle_collision INTEGER, "
+        "truck_collision INTEGER, "
+        "not_private_property INTEGER, "
+        "alcohol_involved INTEGER, "
+        "statewide_vehicle_type_at_fault TEXT, "
+        "chp_vehicle_type_at_fault TEXT, "
+        "severe_injury_count INTEGER, "
+        "other_visible_injury_count INTEGER, "
+        "complaint_of_pain_injury_count INTEGER, "
+        "pedestrian_killed_count INTEGER, "
+        "pedestrian_injured_count INTEGER, "
+        "bicyclist_killed_count INTEGER, "
+        "bicyclist_injured_count INTEGER, "
+        "motorcyclist_killed_count INTEGER, "
+        "motorcyclist_injured_count INTEGER, "
+        "primary_ramp TEXT, "
+        "secondary_ramp TEXT, "
+        "latitude REAL, "
+        "longitude REAL, "
+        "collision_date TEXT, "
+        "collision_time TEXT, "
+        "process_date TEXT"
         ")"
     )
 
 def test_partyrow_columns():
     assert CollisionRow.columns == [
-        ("Case_ID", "TEXT", "PRIMARY KEY"),
-        ("Jurisdiction", "INTEGER"),
-        ("Officer_ID", "TEXT"),
-        ("Reporting_District", "TEXT"),
-        ("CHP_Shift", "TEXT"),
-        ("Population", "TEXT"),
-        ("County_City_Location", "TEXT"),
-        ("Special_Condition", "TEXT"),
-        ("Beat_Type", "TEXT"),
-        ("CHP_Beat_Type", "TEXT"),
-        ("City_Division_LAPD", "TEXT"),
-        ("CHP_Beat_Class", "TEXT"),
-        ("Beat_Number", "TEXT"),
-        ("Primary_Road", "TEXT"),
-        ("Secondary_Road", "TEXT"),
-        ("Distance", "REAL"),
-        ("Direction", "TEXT"),
-        ("Intersection", "INTEGER"),
-        ("Weather_1", "TEXT"),
-        ("Weather_2", "TEXT"),
-        ("State_Highway_Indicator", "INTEGER"),
-        ("Caltrans_County", "TEXT"),
-        ("Caltrans_District", "INTEGER"),
-        ("State_Route", "INTEGER"),
-        ("Route_Suffix", "TEXT"),
-        ("Postmile_Prefix", "TEXT"),
-        ("Postmile", "REAL"),
-        ("Location_Type", "TEXT"),
-        ("Ramp_Intersection", "INTEGER"),
-        ("Side_Of_Highway", "TEXT"),
-        ("Tow_Away", "INTEGER"),
-        ("Collision_Severity", "TEXT"),
-        ("Killed_Victims", "INTEGER"),
-        ("Injured_Victims", "INTEGER"),
-        ("Party_Count", "INTEGER"),
-        ("Primary_Collision_Factor", "TEXT"),
-        ("PCF_Violation_Code", "TEXT"),
-        ("PCF_Violation_Category", "TEXT"),
-        ("PCF_Violation", "INTEGER"),
-        ("PCF_Violation_Subsection", "TEXT"),
-        ("Hit_And_Run", "TEXT"),
-        ("Type_Of_Collision", "TEXT"),
-        ("Motor_Vehicle_Involved_With", "TEXT"),
-        ("Pedestrian_Action", "TEXT"),
-        ("Road_Surface", "TEXT"),
-        ("Road_Condition_1", "TEXT"),
-        ("Road_Condition_2", "TEXT"),
-        ("Lighting", "TEXT"),
-        ("Control_Device", "TEXT"),
-        ("CHP_Road_Type", "TEXT"),
-        ("Pedestrian_Collision", "INTEGER"),
-        ("Bicycle_Collision", "INTEGER"),
-        ("Motorcycle_Collision", "INTEGER"),
-        ("Truck_Collision", "INTEGER"),
-        ("Not_Private_Property", "INTEGER"),
-        ("Alcohol_Involved", "INTEGER"),
-        ("Statewide_Vehicle_Type_At_Fault", "TEXT"),
-        ("CHP_Vehicle_Type_At_Fault", "TEXT"),
-        ("Severe_Injury_Count", "INTEGER"),
-        ("Other_Visible_Injury_Count", "INTEGER"),
-        ("Complaint_Of_Pain_Injury_Count", "INTEGER"),
-        ("Pedestrian_Killed_Count", "INTEGER"),
-        ("Pedestrian_Injured_Count", "INTEGER"),
-        ("Bicyclist_Killed_Count", "INTEGER"),
-        ("Bicyclist_Injured_Count", "INTEGER"),
-        ("Motorcyclist_Killed_Count", "INTEGER"),
-        ("Motorcyclist_Injured_Count", "INTEGER"),
-        ("Primary_Ramp", "TEXT"),
-        ("Secondary_Ramp", "TEXT"),
-        ("Latitude", "REAL"),
-        ("Longitude", "REAL"),
-        ("Collision_Date", "TEXT"),
-        ("Collision_Time", "TEXT"),
-        ("Process_Date", "TEXT"),
+        ("case_id", "TEXT", "PRIMARY KEY"),
+        ("jurisdiction", "INTEGER"),
+        ("officer_id", "TEXT"),
+        ("reporting_district", "TEXT"),
+        ("chp_shift", "TEXT"),
+        ("population", "TEXT"),
+        ("county_city_location", "TEXT"),
+        ("special_condition", "TEXT"),
+        ("beat_type", "TEXT"),
+        ("chp_beat_type", "TEXT"),
+        ("city_division_lapd", "TEXT"),
+        ("chp_beat_class", "TEXT"),
+        ("beat_number", "TEXT"),
+        ("primary_road", "TEXT"),
+        ("secondary_road", "TEXT"),
+        ("distance", "REAL"),
+        ("direction", "TEXT"),
+        ("intersection", "INTEGER"),
+        ("weather_1", "TEXT"),
+        ("weather_2", "TEXT"),
+        ("state_highway_indicator", "INTEGER"),
+        ("caltrans_county", "TEXT"),
+        ("caltrans_district", "INTEGER"),
+        ("state_route", "INTEGER"),
+        ("route_suffix", "TEXT"),
+        ("postmile_prefix", "TEXT"),
+        ("postmile", "REAL"),
+        ("location_type", "TEXT"),
+        ("ramp_intersection", "INTEGER"),
+        ("side_of_highway", "TEXT"),
+        ("tow_away", "INTEGER"),
+        ("collision_severity", "TEXT"),
+        ("killed_victims", "INTEGER"),
+        ("injured_victims", "INTEGER"),
+        ("party_count", "INTEGER"),
+        ("primary_collision_factor", "TEXT"),
+        ("pcf_violation_code", "TEXT"),
+        ("pcf_violation_category", "TEXT"),
+        ("pcf_violation", "INTEGER"),
+        ("pcf_violation_subsection", "TEXT"),
+        ("hit_and_run", "TEXT"),
+        ("type_of_collision", "TEXT"),
+        ("motor_vehicle_involved_with", "TEXT"),
+        ("pedestrian_action", "TEXT"),
+        ("road_surface", "TEXT"),
+        ("road_condition_1", "TEXT"),
+        ("road_condition_2", "TEXT"),
+        ("lighting", "TEXT"),
+        ("control_device", "TEXT"),
+        ("chp_road_type", "TEXT"),
+        ("pedestrian_collision", "INTEGER"),
+        ("bicycle_collision", "INTEGER"),
+        ("motorcycle_collision", "INTEGER"),
+        ("truck_collision", "INTEGER"),
+        ("not_private_property", "INTEGER"),
+        ("alcohol_involved", "INTEGER"),
+        ("statewide_vehicle_type_at_fault", "TEXT"),
+        ("chp_vehicle_type_at_fault", "TEXT"),
+        ("severe_injury_count", "INTEGER"),
+        ("other_visible_injury_count", "INTEGER"),
+        ("complaint_of_pain_injury_count", "INTEGER"),
+        ("pedestrian_killed_count", "INTEGER"),
+        ("pedestrian_injured_count", "INTEGER"),
+        ("bicyclist_killed_count", "INTEGER"),
+        ("bicyclist_injured_count", "INTEGER"),
+        ("motorcyclist_killed_count", "INTEGER"),
+        ("motorcyclist_injured_count", "INTEGER"),
+        ("primary_ramp", "TEXT"),
+        ("secondary_ramp", "TEXT"),
+        ("latitude", "REAL"),
+        ("longitude", "REAL"),
+        ("collision_date", "TEXT"),
+        ("collision_time", "TEXT"),
+        ("process_date", "TEXT"),
     ]

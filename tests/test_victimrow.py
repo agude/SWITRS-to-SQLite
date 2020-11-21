@@ -33,32 +33,32 @@ def test_victimrows():
 def test_vicitimrow_create_table():
     assert VictimRow.create_table_statement() == (
         "CREATE TABLE "
-        "Victim ("
+        "victims ("
         "id INTEGER PRIMARY KEY, "
-        "Case_ID TEXT, "
-        "Party_Number INTEGER, "
-        "Victim_Role TEXT, "
-        "Victim_Sex TEXT, "
-        "Victim_Age INTEGER, "
-        "Victim_Degree_Of_Injury TEXT, "
-        "Victim_Seating_Position TEXT, "
-        "Victim_Safety_Equipment_1 TEXT, "
-        "Victim_Safety_Equipment_2 TEXT, "
-        "Victim_Ejected TEXT"
+        "case_id TEXT, "
+        "party_number INTEGER, "
+        "victim_role TEXT, "
+        "victim_sex TEXT, "
+        "victim_age INTEGER, "
+        "victim_degree_of_injury TEXT, "
+        "victim_seating_position TEXT, "
+        "victim_safety_equipment_1 TEXT, "
+        "victim_safety_equipment_2 TEXT, "
+        "victim_ejected TEXT"
         ")"
     )
 
 def test_victimrow_columns():
     assert VictimRow.columns == [
         ("id", "INTEGER", "PRIMARY KEY"),
-        ("Case_ID", "TEXT"),
-        ("Party_Number", "INTEGER"),
-        ("Victim_Role", "TEXT"),
-        ("Victim_Sex", "TEXT"),
-        ("Victim_Age", "INTEGER"),
-        ("Victim_Degree_Of_Injury", "TEXT"),
-        ("Victim_Seating_Position", "TEXT"),
-        ("Victim_Safety_Equipment_1", "TEXT"),
-        ("Victim_Safety_Equipment_2", "TEXT"),
-        ("Victim_Ejected", "TEXT"),
+        ("case_id", "TEXT"),
+        ("party_number", "INTEGER"),
+        ("victim_role", "TEXT"),
+        ("victim_sex", "TEXT"),
+        ("victim_age", "INTEGER"),
+        ("victim_degree_of_injury", "TEXT"),
+        ("victim_seating_position", "TEXT"),
+        ("victim_safety_equipment_1", "TEXT"),
+        ("victim_safety_equipment_2", "TEXT"),
+        ("victim_ejected", "TEXT"),
     ]

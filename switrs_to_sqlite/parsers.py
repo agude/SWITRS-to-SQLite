@@ -115,9 +115,9 @@ class CSVParser:
 
         # Convert dates as well
         if self.date_parsing_table:
-            values["Collision_Date"] = self.__convert_date(row, "Collision_Date")
-            values["Collision_Time"] = self.__convert_time(row)
-            values["Process_Date"] = self.__convert_date(row, "Process_Date")
+            values["collision_date"] = self.__convert_date(row, "collision_date")
+            values["collision_time"] = self.__convert_time(row)
+            values["process_date"] = self.__convert_date(row, "process_date")
 
         return values
 
@@ -132,7 +132,7 @@ class CSVParser:
         # Find the correct index for the
         index = None
         for i, name, _ in self.date_parsing_table:
-            if name == "Collision_Time":
+            if name == "collision_time":
                 index = i
                 break
 
@@ -220,7 +220,7 @@ class CSVParser:
 
 VictimRow = CSVParser(
     parsing_table=VICTIM_ROW,
-    table_name="Victim",
+    table_name="victims",
     has_primary_column=False,
     date_parsing_table=None,
 )
@@ -228,7 +228,7 @@ VictimRow = CSVParser(
 
 PartyRow = CSVParser(
     parsing_table=PARTY_ROW,
-    table_name="Party",
+    table_name="parties",
     has_primary_column=False,
     date_parsing_table=None,
 )
@@ -236,7 +236,7 @@ PartyRow = CSVParser(
 
 CollisionRow = CSVParser(
     parsing_table=COLLISION_ROW,
-    table_name="Collision",
+    table_name="collisions",
     has_primary_column=True,
     date_parsing_table=COLLISION_DATE_TABLE,
 )
