@@ -1,8 +1,12 @@
 name: Tests 🧪
 
-on: [push, pull_request]
+on:
+  push:
+    branches: master
+    tag: v*
 
 jobs:
+  # Test using matrix
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -30,9 +34,10 @@ jobs:
       run: |
         pip install .
         switrs_to_sqlite --help
+
+  # Build and publish if it's a tagged master release
   build_packages:
     needs: test
-    if: contains(github.ref, '/tags/') && contains(github.ref, 'heads/master')
     runs-on: ubuntu-latest
     name: Build Package 📦
     steps:
