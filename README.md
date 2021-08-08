@@ -1,6 +1,9 @@
 # SWITRS-to-SQLite
 
-[![Build Status](https://travis-ci.org/agude/SWITRS-to-SQLite.svg?branch=master)](https://travis-ci.org/agude/SWITRS-to-SQLite)
+**Looking to get right to work with the data? Checkout the cleaned dataset on
+Kaggle: [California Traffic Collision Data from SWITRS][kaggle]**
+
+[kaggle]: https://www.kaggle.com/alexgude/california-traffic-collision-data-from-switrs
 
 SWITRS-to-SQLite is a Python3 script that will convert the CSV files
 provided by the California Highway Patrol's [Statewide Integrated Traffic
