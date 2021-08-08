@@ -3,7 +3,6 @@ name: Tests 🧪
 on:
   push:
     branches: master
-    tag: v*
 
 jobs:
   # Test using matrix
@@ -34,43 +33,47 @@ jobs:
       run: |
         pip install .
         switrs_to_sqlite --help
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
 
-  # Build and publish if it's a tagged master release
-  build_packages:
-    needs: test
-    runs-on: ubuntu-latest
-    name: Build Package 📦
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 🐍
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - name: Install dependencies 🏗
-      run: >-
-        sudo apt-get install pandoc
-        &&
-        python -m pip install --upgrade
-        pip
-        setuptools
-        wheel
-        pypandoc
-    - name: Install pypa/build 🚧
-      run: >-
-        python -m
-        pip install
-        build
-        --user
-    - name: Build a binary wheel and a source tarball 👷
-      run: >-
-        python -m
-        build
-        --sdist
-        --wheel
-        --outdir dist/
-        .
-        #- name: Publish distribution 📦 to PyPI
-        #  if: startsWith(github.ref, 'refs/tags')
-        #  uses: pypa/gh-action-pypi-publish@master
-        #  with:
-        #    password: ${{ secrets.PYPI_API_TOKEN }}
+        #  # Build and publish if it's a tagged master release
+        #  build_packages:
+        #    needs: test
+        #    runs-on: ubuntu-latest
+        #    name: Build Package 📦
+        #    steps:
+        #    - uses: actions/checkout@v2
+        #    - name: Set up Python 🐍
+        #      uses: actions/setup-python@v2
+        #      with:
+        #        python-version: '3.x'
+        #    - name: Install dependencies 🏗
+        #      run: >-
+        #        sudo apt-get install pandoc
+        #        &&
+        #        python -m pip install --upgrade
+        #        pip
+        #        setuptools
+        #        wheel
+        #        pypandoc
+        #    - name: Install pypa/build 🚧
+        #      run: >-
+        #        python -m
+        #        pip install
+        #        build
+        #        --user
+        #    - name: Build a binary wheel and a source tarball 👷
+        #      run: >-
+        #        python -m
+        #        build
+        #        --sdist
+        #        --wheel
+        #        --outdir dist/
+        #        .
+        #        #- name: Publish distribution 📦 to PyPI
+        #        #  if: startsWith(github.ref, 'refs/tags')
+        #        #  uses: pypa/gh-action-pypi-publish@master
+        #        #  with:
+        #        #    password: ${{ secrets.PYPI_API_TOKEN }}
