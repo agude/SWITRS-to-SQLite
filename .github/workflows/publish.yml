@@ -2,7 +2,7 @@ name: Publish Package 📦
 
 on: 
   workflow_run:
-    workflows: ["Tests"]
+    workflows: ["Tests 🧪"]
     branches: [master]
     types: [completed]
 
