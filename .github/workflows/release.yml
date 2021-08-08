@@ -2,7 +2,7 @@ name: Build Package 📦
 
 on: 
   release:
-    types: [published, created, edited]
+    types: published
 
 jobs:
   test:
