@@ -1,5 +1,6 @@
 from switrs_to_sqlite.converters import convert, negative, string_to_bool
 from switrs_to_sqlite.datatypes import DataType
+import switrs_to_sqlite.make_map as mm
 import switrs_to_sqlite.value_maps as vm
 
 
@@ -109,7 +110,7 @@ PARTY_ROW = (
     (22, "party_number_injured", DataType.INTEGER, None, convert, None),
     (23, "movement_preceding_collision", DataType.TEXT, None, convert, vm.MOVEMENT_PRECEDING),
     (24, "vehicle_year", DataType.INTEGER, ["9999"], convert, None),
-    (25, "vehicle_make", DataType.TEXT, None, convert, None),
+    (25, "vehicle_make", DataType.TEXT, None, convert, mm.MAKE_MAP),
     (26, "statewide_vehicle_type", DataType.TEXT, None, convert, vm.STATEWIDE_VEHICLE_TYPE),
     (27, "chp_vehicle_type_towing", DataType.TEXT, ["99"], convert, None),
     (28, "chp_vehicle_type_towed", DataType.TEXT, ["99"], convert, None),

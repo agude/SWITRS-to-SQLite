@@ -73,10 +73,10 @@ class CSVParser:
 
     def parse_row(self, row):
         # The CSV file is malformed, so extend it to avoid KeyErrors
-        new_row = self.__extend_row(row)
+        extended_row = self.__extend_row(row)
 
         # Set up list of variables for insertion
-        values = self.__set_values(row)
+        values = self.__set_values(extended_row)
 
         return list(values.values())
 
@@ -185,9 +185,9 @@ class CSVParser:
         # extent it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
         extend = (self.parsing_table[-1][0] + 1) - len(row)
-        row += extend * [""]  # "" maps to null
+        output_row = row + extend * [""]  # "" maps to null
 
-        return row
+        return output_row
 
     def insert_statement(self, values):
         """Creates an insert statement used to fill a row in the SQLite table."""
