@@ -1,4 +1,4 @@
-from switrs_to_sqlite.converters import convert, negative, string_to_bool
+from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county
 from switrs_to_sqlite.datatypes import DataType
 import switrs_to_sqlite.make_map as mm
 import switrs_to_sqlite.value_maps as vm
@@ -12,6 +12,7 @@ COLLISION_ROW = (
     (9, "chp_shift", DataType.TEXT, None, convert, None),
     (10, "population", DataType.TEXT, None, convert, None),
     (11, "county_city_location", DataType.TEXT, None, convert, None),
+    (11, "county_location", DataType.TEXT, None, county_city_location_to_county, vm.COUNTIES),
     (12, "special_condition", DataType.TEXT, None, convert, None),
     (13, "beat_type", DataType.TEXT, None, convert, None),
     (14, "chp_beat_type", DataType.TEXT, None, convert, vm.CHP_BEAT_TYPE),

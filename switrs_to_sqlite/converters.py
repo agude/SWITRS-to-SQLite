@@ -8,9 +8,9 @@ def convert(**kwargs):
             - val (str): A value to convert to dtype.
             - dtype (callable): A callable object that returns the desired
                 type, if None then the val is passed through unchanged.
-            - nulls (iterable, optional): An iterable containing strings to check
-                against. If val if found to be equal to a string in this list,
-                None is returned.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
 
     Returns:
         converted_val: Returns dtype(val) if val is not in nulls, otherwise
@@ -54,9 +54,9 @@ def negative(**kwargs):
                 type, if None then the val is passed through unchanged. The
                 returned object should allow multiplication by -1, or None will
                 be returned instead.
-            - nulls (iterable, optional): An iterable containing strings to check
-                against. If val if found to be equal to a string in this list,
-                None is returned.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
 
     Returns:
         converted_val: Returns -1 * convert(kwargs), unless convert() returns
@@ -78,9 +78,9 @@ def string_to_bool(**kwargs):
     Args:
         **kwargs: One specific keywords must be passed, a second is optional:
             - val (str): A value to convert to a bool.
-            - nulls (iterable, optional): An iterable containing strings to check
-                against. If val if found to be equal to a string in this list,
-                None is returned.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
 
     Returns:
         converted_val: Returns a bool if val is not in nulls, otherwise None.
@@ -99,3 +99,30 @@ def string_to_bool(**kwargs):
     if val.lower() == "y":
         return True
     return False
+
+
+def county_city_location_to_county(**kwargs):
+    """Convert a 4-digit county-city location code to a county code.
+
+    The county-city codes are four digits, like XXYY. The county code is just
+    the first two digits, so XX in this example. They codes are not numbers,
+    leading zeros need to be preserved.
+
+    Args:
+        **kwargs: One specific keywords must be passed, a second is optional:
+            - val (str): A value to convert to a a county code.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
+
+    Returns:
+        converted_val: Returns a bool if val is not in nulls, otherwise None.
+
+    """
+    # Use convert to do the conversion
+    out_val = convert(**kwargs)
+
+    if out_val is None:
+        return None
+
+    return out_val[:2]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.converters import convert, negative, string_to_bool
+from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county
 
 
 # Test the convert function
@@ -98,3 +98,20 @@ def test_nulls():
     )
     for val, nulls in nones:
         assert string_to_bool(val=val, nulls=nulls) is None
+
+def test_county_city_location_to_county():
+    convert_vals = (
+        ("0145", str, None, "01"),
+        ("5899", str, None, "58"),
+        # Nulls that return None
+        ("9", int, ["9"], None),
+        ("a", str, ["a"], None),
+        ("1.", float, ["1."], None),
+        ("9", None, ["9"], None),
+        ("a", None, ["a"], None),
+        ("1.", None, ["1."], None),
+        # Conversion failure
+        ("a", int, None, None),
+    )
+    for val, dtype, nulls, res in convert_vals:
+        assert county_city_location_to_county(val=val, dtype=dtype, nulls=nulls) == res
