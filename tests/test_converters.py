@@ -114,5 +114,4 @@ def test_county_city_location_to_county():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        print(val)
         assert county_city_location_to_county(val=val, dtype=dtype, nulls=nulls) == res
