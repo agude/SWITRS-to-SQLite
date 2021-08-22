@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county, cellphone_use_to_bool
+from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county, cellphone_use_to_bool, non_standard_str_to_bool
 
 
 # Test the convert function
@@ -138,3 +138,26 @@ def test_cellphone_use_to_bool():
     )
     for val, dtype, nulls, res in convert_vals:
         assert cellphone_use_to_bool(val=val, dtype=dtype, nulls=nulls) == res
+
+
+def test_non_standard_str_to_bool():
+    convert_vals = (
+        ("A", int, None, True),
+        ("E", int, None, True),
+        # Unknown keys
+        ("D", int, None, None),
+        ("1", int, None, None),
+        ("2", int, None, None),
+        ("3", int, None, None),
+        # Nulls that return None
+        ("9", int, ["9"], None),
+        ("a", str, ["a"], None),
+        ("1.", float, ["1."], None),
+        ("9", None, ["9"], None),
+        ("a", None, ["a"], None),
+        ("1.", None, ["1."], None),
+        # Conversion failure
+        ("a", int, None, None),
+    )
+    for val, dtype, nulls, res in convert_vals:
+        assert non_standard_str_to_bool(val=val, dtype=dtype, nulls=nulls) == res

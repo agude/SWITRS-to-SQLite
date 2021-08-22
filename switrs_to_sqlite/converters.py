@@ -171,3 +171,37 @@ def cellphone_use_to_bool(**kwargs):
     }
 
     return CELLPHONE_IN_USE.get(val, None)
+
+
+def non_standard_str_to_bool(**kwargs):
+    """Convert a hard-code set of keys to bools, everything else to None.
+
+    Args:
+        **kwargs: One specific keywords must be passed, a second is optional:
+            - val (str): A value to convert to a a county code.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
+
+    Returns:
+        converted_val: Returns a bool if val is not in nulls, otherwise None.
+
+    """
+    # Get the arguments
+    val = kwargs.get("val")
+    nulls = kwargs.get("nulls", None)
+
+    # Return None if the val matches a string in nulls
+    if nulls is not None:
+        if val in nulls:
+            return None
+
+    # Map val
+    MAP = {
+        # Parties: hazardous_materials
+        'A': True,
+        # Parties: school_bus_related
+        'E': True,
+    }
+
+    return MAP.get(val, None)
