@@ -10,7 +10,7 @@ ROWS = (
     (
         #      Case_ID     Party_Number  Party_Type    At_Fault  Party_Sex  Party_Age  Party_Sobriety            Party_Drug_Physical      Direction_Of_Travel  Party_Safety_Equipment_1      Party_Safety_Equipment_2      Financial_Responsibility           Hazardous_Materials  Cellphone_In_Use  Cellphone_Use_Type         School_Bus_Related  OAF_Violation_Code  OAF_Violation_Category  OAF_Violation_Section  OAF_Violation_Suffix  Other_Associate_Factor_1  Other_Associate_Factor_2  Party_Number_Killed  Party_Number_Injured  Movement_Preceding_Collision  Vehicle_Year  Vehicle_Make  Statewide_Vehicle_Type  CHP_Vehicle_Type_Towing                     CHP_Vehicle_Type_Towed  Party_Race
         [      '097293',   '1',          '1',          'Y',      'M',       '20',      'A',                      'H',                     'E',                 'A',                          'F',                          'N',                               'A',                 '3',                                         'E',                'C',                '18',                   '12345',               'A',                  'N',                      'A',                      '0',                 '0',                  'M',                          '1996',       'FORD',       'A',                    '08',                                       '00',                   'W'],
-        [None, '097293',   1,            'driver',     True,     'male',    20,        'had not been drinking',  'not applicable',        'east',              'none in vehicle',            'shoulder harness not used',  'no proof of insurance obtained',  'A',                 False,            'cellphone not in use',    'E',                'C',                'agriculture code',     12345,                 'A',                  'N',                      'A',                      0,                   0,                    'other unsafe turning',       1996,         'ford',       'passenger car',        'mini-vans',                                '00',                   'white'],
+        [None, '097293',   1,            'driver',     True,     'male',    20,        'had not been drinking',  'not applicable',        'east',              'none in vehicle',            'shoulder harness not used',  'no proof of insurance obtained',  'A',                 False,            'cellphone not in use',    'E',                'C',                'agriculture code',     '12345',               'A',                  'N',                      'A',                      0,                   0,                    'other unsafe turning',       1996,         'ford',       'passenger car',        'mini-vans',                                '00',                   'white'],
     ),
     (
         #      Case_ID     Party_Number  Party_Type    At_Fault  Party_Sex  Party_Age  Party_Sobriety            Party_Drug_Physical      Direction_Of_Travel  Party_Safety_Equipment_1      Party_Safety_Equipment_2      Financial_Responsibility           Hazardous_Materials  Cellphone_In_Use  Cellphone_Use_Type         School_Bus_Related  OAF_Violation_Code  OAF_Violation_Category  OAF_Violation_Section  OAF_Violation_Suffix  Other_Associate_Factor_1  Other_Associate_Factor_2  Party_Number_Killed  Party_Number_Injured  Movement_Preceding_Collision  Vehicle_Year  Vehicle_Make  Statewide_Vehicle_Type  CHP_Vehicle_Type_Towing                     CHP_Vehicle_Type_Towed  Party_Race
@@ -53,7 +53,7 @@ def test_partyrow_create_table():
         "school_bus_related TEXT, "
         "oaf_violation_code TEXT, "
         "oaf_violation_category TEXT, "
-        "oaf_violation_section INTEGER, "
+        "oaf_violation_section TEXT, "
         "oaf_violation_suffix TEXT, "
         "other_associate_factor_1 TEXT, "
         "other_associate_factor_2 TEXT, "
@@ -90,7 +90,7 @@ def test_partyrow_columns():
         ("school_bus_related", "TEXT"),
         ("oaf_violation_code", "TEXT"),
         ("oaf_violation_category", "TEXT"),
-        ("oaf_violation_section", "INTEGER"),
+        ("oaf_violation_section", "TEXT"),
         ("oaf_violation_suffix", "TEXT"),
         ("other_associate_factor_1", "TEXT"),
         ("other_associate_factor_2", "TEXT"),

@@ -106,7 +106,7 @@ PARTY_ROW = (
     (14, "school_bus_related", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (15, "oaf_violation_code", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (16, "oaf_violation_category", DataType.TEXT, DEFAULT_NULLS + ["00"], convert, vm.OAF_VIOLATION_CATEGORY),
-    (17, "oaf_violation_section", DataType.INTEGER, DEFAULT_NULLS, convert, None),
+    (17, "oaf_violation_section", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (18, "oaf_violation_suffix", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (19, "other_associate_factor_1", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (20, "other_associate_factor_2", DataType.TEXT, DEFAULT_NULLS, convert, None),
