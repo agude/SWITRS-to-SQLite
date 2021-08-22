@@ -555,3 +555,10 @@ SEATING_POSITION = {
     '9': "position unknown",
     '0': "other occupants",
 }
+
+EJECTED = {
+    '0': 'not ejected',
+    '1': 'fully ejected',
+    '2': 'partially ejected',
+    '3': 'unknown',
+}

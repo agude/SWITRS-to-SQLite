@@ -131,5 +131,5 @@ VICTIM_ROW = (
     (6, "victim_seating_position", DataType.TEXT, DEFAULT_NULLS, convert, vm.SEATING_POSITION),
     (7, "victim_safety_equipment_1", DataType.TEXT, DEFAULT_NULLS, convert, vm.SAFETY),
     (8, "victim_safety_equipment_2", DataType.TEXT, DEFAULT_NULLS, convert, vm.SAFETY),
-    (9, "victim_ejected", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (9, "victim_ejected", DataType.TEXT, DEFAULT_NULLS, convert, vm.EJECTED),
 )

@@ -10,12 +10,12 @@ ROWS = (
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1     Victim_Safety_Equipment_2                    Victim_Ejected
         [      '097293',   '1',          '2',         'M',        '20',       '0',                     '3',                     'G',                          'T',                                         '0'],
-        [None, '097293',   1,            '2',         'male',     20,         'no injury',             'passenger seat 3',      'lap/shoulder harness used',  'child restraint in vehicle, improper use',  '0'],
+        [None, '097293',   1,            '2',         'male',     20,         'no injury',             'passenger seat 3',      'lap/shoulder harness used',  'child restraint in vehicle, improper use',  'not ejected'],
     ),
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1     Victim_Safety_Equipment_2                    Victim_Ejected
         [      '965874',   '2',          '2',         '-',        '998',      '-',                     'A',                     '-',                          '-',                                         '2'],
-        [None, '965874',   2,            '2',         None,       None,       None,                    'A',                     None,                         None,                                        '2'],
+        [None, '965874',   2,            '2',         None,       None,       None,                    'A',                     None,                         None,                                        'partially ejected'],
     ),
     (
         #      Case_ID     Party_Number  Victim_Role  Victim_Sex  Victim_Age  Victim_Degree_Of_Injury  Victim_Seating_Position  Victim_Safety_Equipment_1     Victim_Safety_Equipment_2                    Victim_Ejected
