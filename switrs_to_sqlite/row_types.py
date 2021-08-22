@@ -104,7 +104,7 @@ PARTY_ROW = (
     (13, "cellphone_in_use", DataType.INTEGER, DEFAULT_NULLS, cellphone_use_to_bool, None),
     (13, "cellphone_use_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.CELLPHONE_USE_TYPE),
     (14, "school_bus_related", DataType.TEXT, DEFAULT_NULLS, convert, None),
-    (15, "oaf_violation_code", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (15, "oaf_violation_code", DataType.TEXT, DEFAULT_NULLS, convert, vm.OAF_VIOLATION_CODE),
     (16, "oaf_violation_category", DataType.TEXT, DEFAULT_NULLS + ["00"], convert, vm.OAF_VIOLATION_CATEGORY),
     (17, "oaf_violation_section", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (18, "oaf_violation_suffix", DataType.TEXT, DEFAULT_NULLS, convert, None),

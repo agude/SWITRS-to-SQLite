@@ -454,6 +454,17 @@ FINANCIAL = {
     'E': 'officer called away before obtained',
 }
 
+OAF_VIOLATION_CODE = {
+    'B': 'business and professions',
+    'C': 'vehicle',
+    'H': 'city health and safety',
+    'I': 'city ordinance',
+    'O': 'county ordinance',
+    'P': 'penal',
+    'S': 'streets and highways',
+    'W': 'welfare and institutions',
+}
+
 OAF_VIOLATION_CATEGORY = {
     '01': 'under influence in public (647f)',
     '02': 'county ordinance',
