@@ -65,7 +65,7 @@ COLLISION_ROW = (
     (59, "not_private_property", DataType.INTEGER, DEFAULT_NULLS, string_to_bool, None),
     (60, "alcohol_involved", DataType.INTEGER, DEFAULT_NULLS, string_to_bool, None),
     (61, "statewide_vehicle_type_at_fault", DataType.TEXT, DEFAULT_NULLS, convert, vm.STATEWIDE_VEHICLE_TYPE),
-    (62, "chp_vehicle_type_at_fault", DataType.TEXT, DEFAULT_NULLS + ["99"], convert, None),
+    (62, "chp_vehicle_type_at_fault", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_VEHICLE_TYPE),
     (63, "severe_injury_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (64, "other_visible_injury_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (65, "complaint_of_pain_injury_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
@@ -115,8 +115,8 @@ PARTY_ROW = (
     (24, "vehicle_year", DataType.INTEGER, DEFAULT_NULLS + ["9999"], convert, None),
     (25, "vehicle_make", DataType.TEXT, DEFAULT_NULLS, convert, mm.MAKE_MAP),
     (26, "statewide_vehicle_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.STATEWIDE_VEHICLE_TYPE),
-    (27, "chp_vehicle_type_towing", DataType.TEXT, DEFAULT_NULLS + ["99"], convert, None),
-    (28, "chp_vehicle_type_towed", DataType.TEXT, DEFAULT_NULLS + ["99"], convert, None),
+    (27, "chp_vehicle_type_towing", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_VEHICLE_TYPE),
+    (28, "chp_vehicle_type_towed", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_VEHICLE_TYPE),
     (29, "party_race", DataType.TEXT, DEFAULT_NULLS, convert, vm.RACE),
 )
 
