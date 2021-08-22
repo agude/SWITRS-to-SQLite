@@ -59,8 +59,6 @@ class CSVParser:
             row (list): A list of strings containing the information from the
                 CSV row, as returned by csv.reader().
         """
-        self.NULLS = ["-", ""]
-
         self.parsing_table = parsing_table
         self.table_name = table_name
         self.has_primary_column = has_primary_column
@@ -95,15 +93,9 @@ class CSVParser:
         for i_csv, name, datatype, nulls, func, val_map in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
 
-            # Set up the nulls for this field
-            # Must deep copy to prevent polluting the ones stored in the class
-            our_nulls = self.NULLS[:]
-            if nulls is not None:
-                our_nulls += nulls
-
             # Convert the CSV field to a value for SQL using the associated
             # conversion function
-            val = func(val=row[i_csv], nulls=our_nulls, dtype=dtype)
+            val = func(val=row[i_csv], nulls=nulls, dtype=dtype)
 
             # If there is a val_map, then use that to convert the value to a
             # return value. This is mainly used to convert "Enums" in the
