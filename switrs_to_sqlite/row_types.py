@@ -124,7 +124,7 @@ PARTY_ROW = (
 VICTIM_ROW = (
     (0, "case_id", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (1, "party_number", DataType.INTEGER, DEFAULT_NULLS, convert, None),
-    (2, "victim_role", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (2, "victim_role", DataType.TEXT, DEFAULT_NULLS, convert, vm.ROLE),
     (3, "victim_sex", DataType.TEXT, DEFAULT_NULLS, convert, vm.SEX),
     (4, "victim_age", DataType.INTEGER, DEFAULT_NULLS + ["998"], convert, None),
     (5, "victim_degree_of_injury", DataType.TEXT, DEFAULT_NULLS, convert, vm.DEGREE_OF_INJURY),

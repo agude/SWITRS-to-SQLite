@@ -562,3 +562,12 @@ EJECTED = {
     '2': 'partially ejected',
     '3': 'unknown',
 }
+
+ROLE = {
+    '1': 'driver',
+    '2': 'passenger',
+    '3': 'pedestrian',
+    '4': 'bicyclist',
+    '5': 'other',
+    '6': 'non-injured party',
+}
