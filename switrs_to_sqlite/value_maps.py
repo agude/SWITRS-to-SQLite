@@ -413,3 +413,10 @@ SOBRIETY = {
     'G': 'impairment unknown',
     'H': 'not applicable',
 }
+
+DRUG = {
+    'E': 'under drug influence',
+    'F': 'impairment - physical',
+    'H': 'not applicable',
+    'I': 'sleepy/fatigued',
+}
