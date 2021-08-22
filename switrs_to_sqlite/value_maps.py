@@ -539,3 +539,16 @@ OTHER_FACTOR = {
     'X': 'inattention, reading',
     'Y': 'inattention, other',
 }
+
+SEATING_POSITION = {
+    '1': "driver",
+    '2': "passenger seat 2",
+    '3': "passenger seat 3",
+    '4': "passenger seat 4",
+    '5': "passenger seat 5",
+    '6': "passenger seat 6",
+    '7': "station wagon rear",
+    '8': "rear occupant of truck or van",
+    '9': "position unknown",
+    '0': "other occupants",
+}
