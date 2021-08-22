@@ -43,6 +43,9 @@ DEGREE_OF_INJURY = {
     "2": "severe injury",
     "3": "other visible injury",
     "4": "complaint of pain",
+    "5": "suspected serious injury",
+    "6": "suspected minor injury",
+    "7": "possible injury",
 }
 
 PARTY_TYPE = {
