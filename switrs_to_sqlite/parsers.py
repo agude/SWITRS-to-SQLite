@@ -134,8 +134,10 @@ class CSVParser:
         if collision_time_str == "2500":
             time = None
         else:
-            # The source data is not always 0 padded
-            if len(collision_time_str) == 3:
+            # The source data is not always 0 padded, so it will be 900 instead
+            # of 0900, and so length 3
+            missing_leading_zero_length = 3
+            if len(collision_time_str) == missing_leading_zero_length:
                 collision_time_str = "0" + collision_time_str
 
             collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
@@ -182,7 +184,8 @@ class CSVParser:
         return output_row
 
     def insert_statement(self, values):
-        """Creates an insert statement used to fill a row in the SQLite table."""
+        """Creates an insert statement used to fill a row in the SQLite
+        table."""
         vals = ["?"] * len(values)
         query = "INSERT INTO {table} VALUES ({values})".format(
             table=self.table_name, values=", ".join(vals)
