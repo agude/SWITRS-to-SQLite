@@ -446,3 +446,10 @@ SAFETY = {
     'X': 'passenger, motorcycle helmet not used',
     'Y': 'passenger, motorcycle helmet used',
 }
+
+FINANCIAL = {
+    'N': 'no proof of insurance obtained',
+    'Y': 'proof of insurance obtained',
+    'O': 'not applicable',
+    'E': 'officer called away before obtained',
+}

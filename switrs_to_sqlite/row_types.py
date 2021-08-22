@@ -99,7 +99,7 @@ PARTY_ROW = (
     (8, "direction_of_travel", DataType.TEXT, DEFAULT_NULLS, convert, vm.DIRECTION),
     (9, "party_safety_equipment_1", DataType.TEXT, DEFAULT_NULLS, convert, vm.SAFETY),
     (10, "party_safety_equipment_2", DataType.TEXT, DEFAULT_NULLS, convert, vm.SAFETY),
-    (11, "financial_responsibility", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (11, "financial_responsibility", DataType.TEXT, DEFAULT_NULLS, convert, vm.FINANCIAL),
     (12, "hazardous_materials", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (13, "cellphone_in_use", DataType.INTEGER, DEFAULT_NULLS, cellphone_use_to_bool, None),
     (13, "cellphone_use_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.CELLPHONE_USE_TYPE),
