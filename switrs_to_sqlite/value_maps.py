@@ -571,3 +571,11 @@ ROLE = {
     '5': 'other',
     '6': 'non-injured party',
 }
+
+CHP_SHIFT = {
+    '1': "0600 thru 1359",
+    '2': "1400 thru 2159",
+    '3': "2200 thru 0559",
+    '4': "chp not stated",
+    '5': "not chp",
+}

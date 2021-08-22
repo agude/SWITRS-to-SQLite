@@ -11,7 +11,7 @@ COLLISION_ROW = (
     (3, "jurisdiction", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (6, "officer_id", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (7, "reporting_district", DataType.TEXT, DEFAULT_NULLS, convert, None),
-    (9, "chp_shift", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (9, "chp_shift", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_SHIFT),
     (10, "population", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (11, "county_city_location", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (11, "county_location", DataType.TEXT, DEFAULT_NULLS, county_city_location_to_county, vm.COUNTIES),
