@@ -514,3 +514,28 @@ OAF_VIOLATION_CATEGORY = {
     '62': 'seat belt',
     '63': 'seat belt (equipment)',
 }
+
+OTHER_FACTOR = {
+    'A': 'violation',
+    'E': 'vision obscurements',
+    'F': 'inattention',
+    'G': 'stop and go traffic',
+    'H': 'entering/leaving ramp',
+    'I': 'previous collision',
+    'J': 'unfamiliar with road',
+    'K': 'defective vehicle equipment',
+    'L': 'uninvolved vehicle',
+    'M': 'other',
+    'N': 'none apparent',
+    'O': 'runaway vehicle',
+    'P': 'inattention, cell phone',
+    'Q': 'inattention, electronic equip',
+    'R': 'inattention, radio/cd',
+    'S': 'inattention, smoking',
+    'T': 'inattention, eating',
+    'U': 'inattention, children',
+    'V': 'inattention, animal',
+    'W': 'inattention, personal hygiene',
+    'X': 'inattention, reading',
+    'Y': 'inattention, other',
+}
