@@ -126,3 +126,48 @@ def county_city_location_to_county(**kwargs):
         return None
 
     return out_val[:2]
+
+
+def cellphone_use_to_bool(**kwargs):
+    """A cellphone use code to True/False if a cellphone was in use.
+
+    The mapping is:
+
+    B -> cellphone in use              -> True
+    C -> cellphone not in use          -> False
+    D -> no cellphone/unknown          -> None
+    1 -> cellphone in use (handheld)   -> True
+    2 -> cellphone in use (hands-free) -> True
+    3 -> cellphone not in use          -> False
+
+    Args:
+        **kwargs: One specific keywords must be passed, a second is optional:
+            - val (str): A value to convert to a a county code.
+            - nulls (iterable, optional): An iterable containing strings to
+                check against. If val if found to be equal to a string in this
+                list, None is returned.
+
+    Returns:
+        converted_val: Returns a bool if val is not in nulls, otherwise None.
+
+    """
+    # Get the arguments
+    val = kwargs.get("val")
+    nulls = kwargs.get("nulls", None)
+
+    # Return None if the val matches a string in nulls
+    if nulls is not None:
+        if val in nulls:
+            return None
+
+    # Map val
+    CELLPHONE_IN_USE = {
+        'B': True,
+        'C': False,
+        'D': None,
+        '1': True,
+        '2': True,
+        '3': False,
+    }
+
+    return CELLPHONE_IN_USE.get(val, None)

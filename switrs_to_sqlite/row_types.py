@@ -1,4 +1,4 @@
-from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county
+from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county, cellphone_use_to_bool
 from switrs_to_sqlite.datatypes import DataType
 import switrs_to_sqlite.make_map as mm
 import switrs_to_sqlite.value_maps as vm
@@ -101,7 +101,8 @@ PARTY_ROW = (
     (10, "party_safety_equipment_2", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (11, "financial_responsibility", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (12, "hazardous_materials", DataType.TEXT, DEFAULT_NULLS, convert, None),
-    (13, "cellphone_use", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (13, "cellphone_in_use", DataType.INTEGER, DEFAULT_NULLS, cellphone_use_to_bool, None),
+    (13, "cellphone_use_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.CELLPHONE_USE_TYPE),
     (14, "school_bus_related", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (15, "oaf_violation_code", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (16, "oaf_violation_category", DataType.TEXT, DEFAULT_NULLS + ["00"], convert, None),

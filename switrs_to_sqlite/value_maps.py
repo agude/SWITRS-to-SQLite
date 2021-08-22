@@ -396,11 +396,11 @@ CHP_VEHICLE_TYPE = {
     "99": "unknown hit and run vehicle involvement",
 }
 
-CELLPHONE = {
-'B': "Cell Phone in Use "
-'C': "Cell Phone Not in Use "
-'D': "No Cell Phone/Unknown "
-'1': "Cell Phone Handheld in Use "
-'2': "Cell Phone Hands Free in Use "
-'3': "Cell Phone Not in Use "
+CELLPHONE_USE_TYPE = {
+    'B': "cellphone in use",
+    'C': "cellphone not in use",
+    'D': "no cellphone/unknown",
+    '1': "cellphone in use (handheld)",
+    '2': "cellphone in use (hands-free)",
+    '3': "cellphone not in use",
 }
