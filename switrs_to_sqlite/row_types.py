@@ -94,7 +94,7 @@ PARTY_ROW = (
     (3, "at_fault", DataType.INTEGER, DEFAULT_NULLS, string_to_bool, None),
     (4, "party_sex", DataType.TEXT, DEFAULT_NULLS, convert, vm.SEX),
     (5, "party_age", DataType.INTEGER, DEFAULT_NULLS + ["998"], convert, None),
-    (6, "party_sobriety", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (6, "party_sobriety", DataType.TEXT, DEFAULT_NULLS, convert, vm.SOBRIETY),
     (7, "party_drug_physical", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (8, "direction_of_travel", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (9, "party_safety_equipment_1", DataType.TEXT, DEFAULT_NULLS, convert, None),

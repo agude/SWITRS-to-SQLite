@@ -404,3 +404,12 @@ CELLPHONE_USE_TYPE = {
     '2': "cellphone in use (hands-free)",
     '3': "cellphone not in use",
 }
+
+SOBRIETY = {
+    'A': 'had not been drinking',
+    'B': 'had been drinking, under influence',
+    'C': 'had been drinking, not under influence',
+    'D': 'had been drinking, impairment unknown',
+    'G': 'impairment unknown',
+    'H': 'not applicable',
+}
