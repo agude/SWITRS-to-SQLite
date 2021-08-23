@@ -36,7 +36,7 @@ COLLISION_ROW = (
     (30, "postmile_prefix", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (31, "postmile", DataType.REAL, DEFAULT_NULLS, convert, None),
     (32, "location_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.LOCATION_TYPE),
-    (33, "ramp_intersection", DataType.INTEGER, DEFAULT_NULLS, convert, None),
+    (33, "ramp_intersection", DataType.TEXT, DEFAULT_NULLS, convert, vm.RAMP_INTERSECTION),
     (34, "side_of_highway", DataType.TEXT, DEFAULT_NULLS, convert, vm.SIDE_OF_HIGHWAY),
     (35, "tow_away", DataType.INTEGER, DEFAULT_NULLS, string_to_bool, None),
     (36, "collision_severity", DataType.TEXT, DEFAULT_NULLS, convert, vm.COLLISION_SEVERITY),

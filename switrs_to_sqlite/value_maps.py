@@ -591,3 +591,14 @@ POPULATION = {
     '9': 'unincorporated',
     '0': 'university',
 }
+
+RAMP_INTERSECTION = {
+    '1': 'ramp exit, last 50 feet',
+    '2': 'mid-ramp',
+    '3': 'ramp entry, first 50 feet',
+    '4': 'not state highway, ramp-related, within 100 feet',
+    '5': 'intersection',
+    '6': 'not state highway, intersection-related, within 250 feet',
+    '7': 'highway',
+    '8': 'not state highway',
+}
