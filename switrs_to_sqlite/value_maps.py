@@ -602,3 +602,14 @@ RAMP_INTERSECTION = {
     '7': 'highway',
     '8': 'not state highway',
 }
+
+RAMP_TYPE = {
+    'EF': 'eastbound off-ramp',
+    'EO': 'eastbound on-ramp',
+    'NF': 'northbound off-ramp',
+    'NO': 'northbound on-ramp',
+    'SF': 'southbound off-ramp',
+    'SO': 'southbound on-ramp',
+    'WF': 'westbound off-ramp',
+    'WO': 'westbound on-ramp',
+}

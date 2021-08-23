@@ -75,8 +75,8 @@ COLLISION_ROW = (
     (69, "bicyclist_injured_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (70, "motorcyclist_killed_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (71, "motorcyclist_injured_count", DataType.INTEGER, DEFAULT_NULLS, convert, None),
-    (72, "primary_ramp", DataType.TEXT, DEFAULT_NULLS, convert, None),
-    (73, "secondary_ramp", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (72, "primary_ramp", DataType.TEXT, DEFAULT_NULLS, convert, vm.RAMP_TYPE),
+    (73, "secondary_ramp", DataType.TEXT, DEFAULT_NULLS, convert, vm.RAMP_TYPE),
     (74, "latitude", DataType.REAL, DEFAULT_NULLS, convert, None),
     (75, "longitude", DataType.REAL, DEFAULT_NULLS, negative, None),
 )
