@@ -29,7 +29,7 @@ COLLISION_ROW = (
     (23, "weather_1", DataType.TEXT, DEFAULT_NULLS + ['N', 'Y'], convert, vm.WEATHER),
     (24, "weather_2", DataType.TEXT, DEFAULT_NULLS + ['N', 'Y'], convert, vm.WEATHER),
     (25, "state_highway_indicator", DataType.INTEGER, DEFAULT_NULLS, string_to_bool, None),
-    (26, "caltrans_county", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (26, "caltrans_county", DataType.TEXT, DEFAULT_NULLS, convert, vm.CALTRANS_COUNTY),
     (27, "caltrans_district", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (28, "state_route", DataType.INTEGER, DEFAULT_NULLS, convert, None),
     (29, "route_suffix", DataType.TEXT, DEFAULT_NULLS, convert, None),
