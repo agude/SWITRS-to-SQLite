@@ -16,7 +16,7 @@ COLLISION_ROW = (
     (11, "county_city_location", DataType.TEXT, DEFAULT_NULLS, convert, None),
     (11, "county_location", DataType.TEXT, DEFAULT_NULLS, county_city_location_to_county, vm.COUNTIES),
     (12, "special_condition", DataType.TEXT, DEFAULT_NULLS, convert, None),
-    (13, "beat_type", DataType.TEXT, DEFAULT_NULLS, convert, None),
+    (13, "beat_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.BEAT_TYPE),
     (14, "chp_beat_type", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_BEAT_TYPE),
     (15, "city_division_lapd", DataType.TEXT, DEFAULT_NULLS + ["0"], convert, None),
     (16, "chp_beat_class", DataType.TEXT, DEFAULT_NULLS, convert, vm.CHP_BEAT_CLASS),

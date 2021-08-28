@@ -71,6 +71,18 @@ WEATHER = {
     "G": "wind",
 }
 
+BEAT_TYPE = {
+    "0": "not chp",
+    "1": "chp state highway",
+    "2": "chp county roadline",
+    "3": "chp county roadarea",
+    "4": "schoolbus on city roadway",
+    "5": "schoolbus not on public roadway",
+    "6": "offroad",
+    "7": "vista point, rest area, scales, or inspection facility",
+    "8": "other public access",
+}
+
 CHP_BEAT_TYPE = {
     "0": "not chp",
     "1": "interstate",
