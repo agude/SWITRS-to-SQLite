@@ -31,7 +31,7 @@ jobs:
     - name: Run Unit and Intergration Tests 🧪
       run: |
         pip install pytest
-        python -m pytest -v
+        python -m pytest -vv
     - name: Run Install and Smoke Test ⚗️
       run: |
         pip install .

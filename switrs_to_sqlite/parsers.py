@@ -59,8 +59,6 @@ class CSVParser:
             row (list): A list of strings containing the information from the
                 CSV row, as returned by csv.reader().
         """
-        self.NULLS = ["-", ""]
-
         self.parsing_table = parsing_table
         self.table_name = table_name
         self.has_primary_column = has_primary_column
@@ -95,15 +93,9 @@ class CSVParser:
         for i_csv, name, datatype, nulls, func, val_map in self.parsing_table:
             dtype = self.__datatype_convert[datatype]
 
-            # Set up the nulls for this field
-            # Must deep copy to prevent polluting the ones stored in the class
-            our_nulls = self.NULLS[:]
-            if nulls is not None:
-                our_nulls += nulls
-
             # Convert the CSV field to a value for SQL using the associated
             # conversion function
-            val = func(val=row[i_csv], nulls=our_nulls, dtype=dtype)
+            val = func(val=row[i_csv], nulls=nulls, dtype=dtype)
 
             # If there is a val_map, then use that to convert the value to a
             # return value. This is mainly used to convert "Enums" in the
@@ -142,8 +134,10 @@ class CSVParser:
         if collision_time_str == "2500":
             time = None
         else:
-            # The source data is not always 0 padded
-            if len(collision_time_str) == 3:
+            # The source data is not always 0 padded, so it will be 900 instead
+            # of 0900, and so length 3
+            missing_leading_zero_length = 3
+            if len(collision_time_str) == missing_leading_zero_length:
                 collision_time_str = "0" + collision_time_str
 
             collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
@@ -190,7 +184,8 @@ class CSVParser:
         return output_row
 
     def insert_statement(self, values):
-        """Creates an insert statement used to fill a row in the SQLite table."""
+        """Creates an insert statement used to fill a row in the SQLite
+        table."""
         vals = ["?"] * len(values)
         query = "INSERT INTO {table} VALUES ({values})".format(
             table=self.table_name, values=", ".join(vals)
