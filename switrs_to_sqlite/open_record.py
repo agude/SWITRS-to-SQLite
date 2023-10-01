@@ -1,7 +1,7 @@
 import gzip
 
 
-def open_record_file(file_name):
+def open_record_file(file_name, errors=None):
     """Open a Record file, even if GZipped.
 
     Args:
@@ -10,5 +10,5 @@ def open_record_file(file_name):
 
     """
     if file_name.endswith(".gz"):
-        return gzip.open(file_name, "rt")
-    return open(file_name, "rt")
+        return gzip.open(file_name, "rt", errors=errors)
+    return open(file_name, "rt", errors=errors)

@@ -41,6 +41,12 @@ def main():
         help="the VictimRecords.txt file or the same file gzipped",
     )
     argparser.add_argument(
+        "-p",
+        "--parse-error",
+        help="how to handle parsing errors",
+        choices=["strict", "ignore", "replace"],
+    )
+    argparser.add_argument(
         "-o",
         "--output-file",
         help="file to save the database to",
@@ -62,7 +68,7 @@ def main():
             con.execute(RowClass.create_table_statement())
 
             # Read in the CSV and process each row
-            with open_record_file(file_name) as f:
+            with open_record_file(file_name, errors=args.parse_error) as f:
                 reader = csv.reader(f)
                 next(reader)  # Skip the header
 
