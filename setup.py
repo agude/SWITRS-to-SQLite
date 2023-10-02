@@ -7,7 +7,7 @@ from setuptools import setup
 # Get the version from the main script
 version = re.search(
     '^__version__\s*=\s*"(.*)"',
-    open("switrs_to_sqlite/switrs_to_sqlite.py").read(),
+    open("switrs_to_sqlite/main.py").read(),
     re.M,
 ).group(1)
 
@@ -35,7 +35,7 @@ setup(
     packages=["switrs_to_sqlite"],
     entry_points={
         "console_scripts": [
-            "switrs_to_sqlite = switrs_to_sqlite.switrs_to_sqlite:main"
+            "switrs_to_sqlite = switrs_to_sqlite.main:main"
         ],
     },
     classifiers=[
