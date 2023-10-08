@@ -1,17 +1,37 @@
-AwTACH DATABASE "20201024-3.0.1-switrs.sqlite" AS db20;
-ATTACH DATABASE "20180925-3.0.1-switrs.sqlite" AS db18;
-ATTACH DATABASE "20170112-3.0.1-switrs.sqlite" AS db17;
-ATTACH DATABASE "20160924-3.0.1-switrs.sqlite" AS db16;
+ATTACH DATABASE "20160924-S2Sv4.1.2-switrs.sqlite3" AS db16;
+ATTACH DATABASE "20170112-S2Sv4.1.2-switrs.sqlite3" AS db17;
+ATTACH DATABASE "20180925-S2Sv4.1.2-switrs.sqlite3" AS db18;
+ATTACH DATABASE "20201024-S2Sv4.1.2-switrs.sqlite3" AS db20;
+ATTACH DATABASE "20210604-S2Sv4.1.2-switrs.sqlite3" AS db21;
+ATTACH DATABASE "20231008-S2Sv4.1.2-switrs.sqlite3" AS db23;
 ATTACH DATABASE "/tmp/output.sqlite" AS outputdb;
 
--- Select all from 2020
+-- Select all from the newest database
 CREATE TABLE outputdb.case_ids AS
-SELECT case_id, '2020' AS db_year
-FROM db20.collisions;
+SELECT case_id, '2023' AS db_year
+FROM db23.collisions;
 
 -- Now add the rows that don't match from earlier databases, in
 -- reverse chronological order so that the newer rows are not
 -- overwritten.
+INSERT INTO outputdb.case_ids
+SELECT * FROM (
+    SELECT older.case_id, '2021'
+    FROM db21.collisions AS older
+    LEFT JOIN outputdb.case_ids AS prime
+    ON prime.case_id = older.case_id
+    WHERE prime.case_id IS NULL
+);
+
+INSERT INTO outputdb.case_ids
+SELECT * FROM (
+    SELECT older.case_id, '2020'
+    FROM db20.collisions AS older
+    LEFT JOIN outputdb.case_ids AS prime
+    ON prime.case_id = older.case_id
+    WHERE prime.case_id IS NULL
+);
+
 INSERT INTO outputdb.case_ids
 SELECT * FROM (
     SELECT older.case_id, '2018'
@@ -44,10 +64,27 @@ FROM outputdb.case_ids
 GROUP BY db_year;
 
 -- Create the combined collision table
-
 CREATE TABLE outputdb.collisions AS
 SELECT *
-FROM db20.collisions;
+FROM db23.collisions;
+
+INSERT INTO outputdb.collisions
+SELECT * FROM (
+    SELECT col.*
+    FROM db21.collisions AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2021'
+);
+
+INSERT INTO outputdb.collisions
+SELECT * FROM (
+    SELECT col.*
+    FROM db20.collisions AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2020'
+);
 
 INSERT INTO outputdb.collisions
 SELECT * FROM (
@@ -76,10 +113,28 @@ SELECT * FROM (
     WHERE ids.db_year = '2016'
 );
 
--- Create the party table
+-- Create the victims table
 CREATE TABLE outputdb.victims AS
 SELECT *
-FROM db20.victims;
+FROM db23.victims;
+
+INSERT INTO outputdb.victims
+SELECT * FROM (
+    SELECT col.*
+    FROM db21.victims AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2021'
+);
+
+INSERT INTO outputdb.victims
+SELECT * FROM (
+    SELECT col.*
+    FROM db20.victims AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2020'
+);
 
 INSERT INTO outputdb.victims
 SELECT * FROM (
@@ -111,7 +166,25 @@ SELECT * FROM (
 -- Create the party table
 CREATE TABLE outputdb.parties AS
 SELECT *
-FROM db20.parties;
+FROM db23.parties;
+
+INSERT INTO outputdb.parties
+SELECT * FROM (
+    SELECT col.*
+    FROM db21.parties AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2021'
+);
+
+INSERT INTO outputdb.parties
+SELECT * FROM (
+    SELECT col.*
+    FROM db20.parties AS col
+    INNER JOIN outputdb.case_ids AS ids
+    ON ids.case_id = col.case_id
+    WHERE ids.db_year = '2020'
+);
 
 INSERT INTO outputdb.parties
 SELECT * FROM (
