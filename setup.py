@@ -46,10 +46,11 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Utilities",
     ],
     keywords=[
@@ -62,5 +63,5 @@ setup(
         "pytest-runner",
     ],
     tests_require=["pytest"],
-    python_requires=">=3.6, <4",
+    python_requires=">=3.8, <4",
 )
