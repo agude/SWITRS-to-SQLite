@@ -9,7 +9,7 @@ from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 
 # Library version
-__version__ = "4.1.1"
+__version__ = "4.1.2"
 
 
 def main():
