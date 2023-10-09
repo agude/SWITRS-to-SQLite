@@ -188,7 +188,7 @@ MAKE_MAP = {
     "CHRS": Make.CHRYSLER.value,
     "CHRSLER": Make.CHRYSLER.value,
     "CHRSY": Make.CHRYSLER.value,
-    "CHRY": Make.CHEVROLET.value,
+    "CHRY": Make.CHRYSLER.value,
     "CHRY/": Make.CHRYSLER.value,
     "CHRYL": Make.CHRYSLER.value,
     "CHRYLER": Make.CHRYSLER.value,
