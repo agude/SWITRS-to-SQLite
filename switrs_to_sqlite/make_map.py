@@ -5,7 +5,7 @@ from enum import Enum, unique
 class Make(Enum):
     ACADIAN                 = "acadian"
     ACURA                   = "acura"
-    ALFA_ROMERO             = "alfa romera"
+    ALFA_ROMERO             = "alfa romero"
     AMC                     = "american motors"
     AMERICAN_LAFRANCE       = "american lafrance"
     AUDI                    = "audi"
@@ -188,7 +188,7 @@ MAKE_MAP = {
     "CHRS": Make.CHRYSLER.value,
     "CHRSLER": Make.CHRYSLER.value,
     "CHRSY": Make.CHRYSLER.value,
-    "CHRY": Make.CHEVROLET.value,
+    "CHRY": Make.CHRYSLER.value,
     "CHRY/": Make.CHRYSLER.value,
     "CHRYL": Make.CHRYSLER.value,
     "CHRYLER": Make.CHRYSLER.value,
@@ -571,7 +571,7 @@ MAKE_MAP = {
     "MERCU": Make.MERCURY.value,
     "MERCUR": Make.MERCURY.value,
     "MERCURY": Make.MERCURY.value,
-    "MERD": Make.MERCURY.value,
+    "MERD": Make.MERCEDES_BENZ.value,
     "MERZ /": Make.MERCEDES_BENZ.value,
     "MERZ BNZ": Make.MERCEDES_BENZ.value,
     "MERZ": Make.MERCEDES_BENZ.value,
@@ -815,7 +815,7 @@ MAKE_MAP = {
     "SUZUKI/": Make.SUZUKI.value,
     "T0Y": Make.TOYOTA.value,
     "T0YOTA": Make.TOYOTA.value,
-    "TAHOE": Make.GMC.value,
+    "TAHOE": Make.CHEVROLET.value,
     "TAOTA": Make.TOYOTA.value,
     "TAOTAO": Make.TOYOTA.value,
     "TESL": Make.TESLA.value,
