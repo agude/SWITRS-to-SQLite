@@ -10,7 +10,6 @@ Usage:
 """
 
 import json
-import os
 import sqlite3
 from pathlib import Path
 
@@ -58,13 +57,15 @@ def generate_golden_data() -> None:
         db_path = temp_path / "golden.sqlite3"
 
         # Run the converter using dependency injection
-        main([
-            str(collisions_path),
-            str(parties_path),
-            str(victims_path),
-            "-o",
-            str(db_path),
-        ])
+        main(
+            [
+                str(collisions_path),
+                str(parties_path),
+                str(victims_path),
+                "-o",
+                str(db_path),
+            ]
+        )
 
         # Extract data from database
         conn = sqlite3.connect(db_path)

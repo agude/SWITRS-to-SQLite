@@ -45,13 +45,15 @@ def test_end_to_end(tmp_path: Path) -> None:
     victims_path.write_text(VICTIMS_HEADER + "\n" + victims_data)
 
     # Run conversion using dependency injection
-    main([
-        str(collisions_path),
-        str(parties_path),
-        str(victims_path),
-        "-o",
-        str(db_path),
-    ])
+    main(
+        [
+            str(collisions_path),
+            str(parties_path),
+            str(victims_path),
+            "-o",
+            str(db_path),
+        ]
+    )
 
     # Verify database was created
     assert db_path.exists(), "Database file was not created"
@@ -92,7 +94,7 @@ def test_end_to_end(tmp_path: Path) -> None:
 
             # Assert content (convert JSON arrays to tuples for comparison)
             for i, (actual_row, expected_row) in enumerate(
-                zip(actual_rows, expected_rows)
+                zip(actual_rows, expected_rows, strict=True)
             ):
                 expected_tuple = tuple(expected_row)
                 assert actual_row == expected_tuple, (
