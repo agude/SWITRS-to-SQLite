@@ -29,33 +29,29 @@ The best way to install SWITRS-to-SQLite is with `pip`:
 pip install switrs-to-sqlite
 ```
 
+Or with [UV](https://docs.astral.sh/uv/):
+
+```bash
+uv pip install switrs-to-sqlite
+```
+
 This will give you access to the script simply by calling:
 
 ```bash
 switrs_to_sqlite --help
 ```
 
-You can also clone this repository:
+### Development Installation
+
+For development, clone the repository and use UV:
 
 ```bash
 git clone https://github.com/agude/SWITRS-to-SQLite.git
 cd SWITRS-to-SQLite
-./switrs_to_sqlite/switrs_to_sqlite --help
+uv sync --dev
 ```
 
-If you clone the repository, SWITRS-to-SQLite can be installed as a local
-application using the `setup.py` script:
-
-```bash
-git clone https://github.com/agude/SWITRS-to-SQLite.git
-cd SWITRS-to-SQLite
-./setup.py install
-```
-
-Which, like using `pip`, will give you access to the script by calling
-`switrs_to_sqlite`.
-
-SWITRS-to-SQLite requires only Python3.
+SWITRS-to-SQLite requires Python 3.10+.
 
 ## Usage
 
@@ -112,8 +108,16 @@ optional arguments:
 ## Unit Tests
 
 SWITRS-to-SQLite uses `pytest` to run unit tests (contained in the `tests`
-folders). To run the tests, run this command from the base directory:
+folder). To run the tests:
 
 ```bash
-python3 -m pytest -v
+uv run pytest -vv
 ```
+
+Or with [just](https://github.com/casey/just):
+
+```bash
+just test
+```
+
+Run `just` with no arguments to see all available commands.

@@ -7,9 +7,8 @@ import sqlite3
 from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
-
 # Library version
-__version__ = "4.1.3"
+__version__ = "4.2.0"
 
 
 def main():
@@ -23,7 +22,7 @@ def main():
     argparser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}".format(version=__version__),
+        version=f"%(prog)s {__version__}",
     )
     argparser.add_argument(
         "collision_record",

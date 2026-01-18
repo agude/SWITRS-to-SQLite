@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.open_record import open_record_file
 import gzip
 import os.path
+
+from switrs_to_sqlite.open_record import open_record_file
 
 
 def test_read_gzipped_file(tmpdir):
@@ -10,7 +11,7 @@ def test_read_gzipped_file(tmpdir):
     f = tmpdir.join("test.csv.gz")
     contents = "Test contents\nsecond line"
     file_path = os.path.join(f.dirname, f.basename)
-    with gzip.open(file_path, 'wt') as f:
+    with gzip.open(file_path, "wt") as f:
         f.write(contents)
 
     # Read back the file

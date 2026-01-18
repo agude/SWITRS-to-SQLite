@@ -162,12 +162,12 @@ def cellphone_use_to_bool(**kwargs):
 
     # Map val
     CELLPHONE_IN_USE = {
-        'B': True,
-        'C': False,
-        'D': None,
-        '1': True,
-        '2': True,
-        '3': False,
+        "B": True,
+        "C": False,
+        "D": None,
+        "1": True,
+        "2": True,
+        "3": False,
     }
 
     return CELLPHONE_IN_USE.get(val, None)
@@ -199,9 +199,9 @@ def non_standard_str_to_bool(**kwargs):
     # Map val
     MAP = {
         # Parties: hazardous_materials
-        'A': True,
+        "A": True,
         # Parties: school_bus_related
-        'E': True,
+        "E": True,
     }
 
     return MAP.get(val, None)
