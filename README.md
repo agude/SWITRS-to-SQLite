@@ -104,7 +104,10 @@ options:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
   -p {strict,ignore,replace}, --parse-error {strict,ignore,replace}
-                        how to handle parsing errors
+                        how to handle unicode decoding errors in input files:
+                        'strict' raises an error (default), 'ignore' skips
+                        invalid characters, 'replace' substitutes a
+                        replacement character
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
                         file to save the database to
 ```

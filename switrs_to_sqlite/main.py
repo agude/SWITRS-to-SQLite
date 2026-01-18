@@ -46,7 +46,12 @@ def main(argv: list[str] | None = None) -> None:
     argparser.add_argument(
         "-p",
         "--parse-error",
-        help="how to handle parsing errors",
+        help=(
+            "how to handle unicode decoding errors in input files: "
+            "'strict' raises an error (default), "
+            "'ignore' skips invalid characters, "
+            "'replace' substitutes a replacement character"
+        ),
         choices=["strict", "ignore", "replace"],
     )
     argparser.add_argument(
