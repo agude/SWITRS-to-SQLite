@@ -11,8 +11,12 @@ from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 __version__: str = "4.3.0"
 
 
-def main() -> None:
-    """Runs the conversion."""
+def main(argv: list[str] | None = None) -> None:
+    """Runs the conversion.
+
+    Args:
+        argv: Command line arguments. If None, uses sys.argv.
+    """
 
     # We only need to parse command line flags if running as the main script
     argparser = argparse.ArgumentParser(
@@ -52,7 +56,7 @@ def main() -> None:
         default="switrs.sqlite3",
     )
 
-    args = argparser.parse_args()
+    args = argparser.parse_args(argv)
 
     # Match the parsers with the files they read
     pairs = (
