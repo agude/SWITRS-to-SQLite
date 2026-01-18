@@ -11,7 +11,7 @@ from switrs_to_sqlite.converters import (
 
 
 # Test the convert function
-def test_convert():
+def test_convert() -> None:
     convert_vals = (
         # Pass through
         ("9", None, None, "9"),
@@ -47,7 +47,7 @@ def test_convert():
 
 
 # Test the negative function
-def test_negative():
+def test_negative() -> None:
     convert_vals = (
         # Pass through (no dtype) returns None since strings can't be negated
         ("9", None, None, None),
@@ -83,7 +83,7 @@ def test_negative():
 
 
 # Test the string_to_bool function
-def test_bools():
+def test_bools() -> None:
     bools = (
         ("Y", True),
         ("y", True),
@@ -94,7 +94,7 @@ def test_bools():
         assert string_to_bool(val) == res
 
 
-def test_nulls():
+def test_nulls() -> None:
     nones = (
         ("Y", ["Y"]),
         ("y", ["y"]),
@@ -107,7 +107,7 @@ def test_nulls():
         assert string_to_bool(val, None, nulls) is None
 
 
-def test_county_city_location_to_county():
+def test_county_city_location_to_county() -> None:
     convert_vals = (
         ("0145", str, None, "01"),
         ("5899", str, None, "58"),
@@ -125,7 +125,7 @@ def test_county_city_location_to_county():
         assert county_city_location_to_county(val, dtype, nulls) == res
 
 
-def test_cellphone_use_to_bool():
+def test_cellphone_use_to_bool() -> None:
     convert_vals = (
         ("B", int, None, True),
         ("C", int, None, False),
@@ -147,7 +147,7 @@ def test_cellphone_use_to_bool():
         assert cellphone_use_to_bool(val, dtype, nulls) == res
 
 
-def test_non_standard_str_to_bool():
+def test_non_standard_str_to_bool() -> None:
     convert_vals = (
         ("A", int, None, True),
         ("E", int, None, True),

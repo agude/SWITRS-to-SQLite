@@ -483,13 +483,13 @@ ROWS = (
 )
 
 
-def test_collisionrows():
+def test_collisionrows() -> None:
     for row, answer in ROWS:
         parsed_row = CollisionRow.parse_row(row)
         assert parsed_row == answer
 
 
-def test_collisionrow_create_table():
+def test_collisionrow_create_table() -> None:
     assert CollisionRow.create_table_statement() == (
         "CREATE TABLE "
         "collisions ("
@@ -572,7 +572,7 @@ def test_collisionrow_create_table():
     )
 
 
-def test_partyrow_columns():
+def test_partyrow_columns() -> None:
     assert CollisionRow.columns == [
         ("case_id", "TEXT", "PRIMARY KEY"),
         ("jurisdiction", "INTEGER"),

@@ -9,12 +9,12 @@ from switrs_to_sqlite.schema import Column
 
 
 @pytest.fixture(scope="module")
-def row():
+def row() -> list[str]:
     return ["9", "a", "1.", "Y"]
 
 
 @pytest.fixture(scope="module")
-def parsing_table():
+def parsing_table() -> tuple[Column, ...]:
     return (
         Column(index=0, name="first", sql_type=DataType.INTEGER, converter=convert),
         Column(index=1, name="second", sql_type=DataType.TEXT, converter=convert),
@@ -33,7 +33,7 @@ def parsing_table():
 
 
 @pytest.fixture(scope="function")
-def parser(parsing_table):
+def parser(parsing_table: tuple[Column, ...]) -> CSVParser:
     Parser = CSVParser(
         parsing_table=parsing_table,
         table_name="Test",
@@ -44,31 +44,33 @@ def parser(parsing_table):
     return Parser
 
 
-def test_extend_row_without_has_primary_column(parser):
+def test_extend_row_without_has_primary_column(parser: CSVParser) -> None:
     parser.has_primary_column = False
     values = parser.parse_row([""])
     assert len(values) == 6
 
 
-def test_extend_row_with_has_primary_column(parser):
+def test_extend_row_with_has_primary_column(parser: CSVParser) -> None:
     parser.has_primary_column = True
     values = parser.parse_row([""])
     assert len(values) == 5
 
 
-def test_parse_row_without_has_primary_column(parser, row):
+def test_parse_row_without_has_primary_column(
+    parser: CSVParser, row: list[str]
+) -> None:
     parser.has_primary_column = False
     values = parser.parse_row(row)
     assert values == [None, 9, "a", 1.0, True, None]
 
 
-def test_parse_row_with_has_primary_column(parser, row):
+def test_parse_row_with_has_primary_column(parser: CSVParser, row: list[str]) -> None:
     parser.has_primary_column = True
     values = parser.parse_row(row)
     assert values == [9, "a", 1.0, True, None]
 
 
-def test_set_columns_without_has_primary_column(parser):
+def test_set_columns_without_has_primary_column(parser: CSVParser) -> None:
     assert parser.columns[0] == ("id", "INTEGER", "PRIMARY KEY")
     assert parser.columns[1] == ("first", "INTEGER")
     assert parser.columns[2] == ("second", "TEXT")
@@ -77,7 +79,7 @@ def test_set_columns_without_has_primary_column(parser):
     assert parser.columns[5] == ("blank", "INTEGER")
 
 
-def test_set_columns_with_has_primary_column(parsing_table):
+def test_set_columns_with_has_primary_column(parsing_table: tuple[Column, ...]) -> None:
     parser = CSVParser(
         parsing_table=parsing_table,
         table_name="Test",
@@ -91,12 +93,12 @@ def test_set_columns_with_has_primary_column(parsing_table):
     assert parser.columns[4] == ("blank", "INTEGER")
 
 
-def test_insert_statement(parser, row):
+def test_insert_statement(parser: CSVParser, row: list[str]) -> None:
     statement = parser.insert_statement(["?", "?", "?", "?", "?"])
     assert statement == "INSERT INTO Test VALUES (?, ?, ?, ?, ?)"
 
 
-def test_create_table_statement_without_has_primary_column(parser):
+def test_create_table_statement_without_has_primary_column(parser: CSVParser) -> None:
     parser.has_primary_column = False
     statement = parser.create_table_statement()
     assert (
@@ -105,7 +107,9 @@ def test_create_table_statement_without_has_primary_column(parser):
     )
 
 
-def test_create_table_statement_with_has_primary_column(parsing_table):
+def test_create_table_statement_with_has_primary_column(
+    parsing_table: tuple[Column, ...],
+) -> None:
     parser = CSVParser(
         parsing_table=parsing_table,
         table_name="Test",

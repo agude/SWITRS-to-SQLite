@@ -262,7 +262,7 @@ def extract_rows(data: dict, row_indices: list[int]) -> list[str]:
     return rows
 
 
-def main():
+def main() -> None:
     if len(sys.argv) != 4:
         print("Usage: python extract_test_rows.py <collisions> <parties> <victims>")
         sys.exit(1)

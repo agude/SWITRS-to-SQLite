@@ -216,13 +216,13 @@ ROWS = (
 )
 
 
-def test_partyrows():
+def test_partyrows() -> None:
     for row, answer in ROWS:
         parsed_row = PartyRow.parse_row(row)
         assert parsed_row == answer
 
 
-def test_partyrow_create_table():
+def test_partyrow_create_table() -> None:
     assert PartyRow.create_table_statement() == (
         "CREATE TABLE "
         "parties ("
@@ -262,7 +262,7 @@ def test_partyrow_create_table():
     )
 
 
-def test_partyrow_columns():
+def test_partyrow_columns() -> None:
     assert PartyRow.columns == [
         ("id", "INTEGER", "PRIMARY KEY"),
         ("case_id", "TEXT"),

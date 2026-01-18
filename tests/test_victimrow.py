@@ -60,13 +60,13 @@ ROWS = (
 )
 
 
-def test_victimrows():
+def test_victimrows() -> None:
     for row, answer in ROWS:
         parsed_row = VictimRow.parse_row(row)
         assert parsed_row == answer
 
 
-def test_vicitimrow_create_table():
+def test_vicitimrow_create_table() -> None:
     assert VictimRow.create_table_statement() == (
         "CREATE TABLE "
         "victims ("
@@ -85,7 +85,7 @@ def test_vicitimrow_create_table():
     )
 
 
-def test_victimrow_columns():
+def test_victimrow_columns() -> None:
     assert VictimRow.columns == [
         ("id", "INTEGER", "PRIMARY KEY"),
         ("case_id", "TEXT"),
