@@ -89,18 +89,22 @@ VictimRecords.txt \
 The program provides the following help menu when called with `--help`:
 
 ```bash
-usage: switrs_to_sqlite [-h] [-o OUTPUT_FILE]
-                             collision_record party_record victim_record
+usage: switrs_to_sqlite [-h] [--version] [-p {strict,ignore,replace}]
+                        [-o OUTPUT_FILE]
+                        collision_record party_record victim_record
 
-Convert SWITRS text files to a SQLite database
+Convert SWITRS text files to a SQLite3 database
 
 positional arguments:
   collision_record      the CollisionRecords.txt file or the same file gzipped
   party_record          the PartyRecords.txt file or the same file gzipped
   victim_record         the VictimRecords.txt file or the same file gzipped
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  -p {strict,ignore,replace}, --parse-error {strict,ignore,replace}
+                        how to handle parsing errors
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
                         file to save the database to
 ```
