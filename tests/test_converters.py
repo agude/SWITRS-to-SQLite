@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.converters import convert, negative, string_to_bool, county_city_location_to_county, cellphone_use_to_bool, non_standard_str_to_bool
+from switrs_to_sqlite.converters import (
+    cellphone_use_to_bool,
+    convert,
+    county_city_location_to_county,
+    negative,
+    non_standard_str_to_bool,
+    string_to_bool,
+)
 
 
 # Test the convert function
@@ -13,18 +20,18 @@ def test_convert():
         # Standard dtypes
         ("9", int, None, 9),
         ("a", str, None, "a"),
-        ("1", float, None, 1.),
+        ("1", float, None, 1.0),
         # With spaces
         ("9 ", int, None, 9),
         ("a ", str, None, "a"),
-        ("1 ", float, None, 1.),
+        ("1 ", float, None, 1.0),
         (" 9", int, None, 9),
         (" a", str, None, "a"),
-        (" 1", float, None, 1.),
+        (" 1", float, None, 1.0),
         # Nulls that do nothing
         ("9", int, [""], 9),
         ("a", str, [""], "a"),
-        ("1", float, [""], 1.),
+        ("1", float, [""], 1.0),
         # Nulls that return None
         ("9", int, ["9"], None),
         ("a", str, ["a"], None),
@@ -49,18 +56,18 @@ def test_negative():
         # Standard dtypes
         ("9", int, None, -9),
         ("a", str, None, ""),
-        ("1", float, None, -1.),
+        ("1", float, None, -1.0),
         # With spaces
         ("9 ", int, None, -9),
         ("a ", str, None, ""),
-        ("1 ", float, None, -1.),
+        ("1 ", float, None, -1.0),
         (" 9", int, None, -9),
         (" a", str, None, ""),
-        (" 1", float, None, -1.),
+        (" 1", float, None, -1.0),
         # Nulls that do nothing
         ("9", int, [""], -9),
         ("a", str, [""], ""),
-        ("1", float, [""], -1.),
+        ("1", float, [""], -1.0),
         # Nulls that return None
         ("9", int, ["9"], None),
         ("a", str, ["a"], None),

@@ -1,10 +1,10 @@
 from collections import OrderedDict
 from datetime import datetime
 
-from switrs_to_sqlite.datatypes import DataType, DATATPYE_MAP
+from switrs_to_sqlite.datatypes import DATATPYE_MAP
 from switrs_to_sqlite.row_types import (
-    COLLISION_ROW,
     COLLISION_DATE_TABLE,
+    COLLISION_ROW,
     PARTY_ROW,
     VICTIM_ROW,
 )
