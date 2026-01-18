@@ -10,6 +10,7 @@ from switrs_to_sqlite.row_types import (
     PARTY_ROW,
     VICTIM_ROW,
 )
+from switrs_to_sqlite.schema import Column
 
 
 class CSVParser:
@@ -27,27 +28,19 @@ class CSVParser:
             row, as returned by csv.reader().
         table_name (str): The name of the table this parser fills. Used to
             create the table in SQLite.
-        has_primary_column (bool): If True, then the first tuple in the members
-            attribute is set to a "PRIMARY KEY", otherwise a self-incrementing
+        has_primary_column (bool): If True, then the first Column in the
+            parsing_table is set to a "PRIMARY KEY", otherwise a self-incrementing
             index column is created.
-        members (list): A list of tuples indicating how to parse each
-            field in the CSV row. The form of each tuple is as follows:
-                - int: The position of the field to parse.
-                - str: The name to use for the field in the table.
-                - DataType: The type to use to store the field value in the
-                    table.
-                - List OR None: List of additional values to consider NULL.
-                    None if no additional values are needed.
-                - function: A function to convert the value from the string it
-                    is read as to its final form.
+        parsing_table (Sequence[Column]): A sequence of Column objects defining
+            how to parse each field in the CSV row.
 
         Additional attributes are set based on the names provided in the
-        members tuples. They contain the values returned by the function in the
-        tuple.
+        Column objects. They contain the values returned by the converter
+        function.
 
     """
 
-    parsing_table: Sequence[Any]
+    parsing_table: Sequence[Column]
     table_name: str
     has_primary_column: bool
     date_parsing_table: Sequence[tuple[int, str, DataType]] | None
@@ -55,7 +48,7 @@ class CSVParser:
 
     def __init__(
         self,
-        parsing_table: Sequence[Any],
+        parsing_table: Sequence[Column],
         table_name: str,
         has_primary_column: bool,
         date_parsing_table: Sequence[tuple[int, str, DataType]] | None,
@@ -68,8 +61,10 @@ class CSVParser:
             super().__init__(row)
 
         Args:
-            row (list): A list of strings containing the information from the
-                CSV row, as returned by csv.reader().
+            parsing_table: A sequence of Column objects defining the schema.
+            table_name: The name of the SQLite table.
+            has_primary_column: Whether the first column is a primary key.
+            date_parsing_table: Optional date field definitions.
         """
         self.parsing_table = parsing_table
         self.table_name = table_name
@@ -102,20 +97,20 @@ class CSVParser:
             values["PRIMARY_COLUMN"] = None
 
         # Parse each item in the row
-        for i_csv, name, datatype, nulls, func, val_map in self.parsing_table:
-            dtype = self.__datatype_convert[datatype]
+        for col in self.parsing_table:
+            dtype = self.__datatype_convert[col.sql_type]
 
             # Convert the CSV field to a value for SQL using the associated
             # conversion function
-            val = func(val=row[i_csv], nulls=nulls, dtype=dtype)
+            val = col.converter(row[col.index], dtype, col.nulls)
 
-            # If there is a val_map, then use that to convert the value to a
+            # If there is a mapping, then use that to convert the value to a
             # return value. This is mainly used to convert "Enums" in the
             # database into human readable values, like 'A' -> 'Stopped'.
-            if val_map is not None:
-                val = val_map.get(val, val)
+            if col.mapping is not None:
+                val = col.mapping.get(val, val)
 
-            values[name] = val
+            values[col.name] = val
 
         # Convert dates as well
         if self.date_parsing_table:
@@ -168,14 +163,14 @@ class CSVParser:
     def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
-        for i_csv, name, dtype, _, _, _ in self.parsing_table:
-            entry: tuple[str, ...] = (name, dtype.value)
+        for col in self.parsing_table:
+            entry: tuple[str, ...] = (col.name, col.sql_type.value)
 
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
-            if i_csv == 0:
+            if col.index == 0:
                 if self.has_primary_column:
-                    entry = (name, dtype.value, "PRIMARY KEY")
+                    entry = (col.name, col.sql_type.value, "PRIMARY KEY")
                 else:
                     zeroth_id_column: tuple[str, ...] = ("id", "INTEGER", "PRIMARY KEY")
                     self.columns.append(zeroth_id_column)
@@ -198,7 +193,7 @@ class CSVParser:
         # The CSV file is malformed, not ever row is the same length, so we
         # extent it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
-        last_index: int = self.parsing_table[-1][0]
+        last_index: int = self.parsing_table[-1].index
         extend = (last_index + 1) - len(row)
         output_row: list[str] = row + extend * [""]  # "" maps to null
 
