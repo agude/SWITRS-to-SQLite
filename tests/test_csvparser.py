@@ -5,6 +5,7 @@ import pytest
 from switrs_to_sqlite.converters import convert, string_to_bool
 from switrs_to_sqlite.datatypes import DataType
 from switrs_to_sqlite.parsers import CSVParser
+from switrs_to_sqlite.schema import Column
 
 
 @pytest.fixture(scope="module")
@@ -15,11 +16,19 @@ def row():
 @pytest.fixture(scope="module")
 def parsing_table():
     return (
-        (0, "first", DataType.INTEGER, None, convert, None),
-        (1, "second", DataType.TEXT, None, convert, None),
-        (2, "third", DataType.REAL, None, convert, None),
-        (3, "forth", DataType.INTEGER, None, string_to_bool, None),
-        (4, "blank", DataType.INTEGER, (""), convert, None),
+        Column(index=0, name="first", sql_type=DataType.INTEGER, converter=convert),
+        Column(index=1, name="second", sql_type=DataType.TEXT, converter=convert),
+        Column(index=2, name="third", sql_type=DataType.REAL, converter=convert),
+        Column(
+            index=3, name="forth", sql_type=DataType.INTEGER, converter=string_to_bool
+        ),
+        Column(
+            index=4,
+            name="blank",
+            sql_type=DataType.INTEGER,
+            nulls=[""],
+            converter=convert,
+        ),
     )
 
 

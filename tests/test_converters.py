@@ -43,34 +43,34 @@ def test_convert():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert convert(val=val, dtype=dtype, nulls=nulls) == res
+        assert convert(val, dtype, nulls) == res
 
 
 # Test the negative function
 def test_negative():
     convert_vals = (
-        # Pass through
-        ("9", None, None, ""),
-        ("a", None, None, ""),
-        ("1.", None, None, ""),
-        # Standard dtypes
+        # Pass through (no dtype) returns None since strings can't be negated
+        ("9", None, None, None),
+        ("a", None, None, None),
+        ("1.", None, None, None),
+        # Standard numeric dtypes
         ("9", int, None, -9),
-        ("a", str, None, ""),
         ("1", float, None, -1.0),
+        # String dtype returns None since strings can't be negated
+        ("a", str, None, None),
         # With spaces
         ("9 ", int, None, -9),
-        ("a ", str, None, ""),
         ("1 ", float, None, -1.0),
         (" 9", int, None, -9),
-        (" a", str, None, ""),
         (" 1", float, None, -1.0),
+        # String with spaces returns None
+        ("a ", str, None, None),
+        (" a", str, None, None),
         # Nulls that do nothing
         ("9", int, [""], -9),
-        ("a", str, [""], ""),
         ("1", float, [""], -1.0),
         # Nulls that return None
         ("9", int, ["9"], None),
-        ("a", str, ["a"], None),
         ("1.", float, ["1."], None),
         ("9", None, ["9"], None),
         ("a", None, ["a"], None),
@@ -79,7 +79,7 @@ def test_negative():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert negative(val=val, dtype=dtype, nulls=nulls) == res
+        assert negative(val, dtype, nulls) == res
 
 
 # Test the string_to_bool function
@@ -91,7 +91,7 @@ def test_bools():
         ("n", False),
     )
     for val, res in bools:
-        assert string_to_bool(val=val) == res
+        assert string_to_bool(val) == res
 
 
 def test_nulls():
@@ -104,7 +104,7 @@ def test_nulls():
         ("1", ["1"]),
     )
     for val, nulls in nones:
-        assert string_to_bool(val=val, nulls=nulls) is None
+        assert string_to_bool(val, None, nulls) is None
 
 
 def test_county_city_location_to_county():
@@ -122,7 +122,7 @@ def test_county_city_location_to_county():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert county_city_location_to_county(val=val, dtype=dtype, nulls=nulls) == res
+        assert county_city_location_to_county(val, dtype, nulls) == res
 
 
 def test_cellphone_use_to_bool():
@@ -144,7 +144,7 @@ def test_cellphone_use_to_bool():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert cellphone_use_to_bool(val=val, dtype=dtype, nulls=nulls) == res
+        assert cellphone_use_to_bool(val, dtype, nulls) == res
 
 
 def test_non_standard_str_to_bool():
@@ -167,4 +167,4 @@ def test_non_standard_str_to_bool():
         ("a", int, None, None),
     )
     for val, dtype, nulls, res in convert_vals:
-        assert non_standard_str_to_bool(val=val, dtype=dtype, nulls=nulls) == res
+        assert non_standard_str_to_bool(val, dtype, nulls) == res

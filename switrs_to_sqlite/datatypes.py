@@ -13,7 +13,7 @@ class DataType(Enum):
 
 
 # Conversion from SQLite data types to Python data types
-DATATPYE_MAP = {
+DATATPYE_MAP: dict[DataType, type[int] | type[float] | type[str] | None] = {
     DataType.INTEGER: int,
     DataType.REAL: float,
     DataType.TEXT: str,

@@ -1,7 +1,8 @@
 import gzip
+from typing import TextIO
 
 
-def open_record_file(file_name, errors=None):
+def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
     """Open a Record file, even if GZipped.
 
     Args:

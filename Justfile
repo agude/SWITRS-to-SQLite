@@ -22,8 +22,12 @@ format:
 format-check:
     uv run ruff format --check .
 
+# Run type checking
+type-check:
+    uv run mypy switrs_to_sqlite/
+
 # Run all checks (CI)
-check: lint format-check test
+check: lint format-check type-check test
 
 # Build package
 build:
