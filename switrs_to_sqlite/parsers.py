@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from collections.abc import Sequence
 from datetime import datetime
+from typing import Any
 
-from switrs_to_sqlite.datatypes import DATATPYE_MAP
+from switrs_to_sqlite.datatypes import DATATPYE_MAP, DataType
 from switrs_to_sqlite.row_types import (
     COLLISION_DATE_TABLE,
     COLLISION_ROW,
@@ -45,9 +47,19 @@ class CSVParser:
 
     """
 
+    parsing_table: Sequence[Any]
+    table_name: str
+    has_primary_column: bool
+    date_parsing_table: Sequence[tuple[int, str, DataType]] | None
+    columns: list[tuple[str, ...]]
+
     def __init__(
-        self, parsing_table, table_name, has_primary_column, date_parsing_table
-    ):
+        self,
+        parsing_table: Sequence[Any],
+        table_name: str,
+        has_primary_column: bool,
+        date_parsing_table: Sequence[tuple[int, str, DataType]] | None,
+    ) -> None:
         """Set up the class and parse the CSV row.
 
         This method should be called by all derived classes within their own
@@ -69,7 +81,7 @@ class CSVParser:
         # Set up column names
         self.__set_columns()
 
-    def parse_row(self, row):
+    def parse_row(self, row: list[str]) -> list[Any]:
         # The CSV file is malformed, so extend it to avoid KeyErrors
         extended_row = self.__extend_row(row)
 
@@ -78,12 +90,12 @@ class CSVParser:
 
         return list(values.values())
 
-    def __set_values(self, row):
+    def __set_values(self, row: list[str]) -> OrderedDict[str, Any]:
         """Creates a list of the attributes set in set_variables() in the
         proper order for reading into the SQLite table.
 
         """
-        values = OrderedDict()
+        values: OrderedDict[str, Any] = OrderedDict()
         # If there is no column in the data that is a primary key, than we have
         # to add an automatic first column which needs a NULL inserted
         if not self.has_primary_column:
@@ -113,20 +125,28 @@ class CSVParser:
 
         return values
 
-    def __convert_date(self, row, test_name):
+    def __convert_date(self, row: list[str], test_name: str) -> str | None:
         # Set up the processing date
+        if self.date_parsing_table is None:
+            return None
         for i, name, _ in self.date_parsing_table:
             if name == test_name:
                 obj = datetime.strptime(row[i], "%Y%m%d")
                 return obj.date().isoformat()
+        return None
 
-    def __convert_time(self, row):
+    def __convert_time(self, row: list[str]) -> str | None:
         # Find the correct index for the
-        index = None
+        index: int | None = None
+        if self.date_parsing_table is None:
+            return None
         for i, name, _ in self.date_parsing_table:
             if name == "collision_time":
                 index = i
                 break
+
+        if index is None:
+            return None
 
         # Set up the collision time
         # 2500 is used as NULL in the source
@@ -145,11 +165,11 @@ class CSVParser:
 
         return time
 
-    def __set_columns(self):
+    def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
         for i_csv, name, dtype, _, _, _ in self.parsing_table:
-            entry = (name, dtype.value)
+            entry: tuple[str, ...] = (name, dtype.value)
 
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
@@ -157,7 +177,7 @@ class CSVParser:
                 if self.has_primary_column:
                     entry = (name, dtype.value, "PRIMARY KEY")
                 else:
-                    zeroth_id_column = ("id", "INTEGER", "PRIMARY KEY")
+                    zeroth_id_column: tuple[str, ...] = ("id", "INTEGER", "PRIMARY KEY")
                     self.columns.append(zeroth_id_column)
 
             # Add the entry
@@ -168,7 +188,7 @@ class CSVParser:
             for _, name, dtype in self.date_parsing_table:
                 self.columns.append((name, dtype.value))
 
-    def __extend_row(self, row):
+    def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
 
         Some rows in the CSV are incomplete and are missing columns at the end.
@@ -178,12 +198,13 @@ class CSVParser:
         # The CSV file is malformed, not ever row is the same length, so we
         # extent it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
-        extend = (self.parsing_table[-1][0] + 1) - len(row)
-        output_row = row + extend * [""]  # "" maps to null
+        last_index: int = self.parsing_table[-1][0]
+        extend = (last_index + 1) - len(row)
+        output_row: list[str] = row + extend * [""]  # "" maps to null
 
         return output_row
 
-    def insert_statement(self, values):
+    def insert_statement(self, values: list[Any]) -> str:
         """Creates an insert statement used to fill a row in the SQLite
         table."""
         vals = ["?"] * len(values)
@@ -193,7 +214,7 @@ class CSVParser:
 
         return query
 
-    def create_table_statement(self):
+    def create_table_statement(self) -> str:
         """Creates a string that can be used to create the correct table in SQLite.
 
         Use as follows:
@@ -213,7 +234,7 @@ class CSVParser:
         )
 
 
-VictimRow = CSVParser(
+VictimRow: CSVParser = CSVParser(
     parsing_table=VICTIM_ROW,
     table_name="victims",
     has_primary_column=False,
@@ -221,7 +242,7 @@ VictimRow = CSVParser(
 )
 
 
-PartyRow = CSVParser(
+PartyRow: CSVParser = CSVParser(
     parsing_table=PARTY_ROW,
     table_name="parties",
     has_primary_column=False,
@@ -229,7 +250,7 @@ PartyRow = CSVParser(
 )
 
 
-CollisionRow = CSVParser(
+CollisionRow: CSVParser = CSVParser(
     parsing_table=COLLISION_ROW,
     table_name="collisions",
     has_primary_column=True,

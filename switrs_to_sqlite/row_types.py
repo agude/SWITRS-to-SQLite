@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any, TypeAlias
+
 import switrs_to_sqlite.make_map as mm
 import switrs_to_sqlite.value_maps as vm
 from switrs_to_sqlite.converters import (
@@ -10,7 +13,21 @@ from switrs_to_sqlite.converters import (
 )
 from switrs_to_sqlite.datatypes import DataType
 
-DEFAULT_NULLS = ["", "-"]
+# Type aliases for field definitions
+FieldDefinition: TypeAlias = tuple[
+    int,
+    str,
+    DataType,
+    list[str] | None,
+    Callable[..., Any],
+    dict[str, str | None] | None,
+]
+ParsingTable: TypeAlias = tuple[FieldDefinition, ...]
+
+DateFieldDefinition: TypeAlias = tuple[int, str, DataType]
+DateParsingTable: TypeAlias = tuple[DateFieldDefinition, ...]
+
+DEFAULT_NULLS: list[str] = ["", "-"]
 
 COLLISION_ROW = (
     (0, "case_id", DataType.TEXT, None, convert, None),

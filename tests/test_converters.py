@@ -49,28 +49,28 @@ def test_convert():
 # Test the negative function
 def test_negative():
     convert_vals = (
-        # Pass through
-        ("9", None, None, ""),
-        ("a", None, None, ""),
-        ("1.", None, None, ""),
-        # Standard dtypes
+        # Pass through (no dtype) returns None since strings can't be negated
+        ("9", None, None, None),
+        ("a", None, None, None),
+        ("1.", None, None, None),
+        # Standard numeric dtypes
         ("9", int, None, -9),
-        ("a", str, None, ""),
         ("1", float, None, -1.0),
+        # String dtype returns None since strings can't be negated
+        ("a", str, None, None),
         # With spaces
         ("9 ", int, None, -9),
-        ("a ", str, None, ""),
         ("1 ", float, None, -1.0),
         (" 9", int, None, -9),
-        (" a", str, None, ""),
         (" 1", float, None, -1.0),
+        # String with spaces returns None
+        ("a ", str, None, None),
+        (" a", str, None, None),
         # Nulls that do nothing
         ("9", int, [""], -9),
-        ("a", str, [""], ""),
         ("1", float, [""], -1.0),
         # Nulls that return None
         ("9", int, ["9"], None),
-        ("a", str, ["a"], None),
         ("1.", float, ["1."], None),
         ("9", None, ["9"], None),
         ("a", None, ["a"], None),

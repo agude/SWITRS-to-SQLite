@@ -1,4 +1,8 @@
 from enum import Enum, unique
+from typing import TypeAlias
+
+# Type for the MAKE_MAP dictionary values (str or None)
+MakeMapValue: TypeAlias = str | None
 
 
 @unique
@@ -85,7 +89,7 @@ class Make(Enum):
     YAMAHA = "yamaha"
 
 
-MAKE_MAP = {
+MAKE_MAP: dict[str, MakeMapValue] = {
     "(UNK)": Make.NONE.value,
     "--": Make.NONE.value,
     "---": Make.NONE.value,

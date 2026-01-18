@@ -1,4 +1,4 @@
-MOVEMENT_PRECEDING = {
+MOVEMENT_PRECEDING: dict[str, str] = {
     "A": "stopped",
     "B": "proceeding straight",
     "C": "ran off road",
@@ -19,7 +19,7 @@ MOVEMENT_PRECEDING = {
     "R": "other",
 }
 
-STATEWIDE_VEHICLE_TYPE = {
+STATEWIDE_VEHICLE_TYPE: dict[str, str] = {
     "A": "passenger car",
     "B": "passenger car with trailer",
     "C": "motorcycle or scooter",
@@ -37,7 +37,7 @@ STATEWIDE_VEHICLE_TYPE = {
     "O": "moped",
 }
 
-DEGREE_OF_INJURY = {
+DEGREE_OF_INJURY: dict[str, str] = {
     "0": "no injury",
     "1": "killed",
     "2": "severe injury",
@@ -48,7 +48,7 @@ DEGREE_OF_INJURY = {
     "7": "possible injury",
 }
 
-PARTY_TYPE = {
+PARTY_TYPE: dict[str, str] = {
     "1": "driver",
     "2": "pedestrian",
     "3": "parked vehicle",
@@ -56,12 +56,12 @@ PARTY_TYPE = {
     "5": "other",
 }
 
-SEX = {
+SEX: dict[str, str] = {
     "M": "male",
     "F": "female",
 }
 
-WEATHER = {
+WEATHER: dict[str, str] = {
     "A": "clear",
     "B": "cloudy",
     "C": "raining",
@@ -71,7 +71,7 @@ WEATHER = {
     "G": "wind",
 }
 
-BEAT_TYPE = {
+BEAT_TYPE: dict[str, str] = {
     "0": "not chp",
     "1": "chp state highway",
     "2": "chp county roadline",
@@ -83,7 +83,7 @@ BEAT_TYPE = {
     "8": "other public access",
 }
 
-CHP_BEAT_TYPE = {
+CHP_BEAT_TYPE: dict[str, str] = {
     "0": "not chp",
     "1": "interstate",
     "2": "us highway",
@@ -100,7 +100,7 @@ CHP_BEAT_TYPE = {
     "A": "administrative",
 }
 
-COLLISION_TYPE = {
+COLLISION_TYPE: dict[str, str] = {
     "A": "head-on",
     "B": "sideswipe",
     "C": "rear end",
@@ -111,7 +111,7 @@ COLLISION_TYPE = {
     "H": "other",
 }
 
-INVOLVED_WITH = {
+INVOLVED_WITH: dict[str, str] = {
     "A": "non-collision",
     "B": "pedestrian",
     "C": "other motor vehicle",
@@ -124,7 +124,7 @@ INVOLVED_WITH = {
     "J": "other object",
 }
 
-PEDESTRIAN_ACTION = {
+PEDESTRIAN_ACTION: dict[str, str] = {
     "A": "no pedestrian involved",
     "B": "crossing in intersection crosswalk",
     "C": "crossing non-intersection crosswalk",
@@ -134,39 +134,39 @@ PEDESTRIAN_ACTION = {
     "G": "using school bus",
 }
 
-DIRECTION = {
+DIRECTION: dict[str, str] = {
     "N": "north",
     "E": "east",
     "S": "south",
     "W": "west",
 }
 
-LOCATION_TYPE = {
+LOCATION_TYPE: dict[str, str] = {
     "H": "highway",
     "I": "intersection",
     "R": "ramp",
 }
 
-CHP_BEAT_CLASS = {
+CHP_BEAT_CLASS: dict[str, str] = {
     "1": "chp primary",
     "2": "chp other",
     "0": "not chp",
 }
 
-HIT_AND_RUN = {
+HIT_AND_RUN: dict[str, str] = {
     "F": "felony",
     "M": "misdemeanor",
     "N": "not hit and run",
 }
 
-ROAD_SURFACE = {
+ROAD_SURFACE: dict[str, str] = {
     "A": "dry",
     "B": "wet",
     "C": "snowy",
     "D": "slippery",
 }
 
-ROAD_CONDITION = {
+ROAD_CONDITION: dict[str, str] = {
     "A": "holes",
     "B": "loose material",
     "C": "obstruction",
@@ -177,7 +177,7 @@ ROAD_CONDITION = {
     "H": "normal",
 }
 
-LIGHTING = {
+LIGHTING: dict[str, str] = {
     "A": "daylight",
     "B": "dusk or dawn",
     "C": "dark with street lights",
@@ -185,21 +185,21 @@ LIGHTING = {
     "E": "dark with street lights not functioning",
 }
 
-CONTROL_DEVICE = {
+CONTROL_DEVICE: dict[str, str] = {
     "A": "functioning",
     "B": "not functioning",
     "C": "obscured",
     "D": "none",
 }
 
-SIDE_OF_HIGHWAY = {
+SIDE_OF_HIGHWAY: dict[str, str] = {
     "N": "northbound",
     "S": "southbound",
     "E": "eastbound",
     "W": "westbound",
 }
 
-PRIMARY_COLLISION_FACTOR = {
+PRIMARY_COLLISION_FACTOR: dict[str, str] = {
     "A": "vehicle code violation",
     "B": "other improper driving",
     "C": "other than driver",
@@ -207,7 +207,7 @@ PRIMARY_COLLISION_FACTOR = {
     "E": "fell asleep",
 }
 
-PCF_VIOLATION_CODE = {
+PCF_VIOLATION_CODE: dict[str, str] = {
     "B": "business",
     "C": "vehicle",
     "H": "city health",
@@ -218,7 +218,7 @@ PCF_VIOLATION_CODE = {
     "W": "welfare",
 }
 
-RACE = {
+RACE: dict[str, str] = {
     "A": "asian",
     "B": "black",
     "H": "hispanic",
@@ -226,7 +226,7 @@ RACE = {
     "W": "white",
 }
 
-COLLISION_SEVERITY = {
+COLLISION_SEVERITY: dict[str, str] = {
     "0": "property damage only",
     "1": "fatal",
     "2": "severe injury",
@@ -234,7 +234,7 @@ COLLISION_SEVERITY = {
     "4": "pain",
 }
 
-PCF_VIOLATION_CATEGORY = {
+PCF_VIOLATION_CATEGORY: dict[str, str] = {
     "00": "unknown",
     "01": "dui",
     "02": "impeding traffic",
@@ -260,7 +260,7 @@ PCF_VIOLATION_CATEGORY = {
     "24": "fell asleep",
 }
 
-COUNTIES = {
+COUNTIES: dict[str, str] = {
     "01": "alameda",
     "02": "alpine",
     "03": "amador",
@@ -321,7 +321,7 @@ COUNTIES = {
     "58": "yuba",
 }
 
-CALTRANS_COUNTY = {
+CALTRANS_COUNTY: dict[str, str] = {
     "ALA": "alameda",
     "ALP": "alpine",
     "AMA": "amador",
@@ -382,7 +382,7 @@ CALTRANS_COUNTY = {
     "YUB": "yuba",
 }
 
-CHP_VEHICLE_TYPE = {
+CHP_VEHICLE_TYPE: dict[str, str] = {
     "01": "passenger car, station",
     "02": "motorcycle",
     "03": "motor driven",
@@ -472,7 +472,7 @@ CHP_VEHICLE_TYPE = {
     "99": "unknown hit and run vehicle involvement",
 }
 
-CELLPHONE_USE_TYPE = {
+CELLPHONE_USE_TYPE: dict[str, str] = {
     "B": "cellphone in use",
     "C": "cellphone not in use",
     "D": "no cellphone/unknown",
@@ -481,7 +481,7 @@ CELLPHONE_USE_TYPE = {
     "3": "cellphone not in use",
 }
 
-SOBRIETY = {
+SOBRIETY: dict[str, str] = {
     "A": "had not been drinking",
     "B": "had been drinking, under influence",
     "C": "had been drinking, not under influence",
@@ -490,14 +490,14 @@ SOBRIETY = {
     "H": "not applicable",
 }
 
-DRUG = {
+DRUG: dict[str, str] = {
     "E": "under drug influence",
     "F": "impairment - physical",
     "H": "not applicable",
     "I": "sleepy/fatigued",
 }
 
-SAFETY = {
+SAFETY: dict[str, str] = {
     "A": "none in vehicle",
     "B": "unknown",
     "C": "lap belt used",
@@ -523,14 +523,14 @@ SAFETY = {
     "Y": "passenger, motorcycle helmet used",
 }
 
-FINANCIAL = {
+FINANCIAL: dict[str, str] = {
     "N": "no proof of insurance obtained",
     "Y": "proof of insurance obtained",
     "O": "not applicable",
     "E": "officer called away before obtained",
 }
 
-OAF_VIOLATION_CODE = {
+OAF_VIOLATION_CODE: dict[str, str] = {
     "B": "business and professions",
     "C": "vehicle",
     "H": "city health and safety",
@@ -541,7 +541,7 @@ OAF_VIOLATION_CODE = {
     "W": "welfare and institutions",
 }
 
-OAF_VIOLATION_CATEGORY = {
+OAF_VIOLATION_CATEGORY: dict[str, str] = {
     "01": "under influence in public (647f)",
     "02": "county ordinance",
     "03": "city ordinance",
@@ -591,7 +591,7 @@ OAF_VIOLATION_CATEGORY = {
     "63": "seat belt (equipment)",
 }
 
-OTHER_FACTOR = {
+OTHER_FACTOR: dict[str, str] = {
     "A": "violation",
     "E": "vision obscurements",
     "F": "inattention",
@@ -616,7 +616,7 @@ OTHER_FACTOR = {
     "Y": "inattention, other",
 }
 
-SEATING_POSITION = {
+SEATING_POSITION: dict[str, str] = {
     "1": "driver",
     "2": "passenger seat 2",
     "3": "passenger seat 3",
@@ -629,14 +629,14 @@ SEATING_POSITION = {
     "0": "other occupants",
 }
 
-EJECTED = {
+EJECTED: dict[str, str] = {
     "0": "not ejected",
     "1": "fully ejected",
     "2": "partially ejected",
     "3": "unknown",
 }
 
-ROLE = {
+ROLE: dict[str, str] = {
     "1": "driver",
     "2": "passenger",
     "3": "pedestrian",
@@ -645,7 +645,7 @@ ROLE = {
     "6": "non-injured party",
 }
 
-CHP_SHIFT = {
+CHP_SHIFT: dict[str, str] = {
     "1": "0600 thru 1359",
     "2": "1400 thru 2159",
     "3": "2200 thru 0559",
@@ -653,7 +653,7 @@ CHP_SHIFT = {
     "5": "not chp",
 }
 
-POPULATION = {
+POPULATION: dict[str, str] = {
     "1": "<2500",
     "2": "2500 to 10000",
     "3": "10000 to 25000",
@@ -665,7 +665,7 @@ POPULATION = {
     "0": "university",
 }
 
-RAMP_INTERSECTION = {
+RAMP_INTERSECTION: dict[str, str] = {
     "1": "ramp exit, last 50 feet",
     "2": "mid-ramp",
     "3": "ramp entry, first 50 feet",
@@ -676,7 +676,7 @@ RAMP_INTERSECTION = {
     "8": "not state highway",
 }
 
-RAMP_TYPE = {
+RAMP_TYPE: dict[str, str] = {
     "EF": "eastbound off-ramp",
     "EO": "eastbound on-ramp",
     "NF": "northbound off-ramp",
