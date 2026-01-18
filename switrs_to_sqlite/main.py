@@ -3,12 +3,16 @@
 import argparse
 import csv
 import sqlite3
+from typing import Any
 
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import CollisionRow, CSVParser, PartyRow, VictimRow
 
 # Library version
 __version__: str = "4.3.0"
+
+# Number of rows to batch before inserting
+BATCH_SIZE: int = 100_000
 
 
 def main() -> None:
@@ -55,7 +59,7 @@ def main() -> None:
     args = argparser.parse_args()
 
     # Match the parsers with the files they read
-    pairs = (
+    pairs: tuple[tuple[CSVParser, str], ...] = (
         (CollisionRow, args.collision_record),
         (PartyRow, args.party_record),
         (VictimRow, args.victim_record),
@@ -71,10 +75,26 @@ def main() -> None:
                 reader = csv.reader(f)
                 next(reader)  # Skip the header
 
-                # Parse each row and insert it into the database
+                # Parse rows in batches for performance
+                insert_stmt: str | None = None
+                batch: list[list[Any]] = []
+
                 for row in reader:
                     parsed_row = RowClass.parse_row(row)
-                    con.execute(RowClass.insert_statement(parsed_row), parsed_row)
+
+                    # Generate insert statement on first row
+                    if insert_stmt is None:
+                        insert_stmt = RowClass.insert_statement(parsed_row)
+
+                    batch.append(parsed_row)
+
+                    if len(batch) >= BATCH_SIZE:
+                        con.executemany(insert_stmt, batch)
+                        batch = []
+
+                # Insert remaining rows
+                if batch and insert_stmt is not None:
+                    con.executemany(insert_stmt, batch)
 
 
 if __name__ == "__main__":
