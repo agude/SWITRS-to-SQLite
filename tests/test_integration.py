@@ -7,6 +7,7 @@ comparing output against a golden snapshot file.
 import json
 import sqlite3
 from pathlib import Path
+from typing import Any
 
 from switrs_to_sqlite.main import main
 
@@ -20,10 +21,11 @@ PARTIES_HEADER = "CASE_ID,PARTY_NUMBER,PARTY_TYPE,AT_FAULT,PARTY_SEX,PARTY_AGE,P
 VICTIMS_HEADER = "CASE_ID,PARTY_NUMBER,VICTIM_ROLE,VICTIM_SEX,VICTIM_AGE,VICTIM_DEGREE_OF_INJURY,VICTIM_SEATING_POSITION,VICTIM_SAFETY_EQUIP_1,VICTIM_SAFETY_EQUIP_2,VICTIM_EJECTED"
 
 
-def load_golden_data() -> dict:
+def load_golden_data() -> dict[str, Any]:
     """Load expected data from golden snapshot JSON file."""
     with open(GOLDEN_SNAPSHOT) as f:
-        return json.load(f)
+        result: dict[str, Any] = json.load(f)
+        return result
 
 
 def test_end_to_end(tmp_path: Path) -> None:
