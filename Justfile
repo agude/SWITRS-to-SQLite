@@ -24,7 +24,7 @@ format-check:
 
 # Run type checking
 type-check:
-    uv run mypy switrs_to_sqlite/ tests/ scripts/
+    uv run mypy src/switrs_to_sqlite/ tests/ scripts/
 
 # Run all checks (CI)
 check: lint format-check type-check test

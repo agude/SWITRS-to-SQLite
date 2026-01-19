@@ -39,7 +39,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Type check
-        run: uv run mypy switrs_to_sqlite/
+        run: uv run mypy src/switrs_to_sqlite/
 
       - name: Test
         run: uv run pytest -vv
