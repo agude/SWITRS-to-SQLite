@@ -43,15 +43,23 @@ class CSVParser:
     parsing_table: Sequence[Column]
     table_name: str
     has_primary_column: bool
-    date_parsing_table: Sequence[tuple[int, str, DataType]] | None
+    date_parsing_table: Sequence[tuple[str, str, DataType]] | None
     columns: list[tuple[str, ...]]
+    _resolved_indices: dict[str, int]
+    _date_indices: dict[str, int]
+    _ordered_indices: list[int]
+    # Pre-calculated indices for date columns (avoids iteration/string comparison per row)
+    _collision_date_idx: int | None
+    _collision_time_idx: int | None
+    _process_date_idx: int | None
+    _max_index: int
 
     def __init__(
         self,
         parsing_table: Sequence[Column],
         table_name: str,
         has_primary_column: bool,
-        date_parsing_table: Sequence[tuple[int, str, DataType]] | None,
+        date_parsing_table: Sequence[tuple[str, str, DataType]] | None,
     ) -> None:
         """Set up the class and parse the CSV row.
 
@@ -70,13 +78,105 @@ class CSVParser:
         self.table_name = table_name
         self.has_primary_column = has_primary_column
         self.date_parsing_table = date_parsing_table
+        self._resolved_indices = {}
+        self._date_indices = {}
+        self._ordered_indices = []
+        self._collision_date_idx = None
+        self._collision_time_idx = None
+        self._process_date_idx = None
+        self._max_index = 0
 
         self.__datatype_convert = DATATPYE_MAP
 
         # Set up column names
         self.__set_columns()
 
+    def resolve_indices(self, header_row: list[str]) -> dict[str, int]:
+        """Build header-to-index mapping from CSV header row.
+
+        Handles:
+        - BOM stripping from first column
+        - Case-insensitive matching (all headers lowercased)
+
+        Args:
+            header_row: The first row of the CSV file containing headers.
+
+        Returns:
+            The header-to-index mapping for all headers in the file.
+
+        Raises:
+            ValueError: If a required column header is missing or duplicated.
+        """
+        # BOM is handled by open_record_file using utf-8-sig encoding
+
+        # Check for duplicate headers (case-insensitive)
+        seen: dict[str, int] = {}
+        for i, h in enumerate(header_row):
+            normalized = h.lower()
+            if normalized in seen:
+                raise ValueError(
+                    f"Duplicate column header '{h}' at indices {seen[normalized]} and {i}"
+                )
+            seen[normalized] = i
+
+        # Use the already-built mapping
+        header_map = seen
+
+        # Resolve indices for parsing_table columns
+        # (col.header is already lowercase via __post_init__)
+        self._resolved_indices = {}
+        for col in self.parsing_table:
+            if col.header not in header_map:
+                raise ValueError(f"Missing expected column: {col.header}")
+            self._resolved_indices[col.header] = header_map[col.header]
+
+        # Pre-calculate ordered indices aligned with parsing_table for faster
+        # row parsing (avoids dict lookup per column per row)
+        self._ordered_indices = [
+            self._resolved_indices[col.header] for col in self.parsing_table
+        ]
+
+        # Resolve indices for date columns (normalize header here too)
+        # Also pre-calculate specific indices to avoid iteration in convert methods
+        if self.date_parsing_table:
+            self._date_indices = {}
+            for header, db_name, _ in self.date_parsing_table:
+                normalized = header.lower()
+                if normalized not in header_map:
+                    raise ValueError(f"Missing expected date column: {header}")
+                idx = header_map[normalized]
+                self._date_indices[normalized] = idx
+                # Pre-calculate specific indices for date conversion methods
+                if db_name == "collision_date":
+                    self._collision_date_idx = idx
+                elif db_name == "collision_time":
+                    self._collision_time_idx = idx
+                elif db_name == "process_date":
+                    self._process_date_idx = idx
+
+        # Pre-calculate max index for row extension (performance optimization:
+        # avoid recalculating max() for every row in multi-million row files)
+        self._max_index = max(self._resolved_indices.values())
+        if self._date_indices:
+            self._max_index = max(self._max_index, max(self._date_indices.values()))
+
+        return header_map
+
     def parse_row(self, row: list[str]) -> list[Any]:
+        """Parse a CSV row into a list of values for database insertion.
+
+        Args:
+            row: A CSV row as a list of strings.
+
+        Returns:
+            A list of converted values ready for database insertion.
+
+        Raises:
+            RuntimeError: If resolve_indices has not been called first.
+        """
+        if not self._resolved_indices:
+            raise RuntimeError("resolve_indices must be called before parsing rows")
+
         # The CSV file is malformed, so extend it to avoid KeyErrors
         extended_row = self.__extend_row(row)
 
@@ -96,13 +196,13 @@ class CSVParser:
         if not self.has_primary_column:
             values["PRIMARY_COLUMN"] = None
 
-        # Parse each item in the row
-        for col in self.parsing_table:
+        # Parse each item in the row using pre-calculated indices
+        for col, idx in zip(self.parsing_table, self._ordered_indices, strict=True):
             dtype = self.__datatype_convert[col.sql_type]
 
             # Convert the CSV field to a value for SQL using the associated
             # conversion function
-            val = col.converter(row[col.index], dtype, col.nulls)
+            val = col.converter(row[idx], dtype, col.nulls)
 
             # If there is a mapping, then use that to convert the value to a
             # return value. This is mainly used to convert "Enums" in the
@@ -120,32 +220,29 @@ class CSVParser:
 
         return values
 
-    def __convert_date(self, row: list[str], test_name: str) -> str | None:
-        # Set up the processing date
-        if self.date_parsing_table is None:
+    def __convert_date(self, row: list[str], date_type: str) -> str | None:
+        # Use pre-calculated indices (avoids iteration per row)
+        if date_type == "collision_date":
+            idx = self._collision_date_idx
+        elif date_type == "process_date":
+            idx = self._process_date_idx
+        else:
             return None
-        for i, name, _ in self.date_parsing_table:
-            if name == test_name:
-                obj = datetime.strptime(row[i], "%Y%m%d")
-                return obj.date().isoformat()
-        return None
+
+        if idx is None:
+            return None
+
+        obj = datetime.strptime(row[idx], "%Y%m%d")
+        return obj.date().isoformat()
 
     def __convert_time(self, row: list[str]) -> str | None:
-        # Find the correct index for the
-        index: int | None = None
-        if self.date_parsing_table is None:
-            return None
-        for i, name, _ in self.date_parsing_table:
-            if name == "collision_time":
-                index = i
-                break
-
-        if index is None:
+        # Use pre-calculated index (avoids iteration per row)
+        if self._collision_time_idx is None:
             return None
 
         # Set up the collision time
         # 2500 is used as NULL in the source
-        collision_time_str = row[index]
+        collision_time_str = row[self._collision_time_idx]
         if collision_time_str == "2500":
             time = None
         else:
@@ -163,17 +260,19 @@ class CSVParser:
     def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
         self.columns = []
+        is_first = True
         for col in self.parsing_table:
             entry: tuple[str, ...] = (col.name, col.sql_type.value)
 
             # The first item is special, it is either the "PRIMARY KEY", or we
             # need to add an ID column before it
-            if col.index == 0:
+            if is_first:
                 if self.has_primary_column:
                     entry = (col.name, col.sql_type.value, "PRIMARY KEY")
                 else:
                     zeroth_id_column: tuple[str, ...] = ("id", "INTEGER", "PRIMARY KEY")
                     self.columns.append(zeroth_id_column)
+                is_first = False
 
             # Add the entry
             self.columns.append(entry)
@@ -190,14 +289,14 @@ class CSVParser:
         This function pads these rows with NULLs so they parse correctly.
 
         """
-        # The CSV file is malformed, not ever row is the same length, so we
-        # extent it with "" which maps to null in the conversion. The +1
+        # The CSV file is malformed, not every row is the same length, so we
+        # extend it with "" which maps to null in the conversion. The +1
         # converts the final index to length.
-        last_index: int = self.parsing_table[-1].index
-        extend = (last_index + 1) - len(row)
-        output_row: list[str] = row + extend * [""]  # "" maps to null
-
-        return output_row
+        # Uses pre-calculated _max_index from resolve_indices() for performance.
+        extend = (self._max_index + 1) - len(row)
+        if extend > 0:
+            return row + [""] * extend
+        return row
 
     def insert_statement(self, values: list[Any]) -> str:
         """Creates an insert statement used to fill a row in the SQLite

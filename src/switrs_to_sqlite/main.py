@@ -8,7 +8,7 @@ from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 # Library version
-__version__: str = "4.4.0"
+__version__: str = "4.5.0"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -71,19 +71,26 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     with sqlite3.connect(args.output_file) as con:
-        for RowClass, file_name in pairs:
+        for row_parser, file_name in pairs:
             # Add the table to the database
-            con.execute(RowClass.create_table_statement())
+            con.execute(row_parser.create_table_statement())
 
             # Read in the CSV and process each row
             with open_record_file(file_name, errors=args.parse_error) as f:
                 reader = csv.reader(f)
-                next(reader)  # Skip the header
+                try:
+                    header_row = next(reader)
+                except StopIteration:
+                    # Empty file (or only BOM), skip to next file
+                    continue
+
+                # Resolve header-to-index mapping once per file
+                row_parser.resolve_indices(header_row)
 
                 # Parse each row and insert it into the database
                 for row in reader:
-                    parsed_row = RowClass.parse_row(row)
-                    con.execute(RowClass.insert_statement(parsed_row), parsed_row)
+                    parsed_row = row_parser.parse_row(row)
+                    con.execute(row_parser.insert_statement(parsed_row), parsed_row)
 
 
 if __name__ == "__main__":
