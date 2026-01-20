@@ -10,6 +10,7 @@ def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
             be read a gzipped file, otherwise it will be assumed to be text.
 
     """
+    # Use utf-8-sig to automatically handle BOM if present
     if file_name.endswith(".gz"):
-        return gzip.open(file_name, "rt", errors=errors)
-    return open(file_name, errors=errors)
+        return gzip.open(file_name, "rt", encoding="utf-8-sig", errors=errors)
+    return open(file_name, encoding="utf-8-sig", errors=errors)

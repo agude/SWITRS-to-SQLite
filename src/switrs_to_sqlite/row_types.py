@@ -14,14 +14,15 @@ from switrs_to_sqlite.datatypes import DataType
 from switrs_to_sqlite.schema import Column
 
 # Type alias for date field definitions (kept as tuples - simpler structure)
-DateFieldDefinition = tuple[int, str, DataType]
+# (header, db_name, DataType)
+DateFieldDefinition = tuple[str, str, DataType]
 DateParsingTable = tuple[DateFieldDefinition, ...]
 
 DEFAULT_NULLS: set[str] = {"", "-"}
 
 COLLISION_ROW: Sequence[Column] = (
     Column(
-        index=0,
+        header="CASE_ID",
         name="case_id",
         sql_type=DataType.TEXT,
         nulls=None,
@@ -29,7 +30,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=3,
+        header="JURIS",
         name="jurisdiction",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -37,7 +38,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=6,
+        header="OFFICER_ID",
         name="officer_id",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -45,7 +46,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=7,
+        header="REPORTING_DISTRICT",
         name="reporting_district",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -53,7 +54,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=9,
+        header="CHP_SHIFT",
         name="chp_shift",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -61,7 +62,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CHP_SHIFT,
     ),
     Column(
-        index=10,
+        header="POPULATION",
         name="population",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -69,7 +70,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.POPULATION,
     ),
     Column(
-        index=11,
+        header="CNTY_CITY_LOC",
         name="county_city_location",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -77,7 +78,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=11,
+        header="CNTY_CITY_LOC",
         name="county_location",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -85,7 +86,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.COUNTIES,
     ),
     Column(
-        index=12,
+        header="SPECIAL_COND",
         name="special_condition",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -93,7 +94,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=13,
+        header="BEAT_TYPE",
         name="beat_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -101,7 +102,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.BEAT_TYPE,
     ),
     Column(
-        index=14,
+        header="CHP_BEAT_TYPE",
         name="chp_beat_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -109,7 +110,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CHP_BEAT_TYPE,
     ),
     Column(
-        index=15,
+        header="CITY_DIVISION_LAPD",
         name="city_division_lapd",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS | {"0"},
@@ -117,7 +118,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=16,
+        header="CHP_BEAT_CLASS",
         name="chp_beat_class",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -125,7 +126,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CHP_BEAT_CLASS,
     ),
     Column(
-        index=17,
+        header="BEAT_NUMBER",
         name="beat_number",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -133,7 +134,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=18,
+        header="PRIMARY_RD",
         name="primary_road",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -141,7 +142,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=19,
+        header="SECONDARY_RD",
         name="secondary_road",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -149,7 +150,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=20,
+        header="DISTANCE",
         name="distance",
         sql_type=DataType.REAL,
         nulls=DEFAULT_NULLS,
@@ -157,7 +158,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=21,
+        header="DIRECTION",
         name="direction",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -165,7 +166,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.DIRECTION,
     ),
     Column(
-        index=22,
+        header="INTERSECTION",
         name="intersection",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -173,7 +174,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=23,
+        header="WEATHER_1",
         name="weather_1",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS | {"N", "Y"},
@@ -181,7 +182,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.WEATHER,
     ),
     Column(
-        index=24,
+        header="WEATHER_2",
         name="weather_2",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS | {"N", "Y"},
@@ -189,7 +190,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.WEATHER,
     ),
     Column(
-        index=25,
+        header="STATE_HWY_IND",
         name="state_highway_indicator",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -197,7 +198,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=26,
+        header="CALTRANS_COUNTY",
         name="caltrans_county",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -205,7 +206,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CALTRANS_COUNTY,
     ),
     Column(
-        index=27,
+        header="CALTRANS_DISTRICT",
         name="caltrans_district",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -213,7 +214,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=28,
+        header="STATE_ROUTE",
         name="state_route",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -221,7 +222,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=29,
+        header="ROUTE_SUFFIX",
         name="route_suffix",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -229,7 +230,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=30,
+        header="POSTMILE_PREFIX",
         name="postmile_prefix",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -237,7 +238,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=31,
+        header="POSTMILE",
         name="postmile",
         sql_type=DataType.REAL,
         nulls=DEFAULT_NULLS,
@@ -245,7 +246,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=32,
+        header="LOCATION_TYPE",
         name="location_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -253,7 +254,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.LOCATION_TYPE,
     ),
     Column(
-        index=33,
+        header="RAMP_INTERSECTION",
         name="ramp_intersection",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -261,7 +262,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.RAMP_INTERSECTION,
     ),
     Column(
-        index=34,
+        header="SIDE_OF_HWY",
         name="side_of_highway",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -269,7 +270,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.SIDE_OF_HIGHWAY,
     ),
     Column(
-        index=35,
+        header="TOW_AWAY",
         name="tow_away",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -277,7 +278,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=36,
+        header="COLLISION_SEVERITY",
         name="collision_severity",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -285,7 +286,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.COLLISION_SEVERITY,
     ),
     Column(
-        index=37,
+        header="NUMBER_KILLED",
         name="killed_victims",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -293,7 +294,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=38,
+        header="NUMBER_INJURED",
         name="injured_victims",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -301,7 +302,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=39,
+        header="PARTY_COUNT",
         name="party_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -309,7 +310,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=40,
+        header="PRIMARY_COLL_FACTOR",
         name="primary_collision_factor",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -317,7 +318,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.PRIMARY_COLLISION_FACTOR,
     ),
     Column(
-        index=41,
+        header="PCF_CODE_OF_VIOL",
         name="pcf_violation_code",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -325,7 +326,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.PCF_VIOLATION_CODE,
     ),
     Column(
-        index=42,
+        header="PCF_VIOL_CATEGORY",
         name="pcf_violation_category",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -333,7 +334,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.PCF_VIOLATION_CATEGORY,
     ),
     Column(
-        index=43,
+        header="PCF_VIOLATION",
         name="pcf_violation",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -341,7 +342,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=44,
+        header="PCF_VIOL_SUBSECTION",
         name="pcf_violation_subsection",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -349,7 +350,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=45,
+        header="HIT_AND_RUN",
         name="hit_and_run",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -357,7 +358,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.HIT_AND_RUN,
     ),
     Column(
-        index=46,
+        header="TYPE_OF_COLLISION",
         name="type_of_collision",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS | {"M"},
@@ -365,7 +366,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.COLLISION_TYPE,
     ),
     Column(
-        index=47,
+        header="MVIW",
         name="motor_vehicle_involved_with",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -373,7 +374,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.INVOLVED_WITH,
     ),
     Column(
-        index=48,
+        header="PED_ACTION",
         name="pedestrian_action",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -381,7 +382,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.PEDESTRIAN_ACTION,
     ),
     Column(
-        index=49,
+        header="ROAD_SURFACE",
         name="road_surface",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -389,7 +390,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.ROAD_SURFACE,
     ),
     Column(
-        index=50,
+        header="ROAD_COND_1",
         name="road_condition_1",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -397,7 +398,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.ROAD_CONDITION,
     ),
     Column(
-        index=51,
+        header="ROAD_COND_2",
         name="road_condition_2",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -405,7 +406,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.ROAD_CONDITION,
     ),
     Column(
-        index=52,
+        header="LIGHTING",
         name="lighting",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -413,7 +414,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.LIGHTING,
     ),
     Column(
-        index=53,
+        header="CONTROL_DEVICE",
         name="control_device",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -421,7 +422,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CONTROL_DEVICE,
     ),
     Column(
-        index=54,
+        header="CHP_ROAD_TYPE",
         name="chp_road_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -429,7 +430,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=55,
+        header="PEDESTRIAN_ACCIDENT",
         name="pedestrian_collision",
         sql_type=DataType.INTEGER,
         nulls=None,
@@ -437,7 +438,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=56,
+        header="BICYCLE_ACCIDENT",
         name="bicycle_collision",
         sql_type=DataType.INTEGER,
         nulls=None,
@@ -445,7 +446,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=57,
+        header="MOTORCYCLE_ACCIDENT",
         name="motorcycle_collision",
         sql_type=DataType.INTEGER,
         nulls=None,
@@ -453,7 +454,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=58,
+        header="TRUCK_ACCIDENT",
         name="truck_collision",
         sql_type=DataType.INTEGER,
         nulls=None,
@@ -461,7 +462,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=59,
+        header="NOT_PRIVATE_PROPERTY",
         name="not_private_property",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -469,7 +470,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=60,
+        header="ALCOHOL_INVOLVED",
         name="alcohol_involved",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -477,7 +478,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=61,
+        header="STWD_VEHTYPE_AT_FAULT",
         name="statewide_vehicle_type_at_fault",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -485,7 +486,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.STATEWIDE_VEHICLE_TYPE,
     ),
     Column(
-        index=62,
+        header="CHP_VEHTYPE_AT_FAULT",
         name="chp_vehicle_type_at_fault",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -493,7 +494,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.CHP_VEHICLE_TYPE,
     ),
     Column(
-        index=63,
+        header="COUNT_SEVERE_INJ",
         name="severe_injury_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -501,7 +502,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=64,
+        header="COUNT_VISIBLE_INJ",
         name="other_visible_injury_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -509,7 +510,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=65,
+        header="COUNT_COMPLAINT_PAIN",
         name="complaint_of_pain_injury_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -517,7 +518,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=66,
+        header="COUNT_PED_KILLED",
         name="pedestrian_killed_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -525,7 +526,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=67,
+        header="COUNT_PED_INJURED",
         name="pedestrian_injured_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -533,7 +534,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=68,
+        header="COUNT_BICYCLIST_KILLED",
         name="bicyclist_killed_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -541,7 +542,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=69,
+        header="COUNT_BICYCLIST_INJURED",
         name="bicyclist_injured_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -549,7 +550,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=70,
+        header="COUNT_MC_KILLED",
         name="motorcyclist_killed_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -557,7 +558,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=71,
+        header="COUNT_MC_INJURED",
         name="motorcyclist_injured_count",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -565,7 +566,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=72,
+        header="PRIMARY_RAMP",
         name="primary_ramp",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -573,7 +574,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.RAMP_TYPE,
     ),
     Column(
-        index=73,
+        header="SECONDARY_RAMP",
         name="secondary_ramp",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -581,7 +582,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=vm.RAMP_TYPE,
     ),
     Column(
-        index=74,
+        header="LATITUDE",
         name="latitude",
         sql_type=DataType.REAL,
         nulls=DEFAULT_NULLS,
@@ -589,7 +590,7 @@ COLLISION_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=75,
+        header="LONGITUDE",
         name="longitude",
         sql_type=DataType.REAL,
         nulls=DEFAULT_NULLS,
@@ -599,14 +600,14 @@ COLLISION_ROW: Sequence[Column] = (
 )
 
 COLLISION_DATE_TABLE: DateParsingTable = (
-    (4, "collision_date", DataType.TEXT),
-    (5, "collision_time", DataType.TEXT),
-    (2, "process_date", DataType.TEXT),
+    ("COLLISION_DATE", "collision_date", DataType.TEXT),
+    ("COLLISION_TIME", "collision_time", DataType.TEXT),
+    ("PROC_DATE", "process_date", DataType.TEXT),
 )
 
 PARTY_ROW: Sequence[Column] = (
     Column(
-        index=0,
+        header="CASE_ID",
         name="case_id",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -614,7 +615,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=1,
+        header="PARTY_NUMBER",
         name="party_number",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -622,7 +623,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=2,
+        header="PARTY_TYPE",
         name="party_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -630,7 +631,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.PARTY_TYPE,
     ),
     Column(
-        index=3,
+        header="AT_FAULT",
         name="at_fault",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -638,7 +639,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=4,
+        header="PARTY_SEX",
         name="party_sex",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -646,7 +647,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.SEX,
     ),
     Column(
-        index=5,
+        header="PARTY_AGE",
         name="party_age",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS | {"998"},
@@ -654,7 +655,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=6,
+        header="PARTY_SOBRIETY",
         name="party_sobriety",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -662,7 +663,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.SOBRIETY,
     ),
     Column(
-        index=7,
+        header="PARTY_DRUG_PHYSICAL",
         name="party_drug_physical",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -670,7 +671,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.DRUG,
     ),
     Column(
-        index=8,
+        header="DIR_OF_TRAVEL",
         name="direction_of_travel",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -678,7 +679,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.DIRECTION,
     ),
     Column(
-        index=9,
+        header="PARTY_SAFETY_EQUIP_1",
         name="party_safety_equipment_1",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -686,7 +687,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.SAFETY,
     ),
     Column(
-        index=10,
+        header="PARTY_SAFETY_EQUIP_2",
         name="party_safety_equipment_2",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -694,7 +695,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.SAFETY,
     ),
     Column(
-        index=11,
+        header="FINAN_RESPONS",
         name="financial_responsibility",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -702,7 +703,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.FINANCIAL,
     ),
     Column(
-        index=12,
+        header="SP_INFO_1",
         name="hazardous_materials",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -710,7 +711,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=13,
+        header="SP_INFO_2",
         name="cellphone_in_use",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -718,7 +719,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=13,
+        header="SP_INFO_2",
         name="cellphone_use_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -726,7 +727,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.CELLPHONE_USE_TYPE,
     ),
     Column(
-        index=14,
+        header="SP_INFO_3",
         name="school_bus_related",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -734,7 +735,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=15,
+        header="OAF_VIOLATION_CODE",
         name="oaf_violation_code",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -742,7 +743,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.OAF_VIOLATION_CODE,
     ),
     Column(
-        index=16,
+        header="OAF_VIOL_CAT",
         name="oaf_violation_category",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS | {"00"},
@@ -750,7 +751,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.OAF_VIOLATION_CATEGORY,
     ),
     Column(
-        index=17,
+        header="OAF_VIOL_SECTION",
         name="oaf_violation_section",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -758,7 +759,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=18,
+        header="OAF_VIOLATION_SUFFIX",
         name="oaf_violation_suffix",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -766,7 +767,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=19,
+        header="OAF_1",
         name="other_associate_factor_1",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -774,7 +775,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.OTHER_FACTOR,
     ),
     Column(
-        index=20,
+        header="OAF_2",
         name="other_associate_factor_2",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -782,7 +783,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.OTHER_FACTOR,
     ),
     Column(
-        index=21,
+        header="PARTY_NUMBER_KILLED",
         name="party_number_killed",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -790,7 +791,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=22,
+        header="PARTY_NUMBER_INJURED",
         name="party_number_injured",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -798,7 +799,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=23,
+        header="MOVE_PRE_ACC",
         name="movement_preceding_collision",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -806,7 +807,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.MOVEMENT_PRECEDING,
     ),
     Column(
-        index=24,
+        header="VEHICLE_YEAR",
         name="vehicle_year",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS | {"9999"},
@@ -814,7 +815,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=25,
+        header="VEHICLE_MAKE",
         name="vehicle_make",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -822,7 +823,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=mm.MAKE_MAP,
     ),
     Column(
-        index=26,
+        header="STWD_VEHICLE_TYPE",
         name="statewide_vehicle_type",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -830,7 +831,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.STATEWIDE_VEHICLE_TYPE,
     ),
     Column(
-        index=27,
+        header="CHP_VEH_TYPE_TOWING",
         name="chp_vehicle_type_towing",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -838,7 +839,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.CHP_VEHICLE_TYPE,
     ),
     Column(
-        index=28,
+        header="CHP_VEH_TYPE_TOWED",
         name="chp_vehicle_type_towed",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -846,7 +847,7 @@ PARTY_ROW: Sequence[Column] = (
         mapping=vm.CHP_VEHICLE_TYPE,
     ),
     Column(
-        index=29,
+        header="RACE",
         name="party_race",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -857,7 +858,7 @@ PARTY_ROW: Sequence[Column] = (
 
 VICTIM_ROW: Sequence[Column] = (
     Column(
-        index=0,
+        header="CASE_ID",
         name="case_id",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -865,7 +866,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=1,
+        header="PARTY_NUMBER",
         name="party_number",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS,
@@ -873,7 +874,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=2,
+        header="VICTIM_ROLE",
         name="victim_role",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -881,7 +882,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.ROLE,
     ),
     Column(
-        index=3,
+        header="VICTIM_SEX",
         name="victim_sex",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -889,7 +890,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.SEX,
     ),
     Column(
-        index=4,
+        header="VICTIM_AGE",
         name="victim_age",
         sql_type=DataType.INTEGER,
         nulls=DEFAULT_NULLS | {"998"},
@@ -897,7 +898,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=None,
     ),
     Column(
-        index=5,
+        header="VICTIM_DEGREE_OF_INJURY",
         name="victim_degree_of_injury",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -905,7 +906,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.DEGREE_OF_INJURY,
     ),
     Column(
-        index=6,
+        header="VICTIM_SEATING_POSITION",
         name="victim_seating_position",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -913,7 +914,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.SEATING_POSITION,
     ),
     Column(
-        index=7,
+        header="VICTIM_SAFETY_EQUIP_1",
         name="victim_safety_equipment_1",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -921,7 +922,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.SAFETY,
     ),
     Column(
-        index=8,
+        header="VICTIM_SAFETY_EQUIP_2",
         name="victim_safety_equipment_2",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,
@@ -929,7 +930,7 @@ VICTIM_ROW: Sequence[Column] = (
         mapping=vm.SAFETY,
     ),
     Column(
-        index=9,
+        header="VICTIM_EJECTED",
         name="victim_ejected",
         sql_type=DataType.TEXT,
         nulls=DEFAULT_NULLS,

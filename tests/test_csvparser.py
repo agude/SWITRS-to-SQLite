@@ -14,16 +14,28 @@ def row() -> list[str]:
 
 
 @pytest.fixture(scope="module")
+def test_header() -> list[str]:
+    return ["first", "second", "third", "forth", "blank"]
+
+
+@pytest.fixture(scope="module")
 def parsing_table() -> tuple[Column, ...]:
     return (
-        Column(index=0, name="first", sql_type=DataType.INTEGER, converter=convert),
-        Column(index=1, name="second", sql_type=DataType.TEXT, converter=convert),
-        Column(index=2, name="third", sql_type=DataType.REAL, converter=convert),
         Column(
-            index=3, name="forth", sql_type=DataType.INTEGER, converter=string_to_bool
+            header="first", name="first", sql_type=DataType.INTEGER, converter=convert
         ),
         Column(
-            index=4,
+            header="second", name="second", sql_type=DataType.TEXT, converter=convert
+        ),
+        Column(header="third", name="third", sql_type=DataType.REAL, converter=convert),
+        Column(
+            header="forth",
+            name="forth",
+            sql_type=DataType.INTEGER,
+            converter=string_to_bool,
+        ),
+        Column(
+            header="blank",
             name="blank",
             sql_type=DataType.INTEGER,
             nulls=[""],
@@ -33,13 +45,14 @@ def parsing_table() -> tuple[Column, ...]:
 
 
 @pytest.fixture(scope="function")
-def parser(parsing_table: tuple[Column, ...]) -> CSVParser:
+def parser(parsing_table: tuple[Column, ...], test_header: list[str]) -> CSVParser:
     Parser = CSVParser(
         parsing_table=parsing_table,
         table_name="Test",
         has_primary_column=False,
         date_parsing_table=None,
     )
+    Parser.resolve_indices(test_header.copy())
 
     return Parser
 
@@ -121,3 +134,26 @@ def test_create_table_statement_with_has_primary_column(
         statement
         == "CREATE TABLE Test (first INTEGER PRIMARY KEY, second TEXT, third REAL, forth INTEGER, blank INTEGER)"
     )
+
+
+def test_resolve_indices_raises_on_duplicate_headers(
+    parsing_table: tuple[Column, ...],
+) -> None:
+    parser = CSVParser(
+        parsing_table=parsing_table,
+        table_name="Test",
+        has_primary_column=False,
+        date_parsing_table=None,
+    )
+    duplicate_header = [
+        "first",
+        "second",
+        "third",
+        "forth",
+        "FIRST",
+    ]  # FIRST duplicates first
+
+    with pytest.raises(
+        ValueError, match=r"Duplicate column header 'FIRST' at indices 0 and 4"
+    ):
+        parser.resolve_indices(duplicate_header)
