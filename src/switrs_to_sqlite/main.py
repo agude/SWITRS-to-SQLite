@@ -4,11 +4,13 @@ import argparse
 import csv
 import sqlite3
 
+from tqdm import tqdm
+
 from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 # Library version
-__version__: str = "4.5.0"
+__version__: str = "4.6.0"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -88,7 +90,7 @@ def main(argv: list[str] | None = None) -> None:
                 row_parser.resolve_indices(header_row)
 
                 # Parse each row and insert it into the database
-                for row in reader:
+                for row in tqdm(reader, desc=row_parser.table_name, unit=" rows"):
                     parsed_row = row_parser.parse_row(row)
                     con.execute(row_parser.insert_statement(parsed_row), parsed_row)
 

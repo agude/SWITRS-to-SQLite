@@ -22,7 +22,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 keywords = ["switrs", "sqlite", "data"]
-dependencies = []
+dependencies = ["tqdm>=4.0"]
 
 [project.scripts]
 switrs_to_sqlite = "switrs_to_sqlite.main:main"
@@ -47,6 +47,7 @@ dev = [
     "pytest>=7.0",
     "ruff>=0.8",
     "mypy>=1.8",
+    "types-tqdm>=4.0",
 ]
 
 [tool.ruff]
