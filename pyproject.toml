@@ -46,7 +46,7 @@ packages = ["src/switrs_to_sqlite"]
 dev = [
     "pytest>=7.0",
     "ruff>=0.8",
-    "mypy>=1.8",
+    "mypy>=2.1",
 ]
 
 [tool.ruff]
