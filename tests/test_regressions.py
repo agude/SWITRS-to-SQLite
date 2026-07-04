@@ -72,10 +72,6 @@ def test_malformed_collision_time_becomes_null() -> None:
     assert values[PROCESS_DATE_IDX] == "2020-04-16"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="plan.md 1.3: negative() flips already-signed values positive",
-)
 def test_negative_preserves_already_negative_values() -> None:
     # The raw data ships positive longitudes with implied west, but a
     # signed input must not silently flip to the eastern hemisphere.
