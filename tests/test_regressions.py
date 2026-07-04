@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for known bugs (see plan.md, section 1).
-
-Each test asserts the *desired* behavior and is marked
-xfail(strict=True) because the bug is not yet fixed. When a fix lands,
-the test will XPASS and fail the suite, forcing removal of its marker.
-"""
+"""Regression tests for bugs identified in plan.md, section 1."""
 
 from pathlib import Path
 
