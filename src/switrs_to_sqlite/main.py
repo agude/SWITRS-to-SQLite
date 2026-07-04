@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import contextlib
 import csv
 import sqlite3
 import sys
@@ -81,7 +82,7 @@ def main(argv: list[str] | None = None) -> None:
         (VictimRow, args.victim_record),
     )
 
-    with sqlite3.connect(args.output_file) as con:
+    with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:
         for row_parser, file_name in pairs:
             # Add the table to the database
             con.execute(row_parser.create_table_statement())
