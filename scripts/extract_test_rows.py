@@ -12,6 +12,7 @@ import csv
 import sys
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
 # Import value maps to know what we're looking for
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -109,7 +110,9 @@ VICTIM_VALUE_MAPS = {
 }
 
 
-def analyze_file(filepath: str, key_columns: dict, value_maps: dict) -> dict:
+def analyze_file(
+    filepath: str, key_columns: dict[str, Any], value_maps: dict[str, Any]
+) -> dict[str, Any]:
     """Analyze a CSV file and find unique values for key columns."""
     print(f"\nAnalyzing: {filepath}")
 
@@ -149,7 +152,7 @@ def analyze_file(filepath: str, key_columns: dict, value_maps: dict) -> dict:
     }
 
 
-def print_coverage_report(data: dict, name: str) -> None:
+def print_coverage_report(data: dict[str, Any], name: str) -> None:
     """Print a coverage report showing which values are present."""
     print(f"\n{'=' * 60}")
     print(f"Coverage Report: {name}")
@@ -182,7 +185,7 @@ def print_coverage_report(data: dict, name: str) -> None:
                 print(f"    '{code}' -> {expected_map[code]}")
 
 
-def select_diverse_rows(data: dict, max_rows: int = 20) -> list[int]:
+def select_diverse_rows(data: dict[str, Any], max_rows: int = 20) -> list[int]:
     """Select row indices that maximize value coverage."""
     # Track which values we've covered
     covered: dict[str, set[str]] = defaultdict(set)
@@ -238,7 +241,7 @@ def select_diverse_rows(data: dict, max_rows: int = 20) -> list[int]:
     return selected_rows
 
 
-def get_key_columns_for_data(data: dict) -> dict:
+def get_key_columns_for_data(data: dict[str, Any]) -> dict[str, int]:
     """Determine which key columns dict to use based on data."""
     header = data["header"]
     if "COLLISION_SEVERITY" in header:
@@ -249,7 +252,7 @@ def get_key_columns_for_data(data: dict) -> dict:
         return VICTIM_KEY_COLUMNS
 
 
-def extract_rows(data: dict, row_indices: list[int]) -> list[str]:
+def extract_rows(data: dict[str, Any], row_indices: list[int]) -> list[str]:
     """Extract rows as CSV strings."""
     rows = []
     for idx in row_indices:

@@ -12,6 +12,7 @@ Usage:
 import json
 import sqlite3
 from pathlib import Path
+from typing import Any
 
 from switrs_to_sqlite.main import main
 
@@ -72,7 +73,7 @@ def generate_golden_data() -> None:
         cursor = conn.cursor()
 
         tables = ["collisions", "parties", "victims"]
-        golden_data: dict = {}
+        golden_data: dict[str, Any] = {}
 
         for table in tables:
             # Get columns to ensure order
