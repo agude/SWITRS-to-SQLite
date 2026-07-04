@@ -75,8 +75,8 @@ PartyRecords.txt.gz \
 VictimRecords.txt.gz
 ```
 
-The conversion process will take about an hour to write the database, which by
-default is saved to a file named `switrs.sqlite3`. The output file can be
+The conversion takes about 10 minutes for a full-sized dump. The database is
+saved by default to a file named `switrs.sqlite3`. The output file can be
 changed as follows:
 
 ```bash
