@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 
 import argparse
+import contextlib
 import csv
 import sqlite3
+import sys
+from pathlib import Path
 
 from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 # Library version
-__version__: str = "4.5.0"
+__version__: str = "4.5.1"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -63,6 +66,15 @@ def main(argv: list[str] | None = None) -> None:
 
     args = argparser.parse_args(argv)
 
+    output_path = Path(args.output_file)
+    if output_path.exists():
+        print(
+            f"Error: output file '{args.output_file}' already exists. "
+            "Remove it before rerunning.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
     # Match the parsers with the files they read
     pairs = (
         (CollisionRow, args.collision_record),
@@ -70,7 +82,7 @@ def main(argv: list[str] | None = None) -> None:
         (VictimRow, args.victim_record),
     )
 
-    with sqlite3.connect(args.output_file) as con:
+    with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:
         for row_parser, file_name in pairs:
             # Add the table to the database
             con.execute(row_parser.create_table_statement())

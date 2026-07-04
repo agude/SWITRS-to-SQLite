@@ -77,9 +77,8 @@ def negative(
     # Use convert to do the conversion
     out_val = convert(val, dtype, nulls)
 
-    # If convert succeeded with a numeric type, return the value times -1
     if isinstance(out_val, (int, float)):
-        return -1 * out_val
+        return -abs(out_val)
 
     return None
 
