@@ -48,7 +48,6 @@ def _make_parser(
         parsing_table=parsing_table,
         table_name="Test",
         has_primary_column=has_primary_column,
-        date_parsing_table=None,
     )
     parser.resolve_indices(TEST_HEADER.copy())
     return parser
@@ -105,7 +104,6 @@ def test_set_columns_with_has_primary_column(parsing_table: tuple[Column, ...]) 
         parsing_table=parsing_table,
         table_name="Test",
         has_primary_column=True,
-        date_parsing_table=None,
     )
     assert parser.columns[0] == ("first", "INTEGER", "PRIMARY KEY")
     assert parser.columns[1] == ("second", "TEXT")
@@ -137,7 +135,6 @@ def test_create_table_statement_with_has_primary_column(
         parsing_table=parsing_table,
         table_name="Test",
         has_primary_column=True,
-        date_parsing_table=None,
     )
     statement = parser.create_table_statement()
     assert (
@@ -153,7 +150,6 @@ def test_resolve_indices_raises_on_duplicate_headers(
         parsing_table=parsing_table,
         table_name="Test",
         has_primary_column=False,
-        date_parsing_table=None,
     )
     duplicate_header = [
         "first",

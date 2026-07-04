@@ -1,6 +1,7 @@
 """Converter functions for transforming CSV values to database values."""
 
 from collections.abc import Collection
+from datetime import datetime
 
 
 def identity(
@@ -199,3 +200,40 @@ def non_standard_str_to_bool(
     }
 
     return MAP.get(val)
+
+
+def convert_date(
+    val: str,
+    dtype: type[int] | type[float] | type[str] | None = None,
+    nulls: Collection[str] | None = None,
+) -> str | None:
+    """Convert a YYYYMMDD date string to ISO 8601 format (YYYY-MM-DD)."""
+    sval = val.strip()
+    if nulls is not None and sval in nulls:
+        return None
+    if len(sval) != 8:
+        return None
+    try:
+        return datetime.strptime(sval, "%Y%m%d").date().isoformat()
+    except ValueError:
+        return None
+
+
+def convert_time(
+    val: str,
+    dtype: type[int] | type[float] | type[str] | None = None,
+    nulls: Collection[str] | None = None,
+) -> str | None:
+    """Convert an HHMM time string to ISO 8601 format (HH:MM:SS)."""
+    sval = val.strip()
+    if nulls is not None and sval in nulls:
+        return None
+    if not sval or sval == "2500":
+        return None
+    # Source data is not always zero-padded (e.g. "900" instead of "0900")
+    if len(sval) == 3:
+        sval = "0" + sval
+    try:
+        return datetime.strptime(sval, "%H%M").time().isoformat()
+    except ValueError:
+        return None
