@@ -125,7 +125,7 @@ def analyze_file(
     all_rows: list[list[str]] = []
     header: list[str] = []
 
-    with open(filepath, encoding="utf-8", errors="replace") as f:
+    with Path(filepath).open(encoding="utf-8", errors="replace") as f:
         reader = csv.reader(f)
         header = next(reader)
 
@@ -246,10 +246,9 @@ def get_key_columns_for_data(data: dict[str, Any]) -> dict[str, int]:
     header = data["header"]
     if "COLLISION_SEVERITY" in header:
         return COLLISION_KEY_COLUMNS
-    elif "PARTY_TYPE" in header:
+    if "PARTY_TYPE" in header:
         return PARTY_KEY_COLUMNS
-    else:
-        return VICTIM_KEY_COLUMNS
+    return VICTIM_KEY_COLUMNS
 
 
 def extract_rows(data: dict[str, Any], row_indices: list[int]) -> list[str]:

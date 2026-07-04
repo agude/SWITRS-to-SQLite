@@ -23,7 +23,7 @@ VICTIMS_HEADER = "CASE_ID,PARTY_NUMBER,VICTIM_ROLE,VICTIM_SEX,VICTIM_AGE,VICTIM_
 
 def load_golden_data() -> dict[str, Any]:
     """Load expected data from golden snapshot JSON file."""
-    with open(GOLDEN_SNAPSHOT) as f:
+    with GOLDEN_SNAPSHOT.open() as f:
         result: dict[str, Any] = json.load(f)
         return result
 
