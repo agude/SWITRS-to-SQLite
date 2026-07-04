@@ -4,8 +4,12 @@
 from pathlib import Path
 
 import pytest
-from conftest import COLLISION_HEADER
-from test_integration import COLLISIONS_HEADER, PARTIES_HEADER, VICTIMS_HEADER
+from conftest import (
+    COLLISION_HEADER,
+    COLLISIONS_HEADER_CSV,
+    PARTIES_HEADER_CSV,
+    VICTIMS_HEADER_CSV,
+)
 
 from switrs_to_sqlite.converters import negative
 from switrs_to_sqlite.main import main
@@ -83,13 +87,13 @@ def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
     db_path = tmp_path / "switrs.sqlite3"
 
     collisions_path.write_text(
-        COLLISIONS_HEADER + "\n" + (DATA_DIR / "test_collisions.txt").read_text()
+        COLLISIONS_HEADER_CSV + "\n" + (DATA_DIR / "test_collisions.txt").read_text()
     )
     parties_path.write_text(
-        PARTIES_HEADER + "\n" + (DATA_DIR / "test_parties.txt").read_text()
+        PARTIES_HEADER_CSV + "\n" + (DATA_DIR / "test_parties.txt").read_text()
     )
     victims_path.write_text(
-        VICTIMS_HEADER + "\n" + (DATA_DIR / "test_victims.txt").read_text()
+        VICTIMS_HEADER_CSV + "\n" + (DATA_DIR / "test_victims.txt").read_text()
     )
 
     args = [
