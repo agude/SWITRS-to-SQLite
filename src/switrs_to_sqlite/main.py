@@ -55,6 +55,10 @@ def convert_files(
         parse_errors: How to handle unicode decoding errors in input files.
             One of 'strict', 'ignore', 'replace', or None (defaults to strict).
     """
+    for input_file in (collision_file, party_file, victim_file):
+        if not Path(input_file).exists():
+            raise FileNotFoundError(f"Input file not found: '{input_file}'")
+
     output_path = Path(output_file)
     if output_path.exists():
         raise FileExistsError(
@@ -80,6 +84,10 @@ def convert_files(
                 try:
                     header_row = next(reader)
                 except StopIteration:
+                    print(
+                        f"Warning: '{file_name}' is empty, skipping.",
+                        file=sys.stderr,
+                    )
                     continue
 
                 row_parser.resolve_indices(header_row)
@@ -141,7 +149,7 @@ def main(argv: list[str] | None = None) -> None:
             output_file=args.output_file,
             parse_errors=args.parse_error,
         )
-    except FileExistsError as e:
+    except (FileExistsError, FileNotFoundError) as e:
         print(f"Error: {e}", file=sys.stderr)
         raise SystemExit(1) from None
 
