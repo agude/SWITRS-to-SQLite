@@ -9,13 +9,11 @@ from collections.abc import Generator, Iterator
 from pathlib import Path
 from typing import Any
 
+from switrs_to_sqlite import __version__
 from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, CSVParser, PartyRow, VictimRow
 
 _PROGRESS_INTERVAL = 100_000
-
-# Library version
-__version__: str = "4.6.0"
 
 
 def _parsed_rows(

@@ -26,7 +26,7 @@ jobs:
 
       - name: Verify tag matches package version
         run: |
-          pkg_version=$(uv run python -c "from switrs_to_sqlite.main import __version__; print(__version__)")
+          pkg_version=$(uv run python -c "from switrs_to_sqlite import __version__; print(__version__)")
           tag_version="${GITHUB_REF_NAME#v}"
           if [ "$pkg_version" != "$tag_version" ]; then
             echo "ERROR: tag ($tag_version) does not match __version__ ($pkg_version)"
