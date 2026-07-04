@@ -44,6 +44,7 @@ class CSVParser:
     has_primary_column: bool
     date_parsing_table: Sequence[tuple[str, str, DataType]] | None
     columns: list[tuple[str, ...]]
+    _insert_sql: str
     _resolved_indices: dict[str, int]
     _date_indices: dict[str, int]
     _ordered_indices: list[int]
@@ -268,6 +269,9 @@ class CSVParser:
             for _, name, dtype in self.date_parsing_table:
                 self.columns.append((name, dtype.value))
 
+        placeholders = ", ".join("?" * len(self.columns))
+        self._insert_sql = f"INSERT INTO {self.table_name} VALUES ({placeholders})"
+
     def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
 
@@ -284,15 +288,9 @@ class CSVParser:
             return row + [""] * extend
         return row
 
-    def insert_statement(self, values: list[Any]) -> str:
-        """Creates an insert statement used to fill a row in the SQLite
-        table."""
-        vals = ["?"] * len(values)
-        query = "INSERT INTO {table} VALUES ({values})".format(
-            table=self.table_name, values=", ".join(vals)
-        )
-
-        return query
+    def insert_statement(self) -> str:
+        """Returns the precomputed INSERT statement for this table."""
+        return self._insert_sql
 
     def create_table_statement(self) -> str:
         """Creates a string that can be used to create the correct table in SQLite.

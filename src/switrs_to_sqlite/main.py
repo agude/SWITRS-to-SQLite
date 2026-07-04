@@ -99,10 +99,11 @@ def main(argv: list[str] | None = None) -> None:
                 # Resolve header-to-index mapping once per file
                 row_parser.resolve_indices(header_row)
 
-                # Parse each row and insert it into the database
+                insert_sql = row_parser.insert_statement()
+
                 for row in reader:
                     parsed_row = row_parser.parse_row(row)
-                    con.execute(row_parser.insert_statement(parsed_row), parsed_row)
+                    con.execute(insert_sql, parsed_row)
 
 
 if __name__ == "__main__":
