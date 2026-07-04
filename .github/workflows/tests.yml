@@ -2,8 +2,15 @@ name: Tests
 
 on:
   push:
+    branches: [main]
+    tags: ["v*"]
   pull_request:
+  workflow_dispatch:
   workflow_call:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -39,7 +46,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Type check
-        run: uv run mypy src/switrs_to_sqlite/
+        run: uv run mypy src/switrs_to_sqlite/ tests/ scripts/
 
       - name: Test
         run: uv run pytest -vv
