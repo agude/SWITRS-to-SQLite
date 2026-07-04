@@ -5,13 +5,33 @@ import contextlib
 import csv
 import sqlite3
 import sys
+from collections.abc import Generator, Iterator
 from pathlib import Path
+from typing import Any
 
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import CollisionRow, CSVParser, PartyRow, VictimRow
+
+_PROGRESS_INTERVAL = 100_000
 
 # Library version
-__version__: str = "4.5.1"
+__version__: str = "4.6.0"
+
+
+def _parsed_rows(
+    reader: Iterator[list[str]],
+    row_parser: CSVParser,
+) -> Generator[list[Any], None, None]:
+    """Yield parsed rows while printing progress to stderr."""
+    table = row_parser.table_name
+    print(f"Converting {table}...", file=sys.stderr)
+    count = 0
+    for row in reader:
+        count += 1
+        if count % _PROGRESS_INTERVAL == 0:
+            print(f"  {count:,} rows", file=sys.stderr, flush=True)
+        yield row_parser.parse_row(row)
+    print(f"  {table}: {count:,} rows total", file=sys.stderr)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -83,6 +103,10 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:
+        con.execute("PRAGMA journal_mode = OFF")
+        con.execute("PRAGMA synchronous = OFF")
+        con.execute("PRAGMA cache_size = -64000")
+
         for row_parser, file_name in pairs:
             # Add the table to the database
             con.execute(row_parser.create_table_statement())
@@ -99,10 +123,8 @@ def main(argv: list[str] | None = None) -> None:
                 # Resolve header-to-index mapping once per file
                 row_parser.resolve_indices(header_row)
 
-                # Parse each row and insert it into the database
-                for row in reader:
-                    parsed_row = row_parser.parse_row(row)
-                    con.execute(row_parser.insert_statement(parsed_row), parsed_row)
+                insert_sql = row_parser.insert_statement()
+                con.executemany(insert_sql, _parsed_rows(reader, row_parser))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
@@ -45,6 +44,7 @@ class CSVParser:
     has_primary_column: bool
     date_parsing_table: Sequence[tuple[str, str, DataType]] | None
     columns: list[tuple[str, ...]]
+    _insert_sql: str
     _resolved_indices: dict[str, int]
     _date_indices: dict[str, int]
     _ordered_indices: list[int]
@@ -177,46 +177,27 @@ class CSVParser:
         if not self._resolved_indices:
             raise RuntimeError("resolve_indices must be called before parsing rows")
 
-        # The CSV file is malformed, so extend it to avoid KeyErrors
         extended_row = self.__extend_row(row)
+        return self.__set_values(extended_row)
 
-        # Set up list of variables for insertion
-        values = self.__set_values(extended_row)
+    def __set_values(self, row: list[str]) -> list[Any]:
+        """Build the values list for a single row, ready for SQL insertion."""
+        values: list[Any] = []
 
-        return list(values.values())
-
-    def __set_values(self, row: list[str]) -> OrderedDict[str, Any]:
-        """Creates a list of the attributes set in set_variables() in the
-        proper order for reading into the SQLite table.
-
-        """
-        values: OrderedDict[str, Any] = OrderedDict()
-        # If there is no column in the data that is a primary key, than we have
-        # to add an automatic first column which needs a NULL inserted
         if not self.has_primary_column:
-            values["PRIMARY_COLUMN"] = None
+            values.append(None)
 
-        # Parse each item in the row using pre-calculated indices
         for col, idx in zip(self.parsing_table, self._ordered_indices, strict=True):
             dtype = self.__datatype_convert[col.sql_type]
-
-            # Convert the CSV field to a value for SQL using the associated
-            # conversion function
             val = col.converter(row[idx], dtype, col.nulls)
-
-            # If there is a mapping, then use that to convert the value to a
-            # return value. This is mainly used to convert "Enums" in the
-            # database into human readable values, like 'A' -> 'Stopped'.
             if col.mapping is not None:
                 val = col.mapping.get(val, val)
+            values.append(val)
 
-            values[col.name] = val
-
-        # Convert dates as well
         if self.date_parsing_table:
-            values["collision_date"] = self.__convert_date(row, "collision_date")
-            values["collision_time"] = self.__convert_time(row)
-            values["process_date"] = self.__convert_date(row, "process_date")
+            values.append(self.__convert_date(row, "collision_date"))
+            values.append(self.__convert_time(row))
+            values.append(self.__convert_date(row, "process_date"))
 
         return values
 
@@ -288,6 +269,9 @@ class CSVParser:
             for _, name, dtype in self.date_parsing_table:
                 self.columns.append((name, dtype.value))
 
+        placeholders = ", ".join("?" * len(self.columns))
+        self._insert_sql = f"INSERT INTO {self.table_name} VALUES ({placeholders})"
+
     def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
 
@@ -304,15 +288,9 @@ class CSVParser:
             return row + [""] * extend
         return row
 
-    def insert_statement(self, values: list[Any]) -> str:
-        """Creates an insert statement used to fill a row in the SQLite
-        table."""
-        vals = ["?"] * len(values)
-        query = "INSERT INTO {table} VALUES ({values})".format(
-            table=self.table_name, values=", ".join(vals)
-        )
-
-        return query
+    def insert_statement(self) -> str:
+        """Returns the precomputed INSERT statement for this table."""
+        return self._insert_sql
 
     def create_table_statement(self) -> str:
         """Creates a string that can be used to create the correct table in SQLite.
