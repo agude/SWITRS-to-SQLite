@@ -9,7 +9,7 @@ MakeMapValue: TypeAlias = str | None
 class Make(Enum):
     ACADIAN = "acadian"
     ACURA = "acura"
-    ALFA_ROMERO = "alfa romero"
+    ALFA_ROMEO = "alfa romeo"
     AMC = "american motors"
     AMERICAN_LAFRANCE = "american lafrance"
     AUDI = "audi"
@@ -76,6 +76,7 @@ class Make(Enum):
     STERLING = "sterling"
     SUBARU = "subaru"
     SUZUKI = "suzuki"
+    TAOTAO = "taotao"
     TESLA = "tesla"
     THOMAS = "thomas"
     TOYOTA = "toyota"
@@ -105,10 +106,10 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "ACUR": Make.ACURA.value,
     "ACURA": Make.ACURA.value,
     "ACURA/": Make.ACURA.value,
-    "ALFA ROMEO": Make.ALFA_ROMERO.value,
-    "ALFA ROMERO": Make.ALFA_ROMERO.value,
-    "ALFA": Make.ALFA_ROMERO.value,
-    "ALFR": Make.ALFA_ROMERO.value,
+    "ALFA ROMEO": Make.ALFA_ROMEO.value,
+    "ALFA ROMERO": Make.ALFA_ROMEO.value,
+    "ALFA": Make.ALFA_ROMEO.value,
+    "ALFR": Make.ALFA_ROMEO.value,
     "AMER": Make.AMC.value,
     "AMERI": Make.AMC.value,
     "AMERICAN LA FRANCE": Make.AMERICAN_LAFRANCE.value,
@@ -449,7 +450,7 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "INTER": Make.INTERNATIONAL_HARVESTER.value,
     "INTERNAT": Make.INTERNATIONAL_HARVESTER.value,
     "INTERNATIONAL HARVESTER": Make.INTERNATIONAL_HARVESTER.value,
-    "INTL": Make.NONE.value,
+    "INTL": Make.INTERNATIONAL_HARVESTER.value,
     "ISU": Make.ISUZU.value,
     "ISUZ": Make.ISUZU.value,
     "ISUZU": Make.ISUZU.value,
@@ -741,7 +742,7 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "RANGE ROVER": Make.LAND_ROVER.value,
     "RANGE RV": Make.LAND_ROVER.value,
     "RANGE": Make.LAND_ROVER.value,
-    "RANGER": Make.LAND_ROVER.value,
+    "RANGER": Make.FORD.value,
     "RANGEROV": Make.LAND_ROVER.value,
     "RNG ROVR": Make.LAND_ROVER.value,
     "RNG RVR": Make.LAND_ROVER.value,
@@ -820,8 +821,8 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "T0Y": Make.TOYOTA.value,
     "T0YOTA": Make.TOYOTA.value,
     "TAHOE": Make.CHEVROLET.value,
-    "TAOTA": Make.TOYOTA.value,
-    "TAOTAO": Make.TOYOTA.value,
+    "TAOTA": Make.TAOTAO.value,
+    "TAOTAO": Make.TAOTAO.value,
     "TESL": Make.TESLA.value,
     "TESLA MOTORS": Make.TESLA.value,
     "TESLA": Make.TESLA.value,
@@ -885,7 +886,7 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "TREC": Make.TREK.value,
     "TRECK": Make.TREK.value,
     "TREK": Make.TREK.value,
-    "TREK.value, INC.": Make.TREK.value,
+    "TREK, INC.": Make.TREK.value,
     "TRIPH": Make.TRIUMPH.value,
     "TRIU": Make.TRIUMPH.value,
     "TRIUM": Make.TRIUMPH.value,
