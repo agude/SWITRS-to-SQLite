@@ -1,4 +1,5 @@
 import gzip
+from pathlib import Path
 from typing import TextIO
 
 
@@ -13,4 +14,4 @@ def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
     # Use utf-8-sig to automatically handle BOM if present
     if file_name.endswith(".gz"):
         return gzip.open(file_name, "rt", encoding="utf-8-sig", errors=errors)
-    return open(file_name, encoding="utf-8-sig", errors=errors)
+    return Path(file_name).open(encoding="utf-8-sig", errors=errors)

@@ -36,9 +36,8 @@ def convert(
     sval: str = val.strip()
 
     # Return None if the val matches a string in nulls
-    if nulls is not None:
-        if sval in nulls:
-            return None
+    if nulls is not None and sval in nulls:
+        return None
 
     # Otherwise return the converted value
     if dtype is not None:
@@ -47,8 +46,7 @@ def convert(
         except ValueError:
             return None
     # Note: val and not sval because this is the identity operation
-    else:
-        return val
+    return val
 
 
 def negative(
@@ -99,15 +97,10 @@ def string_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    # Return None if the val matches a string in nulls
-    if nulls is not None:
-        if val in nulls:
-            return None
+    if nulls is not None and val in nulls:
+        return None
 
-    # Check if val is True, otherwise return False
-    if val.lower() == "y":
-        return True
-    return False
+    return val.lower() == "y"
 
 
 def county_city_location_to_county(
@@ -164,12 +157,9 @@ def cellphone_use_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    # Return None if the val matches a string in nulls
-    if nulls is not None:
-        if val in nulls:
-            return None
+    if nulls is not None and val in nulls:
+        return None
 
-    # Map val
     CELLPHONE_IN_USE: dict[str, bool | None] = {
         "B": True,
         "C": False,
@@ -179,7 +169,7 @@ def cellphone_use_to_bool(
         "3": False,
     }
 
-    return CELLPHONE_IN_USE.get(val, None)
+    return CELLPHONE_IN_USE.get(val)
 
 
 def non_standard_str_to_bool(
@@ -198,12 +188,9 @@ def non_standard_str_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    # Return None if the val matches a string in nulls
-    if nulls is not None:
-        if val in nulls:
-            return None
+    if nulls is not None and val in nulls:
+        return None
 
-    # Map val
     MAP: dict[str, bool] = {
         # Parties: hazardous_materials
         "A": True,
@@ -211,4 +198,4 @@ def non_standard_str_to_bool(
         "E": True,
     }
 
-    return MAP.get(val, None)
+    return MAP.get(val)
