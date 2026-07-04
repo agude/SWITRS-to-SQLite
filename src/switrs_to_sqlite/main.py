@@ -11,7 +11,12 @@ from typing import Any
 
 from switrs_to_sqlite import __version__
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.parsers import CollisionRow, CSVParser, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import (
+    CSVParser,
+    make_collision_parser,
+    make_party_parser,
+    make_victim_parser,
+)
 
 _PROGRESS_INTERVAL = 100_000
 
@@ -93,11 +98,10 @@ def main(argv: list[str] | None = None) -> None:
         )
         raise SystemExit(1)
 
-    # Match the parsers with the files they read
     pairs = (
-        (CollisionRow, args.collision_record),
-        (PartyRow, args.party_record),
-        (VictimRow, args.victim_record),
+        (make_collision_parser(), args.collision_record),
+        (make_party_parser(), args.party_record),
+        (make_victim_parser(), args.victim_record),
     )
 
     with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:

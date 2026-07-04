@@ -9,7 +9,7 @@ from test_integration import COLLISIONS_HEADER, PARTIES_HEADER, VICTIMS_HEADER
 
 from switrs_to_sqlite.converters import negative
 from switrs_to_sqlite.main import main
-from switrs_to_sqlite.parsers import CollisionRow
+from switrs_to_sqlite.parsers import CSVParser
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -28,40 +28,38 @@ def make_collision_row(**fields: str) -> list[str]:
     return row
 
 
-def test_empty_dates_become_null() -> None:
+def test_empty_dates_become_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(CASE_ID="CASE1")
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] is None
     assert values[PROCESS_DATE_IDX] is None
 
 
-def test_malformed_dates_become_null() -> None:
+def test_malformed_dates_become_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(
         CASE_ID="CASE1",
         COLLISION_DATE="not-a-date",
         PROC_DATE="2020011",  # Too short for %Y%m%d
     )
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] is None
     assert values[PROCESS_DATE_IDX] is None
 
 
-def test_short_row_parses_with_null_dates() -> None:
-    # Real SWITRS files contain ragged rows; __extend_row pads them with
-    # "" which must not crash the date conversion.
-    values = CollisionRow.parse_row(["CASE1", "2020", "20200101"])
+def test_short_row_parses_with_null_dates(collision_parser: CSVParser) -> None:
+    values = collision_parser.parse_row(["CASE1", "2020", "20200101"])
     assert values[COLLISION_DATE_IDX] is None
     assert values[COLLISION_TIME_IDX] is None
 
 
-def test_malformed_collision_time_becomes_null() -> None:
+def test_malformed_collision_time_becomes_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(
         CASE_ID="CASE1",
         COLLISION_DATE="20200101",
         PROC_DATE="20200416",
         COLLISION_TIME="9999",
     )
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] == "2020-01-01"
     assert values[COLLISION_TIME_IDX] is None
     assert values[PROCESS_DATE_IDX] == "2020-04-16"

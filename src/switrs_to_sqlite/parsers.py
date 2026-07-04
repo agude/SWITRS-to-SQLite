@@ -312,25 +312,28 @@ class CSVParser:
         return f"CREATE TABLE {self.table_name} ({cols})"
 
 
-VictimRow: CSVParser = CSVParser(
-    parsing_table=VICTIM_ROW,
-    table_name="victims",
-    has_primary_column=False,
-    date_parsing_table=None,
-)
+def make_collision_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=COLLISION_ROW,
+        table_name="collisions",
+        has_primary_column=True,
+        date_parsing_table=COLLISION_DATE_TABLE,
+    )
 
 
-PartyRow: CSVParser = CSVParser(
-    parsing_table=PARTY_ROW,
-    table_name="parties",
-    has_primary_column=False,
-    date_parsing_table=None,
-)
+def make_party_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=PARTY_ROW,
+        table_name="parties",
+        has_primary_column=False,
+        date_parsing_table=None,
+    )
 
 
-CollisionRow: CSVParser = CSVParser(
-    parsing_table=COLLISION_ROW,
-    table_name="collisions",
-    has_primary_column=True,
-    date_parsing_table=COLLISION_DATE_TABLE,
-)
+def make_victim_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=VICTIM_ROW,
+        table_name="victims",
+        has_primary_column=False,
+        date_parsing_table=None,
+    )

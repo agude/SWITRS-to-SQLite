@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.parsers import PartyRow
+from switrs_to_sqlite.parsers import CSVParser
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and
 # the answer that should be returned from doing so. The tuple is of the form
@@ -216,14 +216,14 @@ ROWS = (
 )
 
 
-def test_partyrows() -> None:
+def test_partyrows(party_parser: CSVParser) -> None:
     for row, answer in ROWS:
-        parsed_row = PartyRow.parse_row(row)
+        parsed_row = party_parser.parse_row(row)
         assert parsed_row == answer
 
 
-def test_partyrow_create_table() -> None:
-    assert PartyRow.create_table_statement() == (
+def test_partyrow_create_table(party_parser: CSVParser) -> None:
+    assert party_parser.create_table_statement() == (
         "CREATE TABLE "
         "parties ("
         "id INTEGER PRIMARY KEY, "
@@ -262,8 +262,8 @@ def test_partyrow_create_table() -> None:
     )
 
 
-def test_partyrow_columns() -> None:
-    assert PartyRow.columns == [
+def test_partyrow_columns(party_parser: CSVParser) -> None:
+    assert party_parser.columns == [
         ("id", "INTEGER", "PRIMARY KEY"),
         ("case_id", "TEXT"),
         ("party_number", "INTEGER"),
