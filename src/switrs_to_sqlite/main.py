@@ -5,13 +5,33 @@ import contextlib
 import csv
 import sqlite3
 import sys
+from collections.abc import Generator, Iterator
 from pathlib import Path
+from typing import Any
 
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import CSVParser, CollisionRow, PartyRow, VictimRow
+
+_PROGRESS_INTERVAL = 100_000
 
 # Library version
 __version__: str = "4.5.1"
+
+
+def _parsed_rows(
+    reader: Iterator[list[str]],
+    row_parser: CSVParser,
+) -> Generator[list[Any], None, None]:
+    """Yield parsed rows while printing progress to stderr."""
+    table = row_parser.table_name
+    print(f"Converting {table}...", file=sys.stderr)
+    count = 0
+    for row in reader:
+        count += 1
+        if count % _PROGRESS_INTERVAL == 0:
+            print(f"  {count:,} rows", file=sys.stderr, flush=True)
+        yield row_parser.parse_row(row)
+    print(f"  {table}: {count:,} rows total", file=sys.stderr)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -104,10 +124,7 @@ def main(argv: list[str] | None = None) -> None:
                 row_parser.resolve_indices(header_row)
 
                 insert_sql = row_parser.insert_statement()
-                con.executemany(
-                    insert_sql,
-                    (row_parser.parse_row(row) for row in reader),
-                )
+                con.executemany(insert_sql, _parsed_rows(reader, row_parser))
 
 
 if __name__ == "__main__":
