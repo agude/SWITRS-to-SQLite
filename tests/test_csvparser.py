@@ -116,7 +116,10 @@ def test_set_columns_with_has_primary_column(parsing_table: tuple[Column, ...]) 
 
 def test_insert_statement(parser: CSVParser) -> None:
     statement = parser.insert_statement()
-    assert statement == "INSERT INTO Test VALUES (?, ?, ?, ?, ?, ?)"
+    assert (
+        statement
+        == "INSERT INTO Test (id, first, second, third, forth, blank) VALUES (?, ?, ?, ?, ?, ?)"
+    )
 
 
 def test_create_table_statement_without_has_primary_column(parser: CSVParser) -> None:

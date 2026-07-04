@@ -271,8 +271,11 @@ class CSVParser:
             for _, name, dtype in self.date_parsing_table:
                 self.columns.append((name, dtype.value))
 
+        col_names = ", ".join(tup[0] for tup in self.columns)
         placeholders = ", ".join("?" * len(self.columns))
-        self._insert_sql = f"INSERT INTO {self.table_name} VALUES ({placeholders})"
+        self._insert_sql = (
+            f"INSERT INTO {self.table_name} ({col_names}) VALUES ({placeholders})"
+        )
 
     def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
