@@ -11,7 +11,7 @@ from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
 
 # Library version
-__version__: str = "4.5.0"
+__version__: str = "4.5.1"
 
 
 def main(argv: list[str] | None = None) -> None:
