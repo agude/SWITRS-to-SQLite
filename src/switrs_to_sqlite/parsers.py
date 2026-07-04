@@ -232,7 +232,14 @@ class CSVParser:
         if idx is None:
             return None
 
-        obj = datetime.strptime(row[idx], "%Y%m%d")
+        raw = row[idx].strip()
+        if len(raw) != 8:
+            return None
+
+        try:
+            obj = datetime.strptime(raw, "%Y%m%d")
+        except ValueError:
+            return None
         return obj.date().isoformat()
 
     def __convert_time(self, row: list[str]) -> str | None:
@@ -240,22 +247,21 @@ class CSVParser:
         if self._collision_time_idx is None:
             return None
 
-        # Set up the collision time
-        # 2500 is used as NULL in the source
-        collision_time_str = row[self._collision_time_idx]
-        if collision_time_str == "2500":
-            time = None
-        else:
-            # The source data is not always 0 padded, so it will be 900 instead
-            # of 0900, and so length 3
-            missing_leading_zero_length = 3
-            if len(collision_time_str) == missing_leading_zero_length:
-                collision_time_str = "0" + collision_time_str
+        collision_time_str = row[self._collision_time_idx].strip()
+        if not collision_time_str or collision_time_str == "2500":
+            return None
 
+        # The source data is not always 0 padded, so it will be 900 instead
+        # of 0900, and so length 3
+        missing_leading_zero_length = 3
+        if len(collision_time_str) == missing_leading_zero_length:
+            collision_time_str = "0" + collision_time_str
+
+        try:
             collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
-            time = collision_time_obj.time().isoformat()
-
-        return time
+        except ValueError:
+            return None
+        return collision_time_obj.time().isoformat()
 
     def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
