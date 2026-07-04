@@ -83,6 +83,10 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:
+        con.execute("PRAGMA journal_mode = OFF")
+        con.execute("PRAGMA synchronous = OFF")
+        con.execute("PRAGMA cache_size = -64000")
+
         for row_parser, file_name in pairs:
             # Add the table to the database
             con.execute(row_parser.create_table_statement())
