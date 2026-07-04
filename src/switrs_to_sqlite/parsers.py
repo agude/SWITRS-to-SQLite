@@ -42,6 +42,7 @@ class CSVParser:
     parsing_table: Sequence[Column]
     table_name: str
     has_primary_column: bool
+    _prepend_null: bool
     date_parsing_table: Sequence[tuple[str, str, DataType]] | None
     columns: list[tuple[str, ...]]
     _insert_sql: str
@@ -77,6 +78,7 @@ class CSVParser:
         self.parsing_table = parsing_table
         self.table_name = table_name
         self.has_primary_column = has_primary_column
+        self._prepend_null = not has_primary_column
         self.date_parsing_table = date_parsing_table
         self._resolved_indices = {}
         self._date_indices = {}
@@ -184,7 +186,7 @@ class CSVParser:
         """Build the values list for a single row, ready for SQL insertion."""
         values: list[Any] = []
 
-        if not self.has_primary_column:
+        if self._prepend_null:
             values.append(None)
 
         for col, idx in zip(self.parsing_table, self._ordered_indices, strict=True):
