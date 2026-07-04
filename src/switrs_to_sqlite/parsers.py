@@ -303,13 +303,8 @@ class CSVParser:
                 cursor.execute(c.create_table_statement())
 
         """
-        cols = []
-        for tup in self.columns:
-            cols.append(" ".join(tup))
-
-        return "CREATE TABLE {table} ({cols})".format(
-            table=self.table_name, cols=", ".join(cols)
-        )
+        cols = ", ".join(" ".join(tup) for tup in self.columns)
+        return f"CREATE TABLE {self.table_name} ({cols})"
 
 
 VictimRow: CSVParser = CSVParser(
