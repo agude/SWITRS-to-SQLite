@@ -48,6 +48,7 @@ packages = ["src/switrs_to_sqlite"]
 [dependency-groups]
 dev = [
     "pytest>=7.0",
+    "pytest-cov>=6.0",
     "ruff>=0.8",
     "mypy>=2.1",
 ]
@@ -88,3 +89,4 @@ disallow_untyped_defs = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--cov=switrs_to_sqlite --cov-fail-under=90"
