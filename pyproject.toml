@@ -19,6 +19,8 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Utilities",
 ]
 keywords = ["switrs", "sqlite", "data"]
@@ -30,6 +32,7 @@ switrs_to_sqlite = "switrs_to_sqlite.main:main"
 [project.urls]
 Homepage = "https://github.com/agude/SWITRS-to-SQLite"
 Repository = "https://github.com/agude/SWITRS-to-SQLite"
+Issues = "https://github.com/agude/SWITRS-to-SQLite/issues"
 
 [build-system]
 requires = ["hatchling"]
