@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     uses: ./.github/workflows/tests.yml
@@ -11,6 +14,7 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    environment: pypi
     permissions:
       id-token: write
 
@@ -19,6 +23,15 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+
+      - name: Verify tag matches package version
+        run: |
+          pkg_version=$(uv run python -c "from switrs_to_sqlite.main import __version__; print(__version__)")
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pkg_version" != "$tag_version" ]; then
+            echo "ERROR: tag ($tag_version) does not match __version__ ($pkg_version)"
+            exit 1
+          fi
 
       - name: Build package
         run: uv build
