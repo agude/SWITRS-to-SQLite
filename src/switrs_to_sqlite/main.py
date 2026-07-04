@@ -100,10 +100,10 @@ def main(argv: list[str] | None = None) -> None:
                 row_parser.resolve_indices(header_row)
 
                 insert_sql = row_parser.insert_statement()
-
-                for row in reader:
-                    parsed_row = row_parser.parse_row(row)
-                    con.execute(insert_sql, parsed_row)
+                con.executemany(
+                    insert_sql,
+                    (row_parser.parse_row(row) for row in reader),
+                )
 
 
 if __name__ == "__main__":
