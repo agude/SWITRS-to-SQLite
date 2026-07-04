@@ -80,10 +80,6 @@ def test_negative_preserves_already_negative_values() -> None:
     assert negative("121.5", float, None) == -121.5
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="plan.md 1.6: rerun on an existing database raises sqlite3.OperationalError",
-)
 def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
     # A second run against the same output file must fail with a clear
     # CLI error, not an unhandled OperationalError mid-run. If the fix

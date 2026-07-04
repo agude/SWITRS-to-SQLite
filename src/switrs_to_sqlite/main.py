@@ -3,6 +3,8 @@
 import argparse
 import csv
 import sqlite3
+import sys
+from pathlib import Path
 
 from switrs_to_sqlite.open_record import open_record_file
 from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
@@ -62,6 +64,15 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     args = argparser.parse_args(argv)
+
+    output_path = Path(args.output_file)
+    if output_path.exists():
+        print(
+            f"Error: output file '{args.output_file}' already exists. "
+            "Remove it before rerunning.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
 
     # Match the parsers with the files they read
     pairs = (
