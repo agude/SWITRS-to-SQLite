@@ -21,20 +21,27 @@ from switrs_to_sqlite.parsers import (
 _PROGRESS_INTERVAL = 100_000
 
 
+class _RowCounter:
+    __slots__ = ("count",)
+
+    def __init__(self) -> None:
+        self.count = 0
+
+
 def _parsed_rows(
     reader: Iterator[list[str]],
     row_parser: CSVParser,
+    counter: _RowCounter,
 ) -> Generator[list[Any], None, None]:
     """Yield parsed rows while printing progress to stderr."""
     table = row_parser.table_name
     print(f"Converting {table}...", file=sys.stderr)
-    count = 0
     for row in reader:
-        count += 1
-        if count % _PROGRESS_INTERVAL == 0:
-            print(f"  {count:,} rows", file=sys.stderr, flush=True)
+        counter.count += 1
+        if counter.count % _PROGRESS_INTERVAL == 0:
+            print(f"  {counter.count:,} rows", file=sys.stderr, flush=True)
         yield row_parser.parse_row(row)
-    print(f"  {table}: {count:,} rows total", file=sys.stderr)
+    print(f"  {table}: {counter.count:,} rows total", file=sys.stderr)
 
 
 def convert_files(
@@ -92,8 +99,22 @@ def convert_files(
 
                 row_parser.resolve_indices(header_row)
 
+                counter = _RowCounter()
                 insert_sql = row_parser.insert_statement()
-                con.executemany(insert_sql, _parsed_rows(reader, row_parser))
+                con.executemany(insert_sql, _parsed_rows(reader, row_parser, counter))
+
+                if row_parser.has_primary_column:
+                    cursor = con.execute(
+                        f"SELECT COUNT(*) FROM {row_parser.table_name}"
+                    )
+                    inserted = cursor.fetchone()[0]
+                    skipped = counter.count - inserted
+                    if skipped:
+                        print(
+                            f"Warning: {skipped:,} duplicate case_id rows "
+                            f"skipped in {row_parser.table_name}.",
+                            file=sys.stderr,
+                        )
 
         con.execute("CREATE INDEX idx_parties_case_id ON parties (case_id)")
         con.execute("CREATE INDEX idx_victims_case_id ON victims (case_id)")
