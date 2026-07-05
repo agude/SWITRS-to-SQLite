@@ -5,13 +5,17 @@ Kaggle: [California Traffic Collision Data from SWITRS][kaggle]**
 
 [kaggle]: https://www.kaggle.com/alexgude/california-traffic-collision-data-from-switrs
 
-SWITRS-to-SQLite is a Python 3 script that converts the CSV files provided by
-the California Highway Patrol's [Statewide Integrated Traffic Records System
-(SWITRS)](http://iswitrs.chp.ca.gov/Reports/jsp/userLogin.jsp) into an
-[SQLite](https://www.sqlite.org/) database.
+SWITRS-to-SQLite is a Python 3 script that converts the CSV files from the
+California Highway Patrol's Statewide Integrated Traffic Records System
+(SWITRS) into an [SQLite](https://www.sqlite.org/) database.
 
-Instructions to **download the SWITRS data** can be found
-[here](requesting_data.md).
+> **Note:** CHP shut down iSWITRS on January 8, 2025 and replaced it with the
+> [California Crash Reporting System (CCRS)][ccrs]. This tool works with the
+> **legacy SWITRS CSV format** (`CollisionRecords.txt`, `PartyRecords.txt`,
+> `VictimRecords.txt`). CCRS uses a different file layout; support for it is
+> planned for a future release.
+
+[ccrs]: https://data.ca.gov/dataset/ccrs
 
 ## Versioning
 

@@ -1,19 +1,22 @@
-# Requesting Data from SWITRS
+# Requesting Data
 
-To request data from the California Highway Patrol, go to the
-[Statewide Integrated Traffic Records System
-(SWITRS) website](http://iswitrs.chp.ca.gov/Reports/jsp/userLogin.jsp) and
-register an account. When your account is registered and activated, login and
-click "Raw Data" on the left hand sidebar, as circled below:
+## Current: CCRS (2025+)
 
-![The raw data link on the left hand sidebar.](/images/menu.png)
+CHP shut down iSWITRS on January 8, 2025. Crash data is now published through
+the [California Crash Reporting System (CCRS)](https://data.ca.gov/dataset/ccrs)
+on the California Open Data portal.
 
-Fill in the form that comes up. Make sure to fill in the "Reporting Period
-Start" and the "Reporting Period End" fields and check the "Headers" box. When
-you are done hit "Generate Report". These fields are boxed in red below:
+CCRS provides yearly CSV files (`crashes_YYYY.csv`, `parties_YYYY.csv`,
+`injuredwitnesspassengers_YYYY.csv`). **This tool does not yet support the CCRS
+format** — support is planned for a future release.
 
-![Example of filling out the SWITRS raw data request form.](/images/form.png)
+For questions, contact CHP at iswitrs@chp.ca.gov.
 
-The CHP will email you when your report is ready for
-download, which normally takes a few days. The download will give you a large
-zip file which you must unzip before using SWITRS-2-SQLite.
+## Legacy: iSWITRS (pre-2025)
+
+If you already have SWITRS data in the legacy format (`CollisionRecords.txt`,
+`PartyRecords.txt`, `VictimRecords.txt`), this tool converts it as-is.
+
+The iSWITRS portal is no longer available. The legacy instructions that were
+previously here (register an account, request "Raw Data", wait for an email)
+no longer apply.
