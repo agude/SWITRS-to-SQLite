@@ -95,6 +95,9 @@ def convert_files(
                 insert_sql = row_parser.insert_statement()
                 con.executemany(insert_sql, _parsed_rows(reader, row_parser))
 
+        con.execute("CREATE INDEX idx_parties_case_id ON parties (case_id)")
+        con.execute("CREATE INDEX idx_victims_case_id ON victims (case_id)")
+
 
 def main(argv: list[str] | None = None) -> None:
     """CLI entry point for SWITRS-to-SQLite conversion."""

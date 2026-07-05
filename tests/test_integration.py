@@ -102,6 +102,11 @@ def test_end_to_end(tmp_path: Path) -> None:
                     f"Expected: {expected_tuple}\n"
                     f"Actual:   {actual_row}"
                 )
+        cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name LIKE 'idx_%'"
+        )
+        indices = {row[0] for row in cursor.fetchall()}
+        assert indices == {"idx_parties_case_id", "idx_victims_case_id"}
     finally:
         conn.close()
 
