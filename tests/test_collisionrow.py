@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from switrs_to_sqlite.parsers import CollisionRow
+from switrs_to_sqlite.parsers import CSVParser
 
 # A list of tuples, with each tuple containing a row ready to be parsed, and
 # the answer that should be returned from doing so. The tuple is of the form
@@ -483,14 +483,14 @@ ROWS = (
 )
 
 
-def test_collisionrows() -> None:
+def test_collisionrows(collision_parser: CSVParser) -> None:
     for row, answer in ROWS:
-        parsed_row = CollisionRow.parse_row(row)
+        parsed_row = collision_parser.parse_row(row)
         assert parsed_row == answer
 
 
-def test_collisionrow_create_table() -> None:
-    assert CollisionRow.create_table_statement() == (
+def test_collisionrow_create_table(collision_parser: CSVParser) -> None:
+    assert collision_parser.create_table_statement() == (
         "CREATE TABLE "
         "collisions ("
         "case_id TEXT PRIMARY KEY, "
@@ -572,8 +572,8 @@ def test_collisionrow_create_table() -> None:
     )
 
 
-def test_partyrow_columns() -> None:
-    assert CollisionRow.columns == [
+def test_partyrow_columns(collision_parser: CSVParser) -> None:
+    assert collision_parser.columns == [
         ("case_id", "TEXT", "PRIMARY KEY"),
         ("jurisdiction", "INTEGER"),
         ("officer_id", "TEXT"),

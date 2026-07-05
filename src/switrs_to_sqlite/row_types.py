@@ -5,6 +5,8 @@ import switrs_to_sqlite.value_maps as vm
 from switrs_to_sqlite.converters import (
     cellphone_use_to_bool,
     convert,
+    convert_date,
+    convert_time,
     county_city_location_to_county,
     negative,
     non_standard_str_to_bool,
@@ -12,11 +14,6 @@ from switrs_to_sqlite.converters import (
 )
 from switrs_to_sqlite.datatypes import DataType
 from switrs_to_sqlite.schema import Column
-
-# Type alias for date field definitions (kept as tuples - simpler structure)
-# (header, db_name, DataType)
-DateFieldDefinition = tuple[str, str, DataType]
-DateParsingTable = tuple[DateFieldDefinition, ...]
 
 DEFAULT_NULLS: set[str] = {"", "-"}
 
@@ -597,12 +594,30 @@ COLLISION_ROW: Sequence[Column] = (
         converter=negative,
         mapping=None,
     ),
-)
-
-COLLISION_DATE_TABLE: DateParsingTable = (
-    ("COLLISION_DATE", "collision_date", DataType.TEXT),
-    ("COLLISION_TIME", "collision_time", DataType.TEXT),
-    ("PROC_DATE", "process_date", DataType.TEXT),
+    Column(
+        header="COLLISION_DATE",
+        name="collision_date",
+        sql_type=DataType.TEXT,
+        nulls=DEFAULT_NULLS,
+        converter=convert_date,
+        mapping=None,
+    ),
+    Column(
+        header="COLLISION_TIME",
+        name="collision_time",
+        sql_type=DataType.TEXT,
+        nulls=DEFAULT_NULLS,
+        converter=convert_time,
+        mapping=None,
+    ),
+    Column(
+        header="PROC_DATE",
+        name="process_date",
+        sql_type=DataType.TEXT,
+        nulls=DEFAULT_NULLS,
+        converter=convert_date,
+        mapping=None,
+    ),
 )
 
 PARTY_ROW: Sequence[Column] = (

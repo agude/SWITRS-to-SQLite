@@ -9,13 +9,16 @@ from collections.abc import Generator, Iterator
 from pathlib import Path
 from typing import Any
 
+from switrs_to_sqlite import __version__
 from switrs_to_sqlite.open_record import open_record_file
-from switrs_to_sqlite.parsers import CollisionRow, CSVParser, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import (
+    CSVParser,
+    make_collision_parser,
+    make_party_parser,
+    make_victim_parser,
+)
 
 _PROGRESS_INTERVAL = 100_000
-
-# Library version
-__version__: str = "4.6.0"
 
 
 def _parsed_rows(
@@ -34,18 +37,70 @@ def _parsed_rows(
     print(f"  {table}: {count:,} rows total", file=sys.stderr)
 
 
-def main(argv: list[str] | None = None) -> None:
-    """Runs the conversion.
+def convert_files(
+    collision_file: str,
+    party_file: str,
+    victim_file: str,
+    output_file: str,
+    *,
+    parse_errors: str | None = None,
+) -> None:
+    """Convert SWITRS CSV files to a SQLite database.
 
     Args:
-        argv: Command line arguments. If None, uses sys.argv.
+        collision_file: Path to CollisionRecords.txt (or gzipped).
+        party_file: Path to PartyRecords.txt (or gzipped).
+        victim_file: Path to VictimRecords.txt (or gzipped).
+        output_file: Path for the output SQLite database.
+        parse_errors: How to handle unicode decoding errors in input files.
+            One of 'strict', 'ignore', 'replace', or None (defaults to strict).
     """
+    for input_file in (collision_file, party_file, victim_file):
+        if not Path(input_file).exists():
+            raise FileNotFoundError(f"Input file not found: '{input_file}'")
 
-    # We only need to parse command line flags if running as the main script
+    output_path = Path(output_file)
+    if output_path.exists():
+        raise FileExistsError(
+            f"Output file '{output_file}' already exists. Remove it before rerunning."
+        )
+
+    pairs = (
+        (make_collision_parser(), collision_file),
+        (make_party_parser(), party_file),
+        (make_victim_parser(), victim_file),
+    )
+
+    with contextlib.closing(sqlite3.connect(output_file)) as con, con:
+        con.execute("PRAGMA journal_mode = OFF")
+        con.execute("PRAGMA synchronous = OFF")
+        con.execute("PRAGMA cache_size = -64000")
+
+        for row_parser, file_name in pairs:
+            con.execute(row_parser.create_table_statement())
+
+            with open_record_file(file_name, errors=parse_errors) as f:
+                reader = csv.reader(f)
+                try:
+                    header_row = next(reader)
+                except StopIteration:
+                    print(
+                        f"Warning: '{file_name}' is empty, skipping.",
+                        file=sys.stderr,
+                    )
+                    continue
+
+                row_parser.resolve_indices(header_row)
+
+                insert_sql = row_parser.insert_statement()
+                con.executemany(insert_sql, _parsed_rows(reader, row_parser))
+
+
+def main(argv: list[str] | None = None) -> None:
+    """CLI entry point for SWITRS-to-SQLite conversion."""
     argparser = argparse.ArgumentParser(
         description="Convert SWITRS text files to a SQLite3 database"
     )
-    # The list of input files
     argparser.add_argument(
         "--version",
         action="version",
@@ -86,45 +141,17 @@ def main(argv: list[str] | None = None) -> None:
 
     args = argparser.parse_args(argv)
 
-    output_path = Path(args.output_file)
-    if output_path.exists():
-        print(
-            f"Error: output file '{args.output_file}' already exists. "
-            "Remove it before rerunning.",
-            file=sys.stderr,
+    try:
+        convert_files(
+            collision_file=args.collision_record,
+            party_file=args.party_record,
+            victim_file=args.victim_record,
+            output_file=args.output_file,
+            parse_errors=args.parse_error,
         )
-        raise SystemExit(1)
-
-    # Match the parsers with the files they read
-    pairs = (
-        (CollisionRow, args.collision_record),
-        (PartyRow, args.party_record),
-        (VictimRow, args.victim_record),
-    )
-
-    with contextlib.closing(sqlite3.connect(args.output_file)) as con, con:
-        con.execute("PRAGMA journal_mode = OFF")
-        con.execute("PRAGMA synchronous = OFF")
-        con.execute("PRAGMA cache_size = -64000")
-
-        for row_parser, file_name in pairs:
-            # Add the table to the database
-            con.execute(row_parser.create_table_statement())
-
-            # Read in the CSV and process each row
-            with open_record_file(file_name, errors=args.parse_error) as f:
-                reader = csv.reader(f)
-                try:
-                    header_row = next(reader)
-                except StopIteration:
-                    # Empty file (or only BOM), skip to next file
-                    continue
-
-                # Resolve header-to-index mapping once per file
-                row_parser.resolve_indices(header_row)
-
-                insert_sql = row_parser.insert_statement()
-                con.executemany(insert_sql, _parsed_rows(reader, row_parser))
+    except (FileExistsError, FileNotFoundError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        raise SystemExit(1) from None
 
 
 if __name__ == "__main__":

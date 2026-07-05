@@ -2,7 +2,12 @@
 
 import pytest
 
-from switrs_to_sqlite.parsers import CollisionRow, PartyRow, VictimRow
+from switrs_to_sqlite.parsers import (
+    CSVParser,
+    make_collision_parser,
+    make_party_parser,
+    make_victim_parser,
+)
 
 # Headers matching the actual SWITRS CSV files. These are in the order they
 # appear in the actual SWITRS data files from CHP.
@@ -124,6 +129,9 @@ PARTY_HEADER = [
     "CHP_VEH_TYPE_TOWING",
     "CHP_VEH_TYPE_TOWED",
     "RACE",
+    "INATTENTION",
+    "SPECIAL_INFO_F",
+    "SPECIAL_INFO_G",
 ]
 
 VICTIM_HEADER = [
@@ -140,13 +148,27 @@ VICTIM_HEADER = [
 ]
 
 
-@pytest.fixture(autouse=True)
-def resolve_parser_indices() -> None:
-    """Resolve header-to-index mappings for all parsers before each test.
+COLLISIONS_HEADER_CSV = ",".join(COLLISION_HEADER)
+PARTIES_HEADER_CSV = ",".join(PARTY_HEADER)
+VICTIMS_HEADER_CSV = ",".join(VICTIM_HEADER)
 
-    This fixture runs automatically before every test to ensure the parsers
-    have their indices resolved, which is required for parse_row() to work.
-    """
-    CollisionRow.resolve_indices(COLLISION_HEADER.copy())
-    PartyRow.resolve_indices(PARTY_HEADER.copy())
-    VictimRow.resolve_indices(VICTIM_HEADER.copy())
+
+@pytest.fixture()
+def collision_parser() -> CSVParser:
+    p = make_collision_parser()
+    p.resolve_indices(COLLISION_HEADER.copy())
+    return p
+
+
+@pytest.fixture()
+def party_parser() -> CSVParser:
+    p = make_party_parser()
+    p.resolve_indices(PARTY_HEADER.copy())
+    return p
+
+
+@pytest.fixture()
+def victim_parser() -> CSVParser:
+    p = make_victim_parser()
+    p.resolve_indices(VICTIM_HEADER.copy())
+    return p

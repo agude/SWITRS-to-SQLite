@@ -1,10 +1,8 @@
 from collections.abc import Sequence
-from datetime import datetime
 from typing import Any
 
-from switrs_to_sqlite.datatypes import DATATPYE_MAP, DataType
+from switrs_to_sqlite.datatypes import DATATPYE_MAP
 from switrs_to_sqlite.row_types import (
-    COLLISION_DATE_TABLE,
     COLLISION_ROW,
     PARTY_ROW,
     VICTIM_ROW,
@@ -42,16 +40,11 @@ class CSVParser:
     parsing_table: Sequence[Column]
     table_name: str
     has_primary_column: bool
-    date_parsing_table: Sequence[tuple[str, str, DataType]] | None
+    _prepend_null: bool
     columns: list[tuple[str, ...]]
     _insert_sql: str
     _resolved_indices: dict[str, int]
-    _date_indices: dict[str, int]
     _ordered_indices: list[int]
-    # Pre-calculated indices for date columns (avoids iteration/string comparison per row)
-    _collision_date_idx: int | None
-    _collision_time_idx: int | None
-    _process_date_idx: int | None
     _max_index: int
 
     def __init__(
@@ -59,7 +52,6 @@ class CSVParser:
         parsing_table: Sequence[Column],
         table_name: str,
         has_primary_column: bool,
-        date_parsing_table: Sequence[tuple[str, str, DataType]] | None,
     ) -> None:
         """Set up the class and parse the CSV row.
 
@@ -72,18 +64,13 @@ class CSVParser:
             parsing_table: A sequence of Column objects defining the schema.
             table_name: The name of the SQLite table.
             has_primary_column: Whether the first column is a primary key.
-            date_parsing_table: Optional date field definitions.
         """
         self.parsing_table = parsing_table
         self.table_name = table_name
         self.has_primary_column = has_primary_column
-        self.date_parsing_table = date_parsing_table
+        self._prepend_null = not has_primary_column
         self._resolved_indices = {}
-        self._date_indices = {}
         self._ordered_indices = []
-        self._collision_date_idx = None
-        self._collision_time_idx = None
-        self._process_date_idx = None
         self._max_index = 0
 
         self.__datatype_convert = DATATPYE_MAP
@@ -136,29 +123,9 @@ class CSVParser:
             self._resolved_indices[col.header] for col in self.parsing_table
         ]
 
-        # Resolve indices for date columns (normalize header here too)
-        # Also pre-calculate specific indices to avoid iteration in convert methods
-        if self.date_parsing_table:
-            self._date_indices = {}
-            for header, db_name, _ in self.date_parsing_table:
-                normalized = header.lower()
-                if normalized not in header_map:
-                    raise ValueError(f"Missing expected date column: {header}")
-                idx = header_map[normalized]
-                self._date_indices[normalized] = idx
-                # Pre-calculate specific indices for date conversion methods
-                if db_name == "collision_date":
-                    self._collision_date_idx = idx
-                elif db_name == "collision_time":
-                    self._collision_time_idx = idx
-                elif db_name == "process_date":
-                    self._process_date_idx = idx
-
         # Pre-calculate max index for row extension (performance optimization:
         # avoid recalculating max() for every row in multi-million row files)
         self._max_index = max(self._resolved_indices.values())
-        if self._date_indices:
-            self._max_index = max(self._max_index, max(self._date_indices.values()))
 
         return header_map
 
@@ -184,7 +151,7 @@ class CSVParser:
         """Build the values list for a single row, ready for SQL insertion."""
         values: list[Any] = []
 
-        if not self.has_primary_column:
+        if self._prepend_null:
             values.append(None)
 
         for col, idx in zip(self.parsing_table, self._ordered_indices, strict=True):
@@ -194,55 +161,7 @@ class CSVParser:
                 val = col.mapping.get(val, val)
             values.append(val)
 
-        if self.date_parsing_table:
-            values.append(self.__convert_date(row, "collision_date"))
-            values.append(self.__convert_time(row))
-            values.append(self.__convert_date(row, "process_date"))
-
         return values
-
-    def __convert_date(self, row: list[str], date_type: str) -> str | None:
-        # Use pre-calculated indices (avoids iteration per row)
-        if date_type == "collision_date":
-            idx = self._collision_date_idx
-        elif date_type == "process_date":
-            idx = self._process_date_idx
-        else:
-            return None
-
-        if idx is None:
-            return None
-
-        raw = row[idx].strip()
-        if len(raw) != 8:
-            return None
-
-        try:
-            obj = datetime.strptime(raw, "%Y%m%d")
-        except ValueError:
-            return None
-        return obj.date().isoformat()
-
-    def __convert_time(self, row: list[str]) -> str | None:
-        # Use pre-calculated index (avoids iteration per row)
-        if self._collision_time_idx is None:
-            return None
-
-        collision_time_str = row[self._collision_time_idx].strip()
-        if not collision_time_str or collision_time_str == "2500":
-            return None
-
-        # The source data is not always 0 padded, so it will be 900 instead
-        # of 0900, and so length 3
-        missing_leading_zero_length = 3
-        if len(collision_time_str) == missing_leading_zero_length:
-            collision_time_str = "0" + collision_time_str
-
-        try:
-            collision_time_obj = datetime.strptime(collision_time_str, "%H%M")
-        except ValueError:
-            return None
-        return collision_time_obj.time().isoformat()
 
     def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
@@ -264,13 +183,11 @@ class CSVParser:
             # Add the entry
             self.columns.append(entry)
 
-        # If we have extra time columns, set those as well
-        if self.date_parsing_table:
-            for _, name, dtype in self.date_parsing_table:
-                self.columns.append((name, dtype.value))
-
+        col_names = ", ".join(tup[0] for tup in self.columns)
         placeholders = ", ".join("?" * len(self.columns))
-        self._insert_sql = f"INSERT INTO {self.table_name} VALUES ({placeholders})"
+        self._insert_sql = (
+            f"INSERT INTO {self.table_name} ({col_names}) VALUES ({placeholders})"
+        )
 
     def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
@@ -303,34 +220,29 @@ class CSVParser:
                 cursor.execute(c.create_table_statement())
 
         """
-        cols = []
-        for tup in self.columns:
-            cols.append(" ".join(tup))
-
-        return "CREATE TABLE {table} ({cols})".format(
-            table=self.table_name, cols=", ".join(cols)
-        )
+        cols = ", ".join(" ".join(tup) for tup in self.columns)
+        return f"CREATE TABLE {self.table_name} ({cols})"
 
 
-VictimRow: CSVParser = CSVParser(
-    parsing_table=VICTIM_ROW,
-    table_name="victims",
-    has_primary_column=False,
-    date_parsing_table=None,
-)
+def make_collision_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=COLLISION_ROW,
+        table_name="collisions",
+        has_primary_column=True,
+    )
 
 
-PartyRow: CSVParser = CSVParser(
-    parsing_table=PARTY_ROW,
-    table_name="parties",
-    has_primary_column=False,
-    date_parsing_table=None,
-)
+def make_party_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=PARTY_ROW,
+        table_name="parties",
+        has_primary_column=False,
+    )
 
 
-CollisionRow: CSVParser = CSVParser(
-    parsing_table=COLLISION_ROW,
-    table_name="collisions",
-    has_primary_column=True,
-    date_parsing_table=COLLISION_DATE_TABLE,
-)
+def make_victim_parser() -> CSVParser:
+    return CSVParser(
+        parsing_table=VICTIM_ROW,
+        table_name="victims",
+        has_primary_column=False,
+    )

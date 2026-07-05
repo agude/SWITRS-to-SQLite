@@ -4,12 +4,16 @@
 from pathlib import Path
 
 import pytest
-from conftest import COLLISION_HEADER
-from test_integration import COLLISIONS_HEADER, PARTIES_HEADER, VICTIMS_HEADER
+from conftest import (
+    COLLISION_HEADER,
+    COLLISIONS_HEADER_CSV,
+    PARTIES_HEADER_CSV,
+    VICTIMS_HEADER_CSV,
+)
 
 from switrs_to_sqlite.converters import negative
 from switrs_to_sqlite.main import main
-from switrs_to_sqlite.parsers import CollisionRow
+from switrs_to_sqlite.parsers import CSVParser
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -28,40 +32,38 @@ def make_collision_row(**fields: str) -> list[str]:
     return row
 
 
-def test_empty_dates_become_null() -> None:
+def test_empty_dates_become_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(CASE_ID="CASE1")
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] is None
     assert values[PROCESS_DATE_IDX] is None
 
 
-def test_malformed_dates_become_null() -> None:
+def test_malformed_dates_become_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(
         CASE_ID="CASE1",
         COLLISION_DATE="not-a-date",
         PROC_DATE="2020011",  # Too short for %Y%m%d
     )
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] is None
     assert values[PROCESS_DATE_IDX] is None
 
 
-def test_short_row_parses_with_null_dates() -> None:
-    # Real SWITRS files contain ragged rows; __extend_row pads them with
-    # "" which must not crash the date conversion.
-    values = CollisionRow.parse_row(["CASE1", "2020", "20200101"])
+def test_short_row_parses_with_null_dates(collision_parser: CSVParser) -> None:
+    values = collision_parser.parse_row(["CASE1", "2020", "20200101"])
     assert values[COLLISION_DATE_IDX] is None
     assert values[COLLISION_TIME_IDX] is None
 
 
-def test_malformed_collision_time_becomes_null() -> None:
+def test_malformed_collision_time_becomes_null(collision_parser: CSVParser) -> None:
     row = make_collision_row(
         CASE_ID="CASE1",
         COLLISION_DATE="20200101",
         PROC_DATE="20200416",
         COLLISION_TIME="9999",
     )
-    values = CollisionRow.parse_row(row)
+    values = collision_parser.parse_row(row)
     assert values[COLLISION_DATE_IDX] == "2020-01-01"
     assert values[COLLISION_TIME_IDX] is None
     assert values[PROCESS_DATE_IDX] == "2020-04-16"
@@ -85,13 +87,13 @@ def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
     db_path = tmp_path / "switrs.sqlite3"
 
     collisions_path.write_text(
-        COLLISIONS_HEADER + "\n" + (DATA_DIR / "test_collisions.txt").read_text()
+        COLLISIONS_HEADER_CSV + "\n" + (DATA_DIR / "test_collisions.txt").read_text()
     )
     parties_path.write_text(
-        PARTIES_HEADER + "\n" + (DATA_DIR / "test_parties.txt").read_text()
+        PARTIES_HEADER_CSV + "\n" + (DATA_DIR / "test_parties.txt").read_text()
     )
     victims_path.write_text(
-        VICTIMS_HEADER + "\n" + (DATA_DIR / "test_victims.txt").read_text()
+        VICTIMS_HEADER_CSV + "\n" + (DATA_DIR / "test_victims.txt").read_text()
     )
 
     args = [
