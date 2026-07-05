@@ -564,7 +564,7 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "MERB/": Make.MERCEDES_BENZ.value,
     "MERBENZ": Make.MERCEDES_BENZ.value,
     "MERBNZ": Make.MERCEDES_BENZ.value,
-    "MERC": Make.MERCURY.value,
+    "MERC": Make.MERCURY.value,  # ambiguous with Mercedes; Mercury is the shorter brand name
     "MERCE": Make.MERCEDES_BENZ.value,
     "MERCED": Make.MERCEDES_BENZ.value,
     "MERCEDE": Make.MERCEDES_BENZ.value,
@@ -736,8 +736,8 @@ MAKE_MAP: dict[str, MakeMapValue] = {
     "RAM 2500": Make.RAM.value,
     "RAM": Make.RAM.value,
     "RAM/": Make.RAM.value,
-    "RAN": Make.RAM.value,
-    "RANG": Make.LAND_ROVER.value,
+    "RAN": Make.RAM.value,  # ambiguous with Range Rover; RANG covers that
+    "RANG": Make.LAND_ROVER.value,  # truncation of Range Rover; RANGER → Ford
     "RANGE RO": Make.LAND_ROVER.value,
     "RANGE ROVER": Make.LAND_ROVER.value,
     "RANGE RV": Make.LAND_ROVER.value,
