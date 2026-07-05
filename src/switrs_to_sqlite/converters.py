@@ -40,14 +40,12 @@ def convert(
     if nulls is not None and sval in nulls:
         return None
 
-    # Otherwise return the converted value
     if dtype is not None:
         try:
             return dtype(sval)
         except ValueError:
             return None
-    # Note: val and not sval because this is the identity operation
-    return val
+    return sval
 
 
 def negative(
@@ -98,10 +96,11 @@ def string_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    if nulls is not None and val in nulls:
+    sval = val.strip()
+    if nulls is not None and sval in nulls:
         return None
 
-    return val.lower() == "y"
+    return sval.lower() == "y"
 
 
 def county_city_location_to_county(
@@ -158,7 +157,8 @@ def cellphone_use_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    if nulls is not None and val in nulls:
+    sval = val.strip()
+    if nulls is not None and sval in nulls:
         return None
 
     CELLPHONE_IN_USE: dict[str, bool | None] = {
@@ -170,7 +170,7 @@ def cellphone_use_to_bool(
         "3": False,
     }
 
-    return CELLPHONE_IN_USE.get(val)
+    return CELLPHONE_IN_USE.get(sval)
 
 
 def non_standard_str_to_bool(
@@ -189,7 +189,8 @@ def non_standard_str_to_bool(
     Returns:
         Returns a bool if val is not in nulls, otherwise None.
     """
-    if nulls is not None and val in nulls:
+    sval = val.strip()
+    if nulls is not None and sval in nulls:
         return None
 
     MAP: dict[str, bool] = {
@@ -199,7 +200,7 @@ def non_standard_str_to_bool(
         "E": True,
     }
 
-    return MAP.get(val)
+    return MAP.get(sval)
 
 
 def convert_date(
