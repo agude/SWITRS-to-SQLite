@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-from switrs_to_sqlite.datatypes import DATATPYE_MAP
+from switrs_to_sqlite.datatypes import DATATYPE_MAP
 from switrs_to_sqlite.row_types import (
     COLLISION_ROW,
     PARTY_ROW,
@@ -73,7 +73,7 @@ class CSVParser:
         self._ordered_indices = []
         self._max_index = 0
 
-        self.__datatype_convert = DATATPYE_MAP
+        self.__datatype_convert = DATATYPE_MAP
 
         # Set up column names
         self.__set_columns()
