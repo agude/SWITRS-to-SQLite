@@ -208,14 +208,14 @@ PRIMARY_COLLISION_FACTOR: dict[str, str] = {
 }
 
 PCF_VIOLATION_CODE: dict[str, str] = {
-    "B": "business",
+    "B": "business and professions",
     "C": "vehicle",
-    "H": "city health",
+    "H": "city health and safety",
     "I": "city ordinance",
     "O": "county ordinance",
     "P": "penal",
-    "S": "streets",
-    "W": "welfare",
+    "S": "streets and highways",
+    "W": "welfare and institutions",
 }
 
 RACE: dict[str, str] = {
