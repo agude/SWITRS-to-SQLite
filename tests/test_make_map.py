@@ -15,14 +15,10 @@ def test_all_values_are_make_enum_members() -> None:
 
 def test_keys_contain_no_dot_value() -> None:
     for key in MAKE_MAP:
-        assert ".value" not in key, (
-            f"MAKE_MAP key {key!r} contains '.value' (enum access leak)"
-        )
+        assert ".value" not in key, f"MAKE_MAP key {key!r} contains '.value' (enum access leak)"
 
 
 def test_keys_are_uppercase_and_stripped() -> None:
     for key in MAKE_MAP:
-        assert key == key.strip(), (
-            f"MAKE_MAP key {key!r} has leading/trailing whitespace"
-        )
+        assert key == key.strip(), f"MAKE_MAP key {key!r} has leading/trailing whitespace"
         assert key == key.upper(), f"MAKE_MAP key {key!r} is not uppercase"

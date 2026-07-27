@@ -89,12 +89,8 @@ def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
     collisions_path.write_text(
         COLLISIONS_HEADER_CSV + "\n" + (DATA_DIR / "test_collisions.txt").read_text()
     )
-    parties_path.write_text(
-        PARTIES_HEADER_CSV + "\n" + (DATA_DIR / "test_parties.txt").read_text()
-    )
-    victims_path.write_text(
-        VICTIMS_HEADER_CSV + "\n" + (DATA_DIR / "test_victims.txt").read_text()
-    )
+    parties_path.write_text(PARTIES_HEADER_CSV + "\n" + (DATA_DIR / "test_parties.txt").read_text())
+    victims_path.write_text(VICTIMS_HEADER_CSV + "\n" + (DATA_DIR / "test_victims.txt").read_text())
 
     args = [
         str(collisions_path),

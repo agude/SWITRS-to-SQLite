@@ -119,9 +119,7 @@ class CSVParser:
 
         # Pre-calculate ordered indices aligned with parsing_table for faster
         # row parsing (avoids dict lookup per column per row)
-        self._ordered_indices = [
-            self._resolved_indices[col.header] for col in self.parsing_table
-        ]
+        self._ordered_indices = [self._resolved_indices[col.header] for col in self.parsing_table]
 
         # Pre-calculate max index for row extension (performance optimization:
         # avoid recalculating max() for every row in multi-million row files)
@@ -186,7 +184,9 @@ class CSVParser:
         col_names = ", ".join(tup[0] for tup in self.columns)
         placeholders = ", ".join("?" * len(self.columns))
         conflict = " OR IGNORE" if self.has_primary_column else ""
-        self._insert_sql = f"INSERT{conflict} INTO {self.table_name} ({col_names}) VALUES ({placeholders})"
+        self._insert_sql = (
+            f"INSERT{conflict} INTO {self.table_name} ({col_names}) VALUES ({placeholders})"
+        )
 
     def __extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.

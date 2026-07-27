@@ -112,9 +112,7 @@ def check_custom_logic(cursor: sqlite3.Cursor) -> None:
     print(f"81335356 Make: {cursor.fetchall()}")
 
     # 3899454: Pedestrian Collision
-    cursor.execute(
-        "SELECT pedestrian_collision FROM collisions WHERE case_id='3899454'"
-    )
+    cursor.execute("SELECT pedestrian_collision FROM collisions WHERE case_id='3899454'")
     print(f"3899454 Ped Flag: {cursor.fetchone()}")
     cursor.execute("SELECT party_type FROM parties WHERE case_id='3899454'")
     print(f"3899454 Party Types: {cursor.fetchall()}")
@@ -124,13 +122,9 @@ def check_custom_logic(cursor: sqlite3.Cursor) -> None:
     print(f"0726202 Hit&Run: {cursor.fetchone()}")
 
     # 3982906: Motorcycle
-    cursor.execute(
-        "SELECT motorcycle_collision FROM collisions WHERE case_id='3982906'"
-    )
+    cursor.execute("SELECT motorcycle_collision FROM collisions WHERE case_id='3982906'")
     print(f"3982906 MC Flag: {cursor.fetchone()}")
-    cursor.execute(
-        "SELECT vehicle_make FROM parties WHERE case_id='3982906' AND party_number=2"
-    )
+    cursor.execute("SELECT vehicle_make FROM parties WHERE case_id='3982906' AND party_number=2")
     print(f"3982906 MC Make: {cursor.fetchone()}")
 
 

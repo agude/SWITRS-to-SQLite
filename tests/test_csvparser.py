@@ -18,12 +18,8 @@ def row() -> list[str]:
 @pytest.fixture(scope="module")
 def parsing_table() -> tuple[Column, ...]:
     return (
-        Column(
-            header="first", name="first", sql_type=DataType.INTEGER, converter=convert
-        ),
-        Column(
-            header="second", name="second", sql_type=DataType.TEXT, converter=convert
-        ),
+        Column(header="first", name="first", sql_type=DataType.INTEGER, converter=convert),
+        Column(header="second", name="second", sql_type=DataType.TEXT, converter=convert),
         Column(header="third", name="third", sql_type=DataType.REAL, converter=convert),
         Column(
             header="forth",
@@ -41,9 +37,7 @@ def parsing_table() -> tuple[Column, ...]:
     )
 
 
-def _make_parser(
-    parsing_table: tuple[Column, ...], has_primary_column: bool
-) -> CSVParser:
+def _make_parser(parsing_table: tuple[Column, ...], has_primary_column: bool) -> CSVParser:
     parser = CSVParser(
         parsing_table=parsing_table,
         table_name="Test",
@@ -159,7 +153,5 @@ def test_resolve_indices_raises_on_duplicate_headers(
         "FIRST",
     ]  # FIRST duplicates first
 
-    with pytest.raises(
-        ValueError, match=r"Duplicate column header 'FIRST' at indices 0 and 4"
-    ):
+    with pytest.raises(ValueError, match=r"Duplicate column header 'FIRST' at indices 0 and 4"):
         parser.resolve_indices(duplicate_header)

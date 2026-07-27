@@ -104,9 +104,7 @@ def convert_files(
                 con.executemany(insert_sql, _parsed_rows(reader, row_parser, counter))
 
                 if row_parser.has_primary_column:
-                    cursor = con.execute(
-                        f"SELECT COUNT(*) FROM {row_parser.table_name}"
-                    )
+                    cursor = con.execute(f"SELECT COUNT(*) FROM {row_parser.table_name}")
                     inserted = cursor.fetchone()[0]
                     skipped = counter.count - inserted
                     if skipped:

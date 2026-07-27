@@ -117,9 +117,7 @@ def analyze_file(
     print(f"\nAnalyzing: {filepath}")
 
     # Track: column -> value -> list of row indices
-    value_occurrences: dict[str, dict[str, list[int]]] = defaultdict(
-        lambda: defaultdict(list)
-    )
+    value_occurrences: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
 
     # Track all rows for later extraction
     all_rows: list[list[str]] = []
@@ -257,9 +255,7 @@ def extract_rows(data: dict[str, Any], row_indices: list[int]) -> list[str]:
     for idx in row_indices:
         row = data["rows"][idx]
         # Convert back to CSV format
-        csv_row = ",".join(
-            f'"{val}"' if "," in val or '"' in val else val for val in row
-        )
+        csv_row = ",".join(f'"{val}"' if "," in val or '"' in val else val for val in row)
         rows.append(csv_row)
     return rows
 
@@ -272,9 +268,7 @@ def main() -> None:
     collision_file, party_file, victim_file = sys.argv[1:4]
 
     # Analyze each file
-    collision_data = analyze_file(
-        collision_file, COLLISION_KEY_COLUMNS, COLLISION_VALUE_MAPS
-    )
+    collision_data = analyze_file(collision_file, COLLISION_KEY_COLUMNS, COLLISION_VALUE_MAPS)
     party_data = analyze_file(party_file, PARTY_KEY_COLUMNS, PARTY_VALUE_MAPS)
     victim_data = analyze_file(victim_file, VICTIM_KEY_COLUMNS, VICTIM_VALUE_MAPS)
 
