@@ -1,3 +1,7 @@
+# Publishes to PyPI when a GitHub release is published.
+#
+# CI runs first and gates the publish: a PyPI upload cannot be undone, so
+# nothing ships that the matrix has not proven.
 name: Release
 
 on:
@@ -8,22 +12,28 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    uses: ./.github/workflows/tests.yml
+  ci:
+    uses: ./.github/workflows/ci.yml
 
   build:
-    needs: test
+    needs: ci
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
+      # Trusted publishing: no API token stored in the repo.
       id-token: write
 
     steps:
       - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v8
 
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      # The tag is what humans read; __init__.py is what pip installs. A
+      # mismatch ships a version nobody can reproduce from the tag.
       - name: Verify tag matches package version
         run: |
           pkg_version=$(uv run python -c "from switrs_to_sqlite import __version__; print(__version__)")
@@ -34,7 +44,7 @@ jobs:
           fi
 
       - name: Build package
-        run: uv build
+        run: just build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

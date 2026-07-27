@@ -1,45 +1,50 @@
-# Default: list available commands
+# Task runner for switrs-to-sqlite. See the project-standards skill for the
+# verb contract: lint is read-only and total, format is its mutating twin, and
+# check is the full gate that CI runs.
+
+# Default: list available recipes
 default:
     @just --list
+
+# Install dependencies
+sync:
+    uv sync --dev
+
+# All read-only static checks
+lint:
+    uv run ruff check .
+    uv run ruff format --check .
+
+# Apply formatting and safe lint fixes
+format:
+    uv run ruff format .
+    uv run ruff check --fix .
+
+# Type check
+type-check:
+    uv run mypy src/switrs_to_sqlite/ tests/ scripts/
 
 # Run tests
 test *args:
     uv run pytest -vv {{ args }}
 
-# Run linter
-lint:
-    uv run ruff check .
+# Everything CI runs
+check: lint type-check test
 
-# Fix lint errors
-lint-fix:
-    uv run ruff check . --fix
-
-# Format code
-format:
-    uv run ruff format .
-
-# Check formatting (no changes)
-format-check:
-    uv run ruff format --check .
-
-# Run type checking
-type-check:
-    uv run mypy src/switrs_to_sqlite/ tests/ scripts/
-
-# Run all checks (CI)
-check: lint format-check type-check test
-
-# Build package
+# Build the package
 build:
     uv build
 
-# Clean build artifacts
+# Remove build and cache artifacts
 clean:
-    rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache
+    rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache .mypy_cache
 
-# Install dependencies
-sync:
-    uv sync --dev
+# Install the pre-commit hook into this clone
+hooks-install:
+    @mkdir -p .git/hooks
+    @cp bin/pre-commit.sh .git/hooks/pre-commit
+    @chmod +x .git/hooks/pre-commit
+    @echo "Pre-commit hook installed."
 
 # Show CLI help
 help:

@@ -1,5 +1,4 @@
-# Claude and TODO
-CLAUDE.md
+# Personal scratch notes
 TODO.md
 
 #Binary and Image
@@ -36,6 +35,8 @@ Session.vim
 ##Github Linux Ignore
 .*
 !.gitignore
+!.python-version
+!.github/
 *~
 
 # Files that might appear on external disk
@@ -80,7 +81,6 @@ dist
 build
 eggs
 parts
-bin
 var
 sdist
 develop-eggs

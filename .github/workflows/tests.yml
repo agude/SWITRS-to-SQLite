@@ -1,3 +1,5 @@
+# Thin caller: runs the full pipeline on push and pull request. The jobs live
+# in ci.yml so release.yml runs the same pipeline rather than a copy of it.
 name: Tests
 
 on:
@@ -6,53 +8,11 @@ on:
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
-  workflow_call:
 
 concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          - "3.13"
-          - "3.14"
-          - "pypy-3.10"
-          - "pypy-3.11"
-
-    name: Python ${{ matrix.python-version }}
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Set up Python ${{ matrix.python-version }}
-        run: uv python install ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: uv sync --dev
-
-      - name: Lint
-        run: uv run ruff check .
-
-      - name: Format check
-        run: uv run ruff format --check .
-
-      - name: Type check
-        run: uv run mypy src/switrs_to_sqlite/ tests/ scripts/
-
-      - name: Test
-        run: uv run pytest -vv
-
-      - name: Smoke test
-        run: |
-          uv pip install .
-          uv run switrs_to_sqlite --help
+  ci:
+    uses: ./.github/workflows/ci.yml

@@ -1,0 +1,75 @@
+# Callable CI. Every step calls a just recipe, so this file only changes when
+# the shape of the pipeline changes — not when the tooling does.
+#
+# Called by tests.yml (push/PR) and release.yml (before publishing).
+name: CI
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Install dependencies
+        run: just sync
+
+      - name: Lint
+        run: just lint
+
+      - name: Type check
+        run: just type-check
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+          - "pypy-3.10"
+          - "pypy-3.11"
+
+    name: Python ${{ matrix.python-version }}
+    # .python-version pins 3.14 for local work, and `uv sync` would honour it
+    # here too — every matrix leg would silently test the same interpreter.
+    # UV_PYTHON overrides the pin for the whole job.
+    env:
+      UV_PYTHON: ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: just sync
+
+      - name: Test
+        run: just test
+
+      # Catches packaging faults the suite cannot: a console script that
+      # imports fine from the source tree but not from an installed wheel.
+      - name: Smoke test
+        run: |
+          uv pip install .
+          uv run switrs_to_sqlite --help
