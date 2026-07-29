@@ -2,12 +2,7 @@
 # in ci.yml so release.yml runs the same pipeline rather than a copy of it.
 name: Tests
 
-on:
-  push:
-    branches: [main]
-    tags: ["v*"]
-  pull_request:
-  workflow_dispatch:
+on: [push, pull_request]
 
 concurrency:
   group: tests-${{ github.ref }}
