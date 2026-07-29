@@ -40,8 +40,6 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-          - "pypy-3.10"
-          - "pypy-3.11"
 
     name: Python ${{ matrix.python-version }}
     # .python-version pins 3.14 for local work, and `uv sync` would honour it
