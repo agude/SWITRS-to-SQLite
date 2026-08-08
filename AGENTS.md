@@ -40,13 +40,53 @@ just hooks-install  # install bin/pre-commit.sh into this clone
   extraction). Type-checked along with the package.
 - `bin/pre-commit.sh` — the hook; installed by `just hooks-install`.
 
+## `make_map.py` conventions
+
+`src/switrs_to_sqlite/make_map.py` maps raw vehicle-make strings to canonical
+makes. The traps, in the order they have actually bitten:
+
+- **Model names resolve to their make** — `ODYSSEY` → Honda, `RANGER` → Ford,
+  `PRIUS` → Toyota. Field truncations stay with the truncated make:
+  `RANGE RO` → Land Rover.
+- **NCIC vehicle make codes are authoritative** for abbreviations —
+  `INTL` → International Harvester.
+- **TaoTao (`TAOTA` / `TAOTAO`) is a real Chinese scooter and ATV maker**, not
+  a Toyota typo. It gets its own make.
+- **Some mappings are deliberately ambiguous and must be left alone:**
+  `MASI` → Maserati, `SUBN` → Subaru, `MERC` → Mercury. These follow NCIC
+  convention, not intuition.
+- **Never bulk-replace text in this file.** A refactor once turned
+  `"TREK, INC."` into `"TREK.value, INC."` (commit `ae20244`) because the keys
+  are strings that look like code.
+
+The CCRS project's `make_map.py` was seeded from this one (42 makers / 84
+strings here → 81 / 866 there), so a fix here is usually worth porting.
+
 ## Releasing
 
 1. Bump `__version__` in `src/switrs_to_sqlite/__init__.py`. Nothing else
    stores the version.
-2. Commit, tag `vX.Y.Z`, push the tag.
+2. Merge to `main` with `--no-ff`, then create a **lightweight** tag `vX.Y.Z`
+   and push the tag.
 3. Publish a GitHub release. `release.yml` runs the full CI pipeline, verifies
    the tag matches `__version__`, then publishes to PyPI via trusted
    publishing.
 
-A tag that disagrees with `__version__` fails the release job by design.
+A tag that disagrees with `__version__` fails the release job by design. The
+workflow checks out the tag ref, so publishing works before `main` is pushed.
+
+### Deciding whether a change is MAJOR
+
+The operational test: **run the old and new code on the same input. If both
+runs succeed and any value or table in the output differs, it is major.**
+
+- A crash does not count — an aborted run produced no database that anything
+  could be compatible with.
+- CLI-only changes do not count unless they break an existing invocation.
+- Additive indices are borderline; treat as minor.
+
+**Pre-tag ritual:** run the previous tag and the release candidate against a
+real dump, then diff `sqlite3 <file> .dump` output. An empty diff means
+patch/minor. Any diff means the change waits for the next major batch.
+Output-changing work is tagged `[v5]`-style in `TODO.md` and batched, so users
+absorb one break instead of several.
