@@ -7,8 +7,8 @@ The campaign has two stages:
 2. This script mutates the column declarations in row_types.py, which mutmut
    cannot reach because they are module-level data.
 
-Any mutmut survivor, or surviving schema mutant that changes parsed values,
-fails the campaign.
+Any mutant that is not conclusively killed fails the campaign, except a schema
+mutant that survives without being able to change a parsed value.
 
 This module doubles as a pytest plugin. Each schema mutant runs the test suite
 with ``-p mutation_campaign`` and SCHEMA_MUTANT set, so the mutation is applied
@@ -23,8 +23,10 @@ import sys
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from enum import Enum, auto
 from pathlib import Path
 
+import pytest
 from hypothesis import Phase, settings
 
 import switrs_to_sqlite.parsers as parsers
@@ -61,6 +63,14 @@ do_not_mutate_patterns = [
     '^\\s+"(how to handle|.strict. raises|.ignore. skips|.replace. substitutes)',
 ]
 """
+
+
+class MutantOutcome(Enum):
+    """What one test run established about a mutant."""
+
+    KILLED = auto()
+    SURVIVED = auto()
+    UNRESOLVED = auto()
 
 
 @dataclass(frozen=True)
@@ -175,7 +185,7 @@ def campaign_environment(**extra_variables: str) -> dict[str, str]:
 
 
 def run_mutmut(scratch_directory: Path) -> int:
-    """Run mutmut, print its surviving mutants, and return their number."""
+    """Run mutmut, print every mutant it did not kill, and return their number."""
     copy_project(scratch_directory)
     (scratch_directory / "pyproject.toml").write_text(MUTMUT_CONFIG)
     log_path = scratch_directory / "run.log"
@@ -196,11 +206,12 @@ def run_mutmut(scratch_directory: Path) -> int:
         text=True,
         check=True,
     )
-    survivors = [line.strip() for line in results.stdout.splitlines() if "survived" in line]
-    print(f"mutmut: {len(survivors)} survivors (inspect with mutmut show in {scratch_directory})")
-    for survivor in survivors:
-        print(f"  {survivor}")
-    return len(survivors)
+    # mutmut results lists every status except killed.
+    unkilled = [line.strip() for line in results.stdout.splitlines() if "__mutmut_" in line]
+    print(f"mutmut: {len(unkilled)} not killed (inspect with mutmut show in {scratch_directory})")
+    for mutant in unkilled:
+        print(f"  {mutant}")
+    return len(unkilled)
 
 
 def schema_test_command() -> list[str]:
@@ -219,7 +230,16 @@ def schema_test_command() -> list[str]:
     ]
 
 
-def mutant_survives(mutant: SchemaMutant, scratch_directory: Path) -> bool:
+def outcome_for_exit_code(exit_code: int) -> MutantOutcome:
+    """Trust only pytest's passed and tests-failed results."""
+    if exit_code == pytest.ExitCode.TESTS_FAILED:
+        return MutantOutcome.KILLED
+    if exit_code == pytest.ExitCode.OK:
+        return MutantOutcome.SURVIVED
+    return MutantOutcome.UNRESOLVED
+
+
+def mutant_outcome(mutant: SchemaMutant, scratch_directory: Path) -> MutantOutcome:
     environment = campaign_environment(
         HYPOTHESIS_PROFILE="mutation",
         **{MUTANT_ENVIRONMENT_VARIABLE: mutant.identifier},
@@ -234,12 +254,12 @@ def mutant_survives(mutant: SchemaMutant, scratch_directory: Path) -> bool:
             check=False,
         )
     except subprocess.TimeoutExpired:
-        return False
-    return completed.returncode == 0
+        return MutantOutcome.UNRESOLVED
+    return outcome_for_exit_code(completed.returncode)
 
 
 def run_schema_mutants(scratch_directory: Path) -> int:
-    """Test every schema mutant and return the number of real survivors."""
+    """Test every schema mutant and return the number of failures."""
     copy_project(scratch_directory)
     subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "-x", "--no-cov", "tests"],
@@ -251,22 +271,29 @@ def run_schema_mutants(scratch_directory: Path) -> int:
 
     mutants = all_schema_mutants()
     with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
-        survived_flags = list(
-            executor.map(lambda mutant: mutant_survives(mutant, scratch_directory), mutants)
+        outcomes = list(
+            executor.map(lambda mutant: mutant_outcome(mutant, scratch_directory), mutants)
         )
-    survivors = [
-        mutant for mutant, survived in zip(mutants, survived_flags, strict=True) if survived
-    ]
+    outcome_by_mutant = dict(zip(mutants, outcomes, strict=True))
+    killed_count = outcomes.count(MutantOutcome.KILLED)
+    survivors = [m for m in mutants if outcome_by_mutant[m] is MutantOutcome.SURVIVED]
+    unresolved = [m for m in mutants if outcome_by_mutant[m] is MutantOutcome.UNRESOLVED]
     real_survivors = [mutant for mutant in survivors if is_real_survivor(mutant)]
 
     print(
-        f"schema: {len(mutants)} mutants, {len(mutants) - len(survivors)} killed, "
-        f"{len(survivors) - len(real_survivors)} equivalent, {len(real_survivors)} real survivors"
+        f"schema: {len(mutants)} mutants, {killed_count} killed, "
+        f"{len(survivors) - len(real_survivors)} equivalent, "
+        f"{len(real_survivors)} real survivors, {len(unresolved)} unresolved"
     )
-    for mutant in real_survivors:
+    print_schema_mutants(real_survivors, "survived")
+    print_schema_mutants(unresolved, "unresolved")
+    return len(real_survivors) + len(unresolved)
+
+
+def print_schema_mutants(mutants: list[SchemaMutant], status: str) -> None:
+    for mutant in mutants:
         column = table_columns(mutant.table_name)[mutant.column_index]
-        print(f"  {mutant.table_name} {column.name}: {mutant.kind}")
-    return len(real_survivors)
+        print(f"  {mutant.table_name} {column.name}: {mutant.kind} ({status})")
 
 
 def is_real_survivor(mutant: SchemaMutant) -> bool:
@@ -276,9 +303,9 @@ def is_real_survivor(mutant: SchemaMutant) -> bool:
 
 def main() -> int:
     shutil.rmtree(SCRATCH_ROOT, ignore_errors=True)
-    mutmut_survivors = run_mutmut(SCRATCH_ROOT / "mutmut")
-    schema_survivors = run_schema_mutants(SCRATCH_ROOT / "schema")
-    return 1 if mutmut_survivors or schema_survivors else 0
+    mutmut_failures = run_mutmut(SCRATCH_ROOT / "mutmut")
+    schema_failures = run_schema_mutants(SCRATCH_ROOT / "schema")
+    return 1 if mutmut_failures or schema_failures else 0
 
 
 if __name__ == "__main__":
