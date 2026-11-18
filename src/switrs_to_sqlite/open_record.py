@@ -10,6 +10,9 @@ _RECORD_ENCODING = "utf-8-sig"
 def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
     """Open a Record file, detecting gzip by magic bytes.
 
+    Newlines are left untranslated, as the csv module requires, so line breaks
+    inside quoted fields are preserved.
+
     Args:
         file_name: The name of a file. Gzip files are detected by the
             two-byte magic number, not the file extension.
@@ -20,5 +23,5 @@ def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
         magic = f.read(2)
 
     if magic == _GZIP_MAGIC:
-        return gzip.open(file_name, "rt", encoding=_RECORD_ENCODING, errors=errors)
-    return path.open(encoding=_RECORD_ENCODING, errors=errors)
+        return gzip.open(file_name, "rt", encoding=_RECORD_ENCODING, errors=errors, newline="")
+    return path.open(encoding=_RECORD_ENCODING, errors=errors, newline="")
