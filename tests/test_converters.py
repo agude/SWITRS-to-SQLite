@@ -5,6 +5,8 @@ import pytest
 from switrs_to_sqlite.converters import (
     cellphone_use_to_bool,
     convert,
+    convert_date,
+    convert_time,
     county_city_location_to_county,
     negative,
     non_standard_str_to_bool,
@@ -206,3 +208,21 @@ def test_numeric_conversion_keeps_standard_forms(
     value: str, dtype: type[int] | type[float], expected: float
 ) -> None:
     assert convert(value, dtype) == expected
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["202401 1", "2024 101", "+2024011", "\u0662\u0660\u0662\u0664\u0660\u0661\u0660\u0661"],
+)
+def test_convert_date_requires_eight_ascii_digits(value: str) -> None:
+    assert convert_date(value) is None
+
+
+@pytest.mark.parametrize("value", ["1", "12", "1 5", "+930", "9 30", "\u0660\u0669\u0660\u0660"])
+def test_convert_time_requires_three_or_four_ascii_digits(value: str) -> None:
+    assert convert_time(value) is None
+
+
+@pytest.mark.parametrize(("value", "expected"), [("900", "09:00:00"), ("0900", "09:00:00")])
+def test_convert_time_accepts_padded_and_unpadded_hours(value: str, expected: str) -> None:
+    assert convert_time(value) == expected

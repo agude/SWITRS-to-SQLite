@@ -8,6 +8,10 @@ SQLITE_MIN_INTEGER = -(2**63)
 SQLITE_MAX_INTEGER = 2**63 - 1
 
 
+def _is_ascii_digits(text: str) -> bool:
+    return text.isascii() and text.isdigit()
+
+
 def identity(
     val: str,
     dtype: type[int] | type[float] | type[str] | None = None,
@@ -227,7 +231,8 @@ def convert_date(
     sval = val.strip()
     if nulls is not None and sval in nulls:
         return None
-    if len(sval) != 8:
+    # strptime alone also accepts unpadded forms like "202401 1".
+    if len(sval) != 8 or not _is_ascii_digits(sval):
         return None
     try:
         return datetime.strptime(sval, "%Y%m%d").date().isoformat()
@@ -249,9 +254,10 @@ def convert_time(
     if nulls is not None and sval in nulls:
         return None
     # Source data is not always zero-padded (e.g. "900" instead of "0900")
-    if len(sval) == 3:
-        sval = "0" + sval
+    if len(sval) not in (3, 4) or not _is_ascii_digits(sval):
+        return None
     try:
-        return datetime.strptime(sval, "%H%M").time().isoformat()
+        return datetime.strptime(sval.zfill(4), "%H%M").time().isoformat()
+
     except ValueError:
         return None

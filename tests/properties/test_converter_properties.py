@@ -119,3 +119,18 @@ def test_numeric_conversion_rejects_non_ascii_digits(value: str) -> None:
 
     assert convert(value, int) is None
     assert convert(value, float) is None
+
+
+@given(st.text(alphabet="0123456789 +-", min_size=8, max_size=8))
+def test_convert_date_rejects_non_digit_forms(value: str) -> None:
+    assume(not value.isdigit())
+
+    assert convert_date(value) is None
+
+
+@given(st.text(alphabet="0123456789 +-", min_size=1, max_size=4))
+def test_convert_time_rejects_short_and_non_digit_forms(value: str) -> None:
+    stripped = value.strip()
+    assume(len(stripped) < 3 or not stripped.isdigit())
+
+    assert convert_time(value) is None
