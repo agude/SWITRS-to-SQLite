@@ -52,6 +52,7 @@ dev = [
     "ruff>=0.8",
     "mypy>=2.1",
 ]
+mutation = ["mutmut==3.8.1"]
 
 [tool.ruff]
 target-version = "py310"
