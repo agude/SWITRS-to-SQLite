@@ -1,35 +1,17 @@
 """Model-based properties for importing legacy CSV files into SQLite."""
 
 import contextlib
-import csv
-import gzip
-import io
 import sqlite3
 import tempfile
 from pathlib import Path
 
 import pytest
 from conftest import COLLISION_HEADER, PARTY_HEADER, VICTIM_HEADER
-from hypothesis import given, settings
+from hypothesis import event, given, settings
 from hypothesis import strategies as st
+from import_helpers import write_csv
 
 from switrs_to_sqlite.main import convert_files
-
-
-def write_csv(
-    path: Path, headers: list[str], records: list[dict[str, str]], *, compressed: bool
-) -> None:
-    """Write CSV records with the standard CSV writer, optionally through gzip."""
-    text = io.StringIO(newline="")
-    writer = csv.DictWriter(text, fieldnames=headers, lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(records)
-    payload = "\ufeff" + text.getvalue()
-    if compressed:
-        with gzip.open(path, "wt", encoding="utf-8", newline="") as output:
-            output.write(payload)
-    else:
-        path.write_text(payload, encoding="utf-8")
 
 
 def records_for_keys(
@@ -122,6 +104,9 @@ def test_import_preserves_first_collision_and_child_multiplicity(
     reverse_headers: bool,
 ) -> None:
     """Imports deduplicate collisions by case ID and retain every child row."""
+    event(f"duplicate collision keys: {len(collision_keys) != len(set(collision_keys))}")
+    event(f"duplicate party keys: {len(party_keys) != len(set(party_keys))}")
+    event(f"parties share a collision key: {not set(party_keys).isdisjoint(collision_keys)}")
     with tempfile.TemporaryDirectory() as temporary_directory:
         assert_import(
             Path(temporary_directory),

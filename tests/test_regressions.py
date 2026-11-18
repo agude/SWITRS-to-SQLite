@@ -186,3 +186,22 @@ def test_cli_reports_package_version(capsys: pytest.CaptureFixture[str]) -> None
 
     assert error.value.code == 0
     assert capsys.readouterr().out.split()[-1] == __version__
+
+
+def test_case_id_indices_have_stable_definitions(tmp_path: Path) -> None:
+    # SQLite stores this text verbatim, so it is part of the database dump.
+    inputs = [tmp_path / name for name in ("collisions.txt", "parties.txt", "victims.txt")]
+    for path in inputs:
+        path.touch()
+    database = tmp_path / "switrs.sqlite3"
+
+    main([*map(str, inputs), "-o", str(database)])
+
+    with closing(sqlite3.connect(database)) as connection:
+        definitions = connection.execute(
+            "SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL ORDER BY name"
+        ).fetchall()
+    assert definitions == [
+        ("CREATE INDEX idx_parties_case_id ON parties (case_id)",),
+        ("CREATE INDEX idx_victims_case_id ON victims (case_id)",),
+    ]

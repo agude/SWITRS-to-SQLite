@@ -13,7 +13,7 @@ from switrs_to_sqlite.parsers import (
 )
 
 settings.register_profile("ci", max_examples=100, derandomize=True)
-settings.register_profile("long", max_examples=20_000, deadline=None)
+settings.register_profile("long", max_examples=20_000, deadline=None, print_blob=True)
 settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", "ci"))
 
 # Headers matching the actual SWITRS CSV files. These are in the order they

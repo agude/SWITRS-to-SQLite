@@ -4,7 +4,7 @@ import math
 from collections.abc import Sequence
 
 import pytest
-from hypothesis import example, given
+from hypothesis import event, example, given
 from hypothesis import strategies as st
 
 from switrs_to_sqlite.converters import convert
@@ -104,6 +104,7 @@ def test_short_rows_pad_missing_trailing_columns_with_empty_values(
 ) -> None:
     parser = make_parser()
     parser.resolve_indices(list(order))
+    event(f"fields present: {len(prefix)}")
     raw_values = dict(zip(order[: len(prefix)], prefix, strict=True))
     expected = [model_value(field, raw_values.get(field, "")) for field in FIELDS]
 

@@ -2,7 +2,7 @@
 
 from datetime import date, time
 
-from hypothesis import example, given
+from hypothesis import event, example, given
 from hypothesis import strategies as st
 
 from switrs_to_sqlite.converters import (
@@ -39,6 +39,7 @@ def test_convert_date_matches_calendar_constructor(value: str) -> None:
     except ValueError:
         expected = None
 
+    event(f"valid calendar date: {expected is not None}")
     assert convert_date(value) == expected
 
 
@@ -55,6 +56,7 @@ def test_convert_time_matches_clock_constructor(value: str) -> None:
     except ValueError:
         expected = None
 
+    event(f"valid clock time: {expected is not None}")
     assert convert_time(value) == expected
 
 
