@@ -1,5 +1,6 @@
 """Converter functions for transforming CSV values to database values."""
 
+import math
 from collections.abc import Collection
 from datetime import datetime
 
@@ -34,8 +35,8 @@ def convert(
 
     Returns:
         Returns dtype(val) if val is not in nulls, otherwise None.
-        If dtype(val) raises a ValueError, or produces an integer SQLite
-        cannot store, None is returned.
+        None is returned if dtype(val) raises a ValueError, or if a number is
+        not plain finite ASCII text that SQLite can store.
     """
     # Strip spaces
     sval: str = val.strip()
@@ -47,12 +48,18 @@ def convert(
     if dtype is None:
         return sval
 
+    # int() and float() also accept forms like 1_000 and non-ASCII digits.
+    if dtype is not str and not (sval.isascii() and "_" not in sval):
+        return None
+
     try:
         converted = dtype(sval)
     except ValueError:
         return None
 
     if isinstance(converted, int) and not SQLITE_MIN_INTEGER <= converted <= SQLITE_MAX_INTEGER:
+        return None
+    if isinstance(converted, float) and not math.isfinite(converted):
         return None
     return converted
 

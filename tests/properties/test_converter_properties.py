@@ -2,7 +2,7 @@
 
 from datetime import date, time
 
-from hypothesis import event, example, given
+from hypothesis import assume, event, example, given
 from hypothesis import strategies as st
 
 from switrs_to_sqlite.converters import (
@@ -111,3 +111,11 @@ def test_boolean_codes_apply_nulls_before_lookup(code: str, nulls: set[str], pad
     assert non_standard_str_to_bool(token, nulls=nulls) is (
         None if code in nulls else nonstandard_codes.get(code)
     )
+
+
+@given(st.text(st.characters(categories=["Nd"]), min_size=1, max_size=4))
+def test_numeric_conversion_rejects_non_ascii_digits(value: str) -> None:
+    assume(not value.isascii())
+
+    assert convert(value, int) is None
+    assert convert(value, float) is None

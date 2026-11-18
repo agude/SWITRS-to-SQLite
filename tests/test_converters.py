@@ -180,3 +180,29 @@ def test_convert_keeps_integers_sqlite_can_store(value: int) -> None:
 @pytest.mark.parametrize("value", [-(2**63) - 1, 2**63, 10**20])
 def test_convert_nulls_integers_sqlite_cannot_store(value: int) -> None:
     assert convert(str(value), int) is None
+
+
+@pytest.mark.parametrize("value", ["nan", "NaN", "inf", "-inf", "Infinity", "1e999"])
+def test_numeric_conversion_rejects_non_finite_values(value: str) -> None:
+    assert convert(value, float) is None
+    assert negative(value, float) is None
+
+
+@pytest.mark.parametrize("dtype", [int, float])
+@pytest.mark.parametrize("value", ["1_000", "\u0661\u0662", "\uff11\uff12"])
+def test_numeric_conversion_requires_plain_ascii_numbers(
+    dtype: type[int] | type[float], value: str
+) -> None:
+    assert convert(value, dtype) is None
+
+
+@pytest.mark.parametrize("value", ["a_b", "Café", "nan"])
+def test_text_conversion_keeps_number_like_rejects(value: str) -> None:
+    assert convert(value, str) == value
+
+
+@pytest.mark.parametrize(("value", "dtype", "expected"), [("+5", int, 5), ("1e3", float, 1000.0)])
+def test_numeric_conversion_keeps_standard_forms(
+    value: str, dtype: type[int] | type[float], expected: float
+) -> None:
+    assert convert(value, dtype) == expected

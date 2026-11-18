@@ -28,19 +28,24 @@ def make_parser(has_primary_column: bool = True) -> CSVParser:
     return CSVParser(make_columns(), "records", has_primary_column)
 
 
+def model_number(number_type: type[int] | type[float], text: str) -> int | float | None:
+    """Reference parsing: plain, finite, ASCII numbers only."""
+    if not text.isascii() or "_" in text:
+        return None
+    try:
+        number = number_type(text)
+    except ValueError:
+        return None
+    return number if math.isfinite(number) else None
+
+
 def model_value(header: str, raw: str) -> object:
     """Reference conversion for the deliberately small schema above."""
     stripped = raw.strip()
     if header == "record_id":
-        try:
-            return int(stripped)
-        except ValueError:
-            return None
+        return model_number(int, stripped)
     if header == "amount":
-        try:
-            return float(stripped)
-        except ValueError:
-            return None
+        return model_number(float, stripped)
     return MAPPING.get(stripped, stripped)
 
 
@@ -108,11 +113,7 @@ def test_short_rows_pad_missing_trailing_columns_with_empty_values(
     raw_values = dict(zip(order[: len(prefix)], prefix, strict=True))
     expected = [model_value(field, raw_values.get(field, "")) for field in FIELDS]
 
-    for actual, reference in zip(parser.parse_row(prefix), expected, strict=True):
-        if isinstance(reference, float) and math.isnan(reference):
-            assert isinstance(actual, float) and math.isnan(actual)
-        else:
-            assert actual == reference
+    assert parser.parse_row(prefix) == expected
 
 
 @given(header=st.sampled_from(FIELDS))
