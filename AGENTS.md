@@ -33,7 +33,8 @@ just hooks-install  # install bin/pre-commit.sh into this clone
 ```
 
 `just test` runs the property tests with a small derandomized profile.
-`proptest.yml` runs `just proptest` weekly. `just mutate` is manual and takes
+`proptest.yml` runs `just proptest` weekly and on pushes that change the
+properties or the workflow. `just mutate` is manual and takes
 about an hour. It fails
 when a schema mutant that changes parsed values survives. Review its mutmut
 survivors by hand: CLI help and progress text are not worth pinning.
