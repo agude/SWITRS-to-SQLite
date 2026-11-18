@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import pytest
+
 from switrs_to_sqlite.converters import (
     cellphone_use_to_bool,
     convert,
@@ -168,3 +170,13 @@ def test_non_standard_str_to_bool() -> None:
     )
     for val, dtype, nulls, res in convert_vals:
         assert non_standard_str_to_bool(val, dtype, nulls) == res
+
+
+@pytest.mark.parametrize("value", [-(2**63), 2**63 - 1])
+def test_convert_keeps_integers_sqlite_can_store(value: int) -> None:
+    assert convert(str(value), int) == value
+
+
+@pytest.mark.parametrize("value", [-(2**63) - 1, 2**63, 10**20])
+def test_convert_nulls_integers_sqlite_cannot_store(value: int) -> None:
+    assert convert(str(value), int) is None
