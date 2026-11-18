@@ -8,6 +8,7 @@ import sqlite3
 import tempfile
 from pathlib import Path
 
+import pytest
 from conftest import COLLISION_HEADER, PARTY_HEADER, VICTIM_HEADER
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -130,3 +131,20 @@ def test_import_preserves_first_collision_and_child_multiplicity(
             compressed=compressed,
             reverse_headers=reverse_headers,
         )
+
+
+def test_import_duplicate_collision_keeps_first_row(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A concrete duplicate collision batch preserves the first row's values."""
+    assert_import(
+        tmp_path,
+        ["42", "42"],
+        ["42", "42"],
+        ["42"],
+        compressed=False,
+        reverse_headers=False,
+    )
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "Warning: 1 duplicate case_id rows skipped in collisions." in captured.err
