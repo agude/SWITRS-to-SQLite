@@ -98,3 +98,11 @@ def test_losing_import_never_changes_the_existing_database(
             main_module.convert_files(inputs[0], inputs[1], inputs[2], str(database))
 
         assert database.read_bytes() == winner
+
+
+@settings(deadline=None)
+@given(bad_index=INPUT_INDICES, row_number=st.integers(min_value=1, max_value=200))
+def test_unterminated_quote_fails_cleanly(bad_index: int, row_number: int) -> None:
+    lines = valid_payload(HEADERS[bad_index]).splitlines(keepends=True)
+    lines[row_number] = b'"' + lines[row_number]
+    assert_clean_failure(bad_index, b"".join(lines))

@@ -162,7 +162,9 @@ def _load_record_file(
 ) -> None:
     """Insert every row of one record file into its table."""
     with open_record_file(file_name, errors=parse_errors) as f:
-        reader = csv.reader(f)
+        # Strict parsing stops a broken quote from silently absorbing later records.
+        reader = csv.reader(f, strict=True)
+
         try:
             header_row = next(reader)
         except StopIteration:

@@ -42,6 +42,14 @@ def oversized_field(header: str) -> bytes:
     return f"{header}\n{'x' * (CSV_FIELD_LIMIT + 1)}\n".encode()
 
 
+def unterminated_quote(header: str) -> bytes:
+    return f'{header}\n"1\n2\n'.encode()
+
+
+def text_after_closing_quote(header: str) -> bytes:
+    return f'{header}\n"1" street\n2\n'.encode()
+
+
 def write_inputs(
     directory: Path, bad_index: int | None, make_bad: Callable[[str], bytes]
 ) -> list[str]:
@@ -58,7 +66,15 @@ def write_inputs(
 @pytest.mark.parametrize("bad_index", [0, 1, 2])
 @pytest.mark.parametrize(
     "make_bad",
-    [missing_header, invalid_utf8, truncated_gzip, corrupted_gzip, oversized_field],
+    [
+        missing_header,
+        invalid_utf8,
+        truncated_gzip,
+        corrupted_gzip,
+        oversized_field,
+        unterminated_quote,
+        text_after_closing_quote,
+    ],
 )
 def test_bad_input_exits_cleanly_and_allows_a_rerun(
     tmp_path: Path,
