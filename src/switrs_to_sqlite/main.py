@@ -3,8 +3,10 @@
 import argparse
 import contextlib
 import csv
+import os
 import sqlite3
 import sys
+import tempfile
 import zlib
 from collections.abc import Generator, Iterable, Iterator
 from pathlib import Path
@@ -33,6 +35,10 @@ _RECORD_FILE_ERRORS = (OSError, EOFError, ValueError, csv.Error, zlib.error)
 
 class RecordFileError(Exception):
     """An input record file could not be read or converted."""
+
+
+class OutputFileError(Exception):
+    """The output database could not be written."""
 
 
 class _RowCounter:
@@ -83,8 +89,11 @@ def convert_files(
     Raises:
         FileNotFoundError: If an input file does not exist.
         FileExistsError: If the output file already exists.
-        RecordFileError: If an input file cannot be read or converted. The
-            partial output file is removed.
+        RecordFileError: If an input file cannot be read or converted.
+        OutputFileError: If the output database cannot be written.
+
+    The database is built in a temporary directory beside output_file and
+    appears there only once complete. An existing file is never replaced.
     """
     for input_file in (collision_file, party_file, victim_file):
         if not Path(input_file).exists():
@@ -92,9 +101,7 @@ def convert_files(
 
     output_path = Path(output_file)
     if output_path.exists():
-        raise FileExistsError(
-            f"Output file '{output_file}' already exists. Remove it before rerunning."
-        )
+        raise FileExistsError(_output_exists_message(output_path))
 
     record_sources = (
         (make_collision_parser(), collision_file),
@@ -102,12 +109,28 @@ def convert_files(
         (make_victim_parser(), victim_file),
     )
 
-    # A partial database would block the rerun and could pass for a real one.
+    # The build directory must share a filesystem with the output for the link.
     try:
-        _write_database(output_file, record_sources, parse_errors)
-    except BaseException:
-        output_path.unlink(missing_ok=True)
+        with tempfile.TemporaryDirectory(dir=output_path.parent) as build_directory:
+            build_path = Path(build_directory) / output_path.name
+            _write_database(str(build_path), record_sources, parse_errors)
+            _publish_database(build_path, output_path)
+    except FileExistsError:
         raise
+    except (OSError, sqlite3.Error) as error:
+        raise OutputFileError(f"Could not write '{output_file}': {error}") from error
+
+
+def _output_exists_message(output_path: Path) -> str:
+    return f"Output file '{output_path}' already exists. Remove it before rerunning."
+
+
+def _publish_database(build_path: Path, output_path: Path) -> None:
+    """Link the finished database into place, failing if the output now exists."""
+    try:
+        os.link(build_path, output_path)
+    except FileExistsError:
+        raise FileExistsError(_output_exists_message(output_path)) from None
 
 
 def _write_database(
@@ -217,11 +240,8 @@ def main(argv: list[str] | None = None) -> None:
             output_file=args.output_file,
             parse_errors=args.parse_error,
         )
-    except (FileExistsError, FileNotFoundError, RecordFileError) as e:
+    except (FileExistsError, FileNotFoundError, RecordFileError, OutputFileError) as e:
         print(f"Error: {e}", file=sys.stderr)
-        raise SystemExit(1) from None
-    except sqlite3.Error as e:
-        print(f"Error: Could not write '{args.output_file}': {e}", file=sys.stderr)
         raise SystemExit(1) from None
 
 

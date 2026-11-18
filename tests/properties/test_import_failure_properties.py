@@ -5,13 +5,16 @@ import gzip
 import io
 import tempfile
 from pathlib import Path
+from typing import Any
+from unittest import mock
 
 import pytest
 from conftest import COLLISION_HEADER, PARTY_HEADER, VICTIM_HEADER
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from switrs_to_sqlite.main import main
+import switrs_to_sqlite.main as main_module
+from switrs_to_sqlite.main import RecordFileError, main
 from switrs_to_sqlite.row_types import COLLISION_ROW, PARTY_ROW, VICTIM_ROW
 
 HEADERS = (COLLISION_HEADER, PARTY_HEADER, VICTIM_HEADER)
@@ -66,3 +69,32 @@ def test_missing_required_header_fails_cleanly(data: st.DataObject, bad_index: i
     missing = data.draw(st.sampled_from(required_headers))
     remaining = [header for header in headers if header != missing]
     assert_clean_failure(bad_index, f"{','.join(remaining)}\n1\n".encode())
+
+
+@settings(deadline=None)
+@given(bad_index=st.one_of(st.none(), INPUT_INDICES), winner=st.binary(min_size=1, max_size=32))
+def test_losing_import_never_changes_the_existing_database(
+    bad_index: int | None, winner: bytes
+) -> None:
+    real_write_database = main_module._write_database
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        directory = Path(temporary_directory)
+        database = directory / "output.sqlite3"
+        inputs = [str(directory / f"input_{index}.txt") for index in range(len(HEADERS))]
+        for index, (path, headers) in enumerate(zip(inputs, HEADERS, strict=True)):
+            payload = b"NOT_A_COLUMN\n" if index == bad_index else valid_payload(headers)
+            Path(path).write_bytes(payload)
+
+        def write_after_winner(output_file: str, *arguments: Any) -> None:
+            database.write_bytes(winner)
+            real_write_database(output_file, *arguments)
+
+        expected_error = FileExistsError if bad_index is None else RecordFileError
+        with (
+            contextlib.redirect_stderr(io.StringIO()),
+            mock.patch.object(main_module, "_write_database", write_after_winner),
+            pytest.raises(expected_error),
+        ):
+            main_module.convert_files(inputs[0], inputs[1], inputs[2], str(database))
+
+        assert database.read_bytes() == winner
