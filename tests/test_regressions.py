@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Regression tests for bugs identified in plan.md, section 1."""
+"""Regression tests for legacy record conversion and CLI behavior."""
 
+import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 import pytest
@@ -11,6 +13,7 @@ from conftest import (
     VICTIMS_HEADER_CSV,
 )
 
+from switrs_to_sqlite import __version__
 from switrs_to_sqlite.converters import negative
 from switrs_to_sqlite.main import main
 from switrs_to_sqlite.parsers import CSVParser
@@ -77,7 +80,9 @@ def test_negative_preserves_already_negative_values() -> None:
     assert negative("121.5", float, None) == -121.5
 
 
-def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
+def test_rerun_on_existing_database_fails_cleanly(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     # A second run against the same output file must fail with a clear
     # CLI error, not an unhandled OperationalError mid-run. If the fix
     # adds overwrite semantics (e.g. --force), update this contract.
@@ -100,5 +105,84 @@ def test_rerun_on_existing_database_fails_cleanly(tmp_path: Path) -> None:
         str(db_path),
     ]
     main(args)
-    with pytest.raises(SystemExit):
+    capsys.readouterr()
+    with pytest.raises(SystemExit) as error:
         main(args)
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert str(db_path) in captured.err
+    assert "already exists" in captured.err
+
+
+def test_missing_input_exits_before_creating_database(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    collisions = tmp_path / "collisions.txt"
+    parties = tmp_path / "parties.txt"
+    victims = tmp_path / "victims.txt"
+    database = tmp_path / "switrs.sqlite3"
+    collisions.touch()
+    victims.touch()
+
+    with pytest.raises(SystemExit) as error:
+        main([str(collisions), str(parties), str(victims), "-o", str(database)])
+
+    assert error.value.code == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "Input file not found" in captured.err
+    assert str(parties) in captured.err
+    assert not database.exists()
+
+
+def test_empty_input_retains_table_and_continues_import(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    collisions = tmp_path / "collisions.txt"
+    parties = tmp_path / "parties.txt"
+    victims = tmp_path / "victims.txt"
+    database = tmp_path / "switrs.sqlite3"
+    collisions.touch()
+    parties.write_text(PARTIES_HEADER_CSV + "\n" + (DATA_DIR / "test_parties.txt").read_text())
+    victims.write_text(VICTIMS_HEADER_CSV + "\n" + (DATA_DIR / "test_victims.txt").read_text())
+
+    main([str(collisions), str(parties), str(victims), "-o", str(database)])
+
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert f"Warning: '{collisions}' is empty, skipping." in captured.err
+    with closing(sqlite3.connect(database)) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM collisions").fetchone() == (0,)
+        assert connection.execute("SELECT COUNT(*) FROM parties").fetchone()[0] > 0
+        assert connection.execute("SELECT COUNT(*) FROM victims").fetchone()[0] > 0
+
+
+@pytest.mark.parametrize("parse_error", ["strict", "ignore"])
+def test_cli_uses_default_output_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, parse_error: str
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    input_names = ["collisions.txt", "parties.txt", "victims.txt"]
+    for name in input_names:
+        (tmp_path / name).touch()
+
+    main([*input_names, "--parse-error", parse_error])
+
+    assert (tmp_path / "switrs.sqlite3").is_file()
+
+
+def test_cli_rejects_an_unknown_decoding_policy(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as error:
+        main(["collisions.txt", "parties.txt", "victims.txt", "--parse-error", "unknown"])
+
+    assert error.value.code == 2
+    assert "invalid choice: 'unknown'" in capsys.readouterr().err
+
+
+def test_cli_reports_package_version(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as error:
+        main(["--version"])
+
+    assert error.value.code == 0
+    assert capsys.readouterr().out.split()[-1] == __version__
