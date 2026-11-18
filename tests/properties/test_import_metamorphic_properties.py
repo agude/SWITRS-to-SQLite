@@ -50,6 +50,7 @@ class InputFormat:
     compressed: bool = False
     reverse_headers: bool = False
     has_unknown_column: bool = False
+    has_blank_lines: bool = False
 
 
 def records_for(headers: list[str]) -> st.SearchStrategy[Records]:
@@ -80,7 +81,13 @@ def import_dump(tables: dict[str, Records], input_format: InputFormat) -> list[s
             if input_format.reverse_headers:
                 headers.reverse()
             path = directory / f"{table}.csv"
-            write_csv(path, headers, records, compressed=input_format.compressed)
+            write_csv(
+                path,
+                headers,
+                records,
+                compressed=input_format.compressed,
+                has_blank_lines=input_format.has_blank_lines,
+            )
             input_paths[table] = str(path)
 
         database = directory / "output.sqlite3"
@@ -104,6 +111,7 @@ def import_dump(tables: dict[str, Records], input_format: InputFormat) -> list[s
             InputFormat(compressed=True),
             InputFormat(reverse_headers=True),
             InputFormat(has_unknown_column=True),
+            InputFormat(has_blank_lines=True),
             InputFormat(compressed=True, reverse_headers=True, has_unknown_column=True),
         ]
     ),

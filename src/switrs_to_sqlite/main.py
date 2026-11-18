@@ -51,7 +51,11 @@ def _parsed_rows(
     table = row_parser.table_name
     print(f"Converting {table}...", file=sys.stderr)
     for row in reader:
+        # csv.reader yields an empty list for a blank line.
+        if not row:
+            continue
         counter.count += 1
+
         if counter.count % _PROGRESS_INTERVAL == 0:
             print(f"  {counter.count:,} rows", file=sys.stderr, flush=True)
         yield row_parser.parse_row(row)
