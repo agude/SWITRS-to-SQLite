@@ -28,6 +28,10 @@ type-check:
 test *args:
     uv run pytest -vv {{ args }}
 
+# Run property tests with the long Hypothesis profile
+proptest *args:
+    HYPOTHESIS_PROFILE=long uv run pytest tests/properties --no-cov {{ args }}
+
 # Everything CI runs
 check: lint type-check test
 

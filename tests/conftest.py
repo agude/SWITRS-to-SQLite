@@ -1,6 +1,9 @@
 """Shared test fixtures for SWITRS-to-SQLite tests."""
 
+import os
+
 import pytest
+from hypothesis import settings
 
 from switrs_to_sqlite.parsers import (
     CSVParser,
@@ -8,6 +11,10 @@ from switrs_to_sqlite.parsers import (
     make_party_parser,
     make_victim_parser,
 )
+
+settings.register_profile("ci", max_examples=100, derandomize=True)
+settings.register_profile("long", max_examples=20_000, deadline=None)
+settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", "ci"))
 
 # Headers matching the actual SWITRS CSV files. These are in the order they
 # appear in the actual SWITRS data files from CHP.
