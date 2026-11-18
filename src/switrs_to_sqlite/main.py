@@ -20,6 +20,11 @@ from switrs_to_sqlite.parsers import (
 )
 
 _PROGRESS_INTERVAL = 100_000
+_BULK_LOAD_PRAGMAS = (
+    "PRAGMA journal_mode = OFF",
+    "PRAGMA synchronous = OFF",
+    "PRAGMA cache_size = -64000",
+)
 
 # ValueError covers bad headers and UnicodeDecodeError. OSError covers
 # gzip.BadGzipFile. EOFError is a truncated gzip stream.
@@ -108,9 +113,8 @@ def _write_database(
 ) -> None:
     """Create the database and load every record file into it."""
     with contextlib.closing(sqlite3.connect(output_file)) as con, con:
-        con.execute("PRAGMA journal_mode = OFF")
-        con.execute("PRAGMA synchronous = OFF")
-        con.execute("PRAGMA cache_size = -64000")
+        for pragma in _BULK_LOAD_PRAGMAS:
+            con.execute(pragma)
 
         for row_parser, file_name in record_sources:
             con.execute(row_parser.create_table_statement())

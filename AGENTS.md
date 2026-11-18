@@ -1,7 +1,5 @@
 # AGENTS.md
 
-`GEMINI.md` is a symlink to this file.
-
 ## Context
 
 SWITRS-to-SQLite converts the California Highway Patrol's SWITRS CSV exports
@@ -34,10 +32,9 @@ just hooks-install  # install bin/pre-commit.sh into this clone
 
 `just test` runs the property tests with a small derandomized profile.
 `proptest.yml` runs `just proptest` weekly and on pushes that change the
-properties or the workflow. `just mutate` is manual and takes
-about an hour. It fails
-when a schema mutant that changes parsed values survives. Review its mutmut
-survivors by hand: CLI help and progress text are not worth pinning.
+properties or the workflow. `just mutate` is manual and takes about an hour. It
+fails when any mutmut mutant survives, or when a schema mutant that changes
+parsed values survives. CLI help text is excluded from mutation.
 
 ## Layout
 

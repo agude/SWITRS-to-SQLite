@@ -170,10 +170,9 @@ def cellphone_use_to_bool(
     if nulls is not None and sval in nulls:
         return None
 
-    CELLPHONE_IN_USE: dict[str, bool | None] = {
+    CELLPHONE_IN_USE: dict[str, bool] = {
         "B": True,
         "C": False,
-        "D": None,
         "1": True,
         "2": True,
         "3": False,
@@ -234,11 +233,13 @@ def convert_time(
     dtype: type[int] | type[float] | type[str] | None = None,
     nulls: Collection[str] | None = None,
 ) -> str | None:
-    """Convert an HHMM time string to ISO 8601 format (HH:MM:SS)."""
+    """Convert an HHMM time string to ISO 8601 format (HH:MM:SS).
+
+    Values that are not clock times, including the 2500 "unknown" code, become
+    None.
+    """
     sval = val.strip()
     if nulls is not None and sval in nulls:
-        return None
-    if not sval or sval == "2500":
         return None
     # Source data is not always zero-padded (e.g. "900" instead of "0900")
     if len(sval) == 3:

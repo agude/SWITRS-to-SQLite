@@ -3,10 +3,12 @@
 
 The campaign has two stages:
 
-1. mutmut mutates executable code. Its survivors are printed for review.
+1. mutmut mutates executable code, apart from CLI help text.
 2. This script mutates the column declarations in row_types.py, which mutmut
-   cannot reach because they are module-level data. A surviving mutant that
-   changes parsed values fails the campaign.
+   cannot reach because they are module-level data.
+
+Any mutmut survivor, or surviving schema mutant that changes parsed values,
+fails the campaign.
 
 This module doubles as a pytest plugin. Each schema mutant runs the test suite
 with ``-p mutation_campaign`` and SCHEMA_MUTANT set, so the mutation is applied
@@ -52,6 +54,12 @@ only_mutate = [
     "src/switrs_to_sqlite/schema.py",
 ]
 pytest_add_cli_args_test_selection = ["tests"]
+do_not_mutate_patterns = [
+    '^\\s+help=',
+    '^\\s+description=',
+    '^\\s+type=str,',
+    '^\\s+"(how to handle|.strict. raises|.ignore. skips|.replace. substitutes)',
+]
 """
 
 
@@ -166,8 +174,8 @@ def campaign_environment(**extra_variables: str) -> dict[str, str]:
     }
 
 
-def run_mutmut(scratch_directory: Path) -> None:
-    """Run mutmut and print its surviving mutants."""
+def run_mutmut(scratch_directory: Path) -> int:
+    """Run mutmut, print its surviving mutants, and return their number."""
     copy_project(scratch_directory)
     (scratch_directory / "pyproject.toml").write_text(MUTMUT_CONFIG)
     log_path = scratch_directory / "run.log"
@@ -192,6 +200,7 @@ def run_mutmut(scratch_directory: Path) -> None:
     print(f"mutmut: {len(survivors)} survivors (inspect with mutmut show in {scratch_directory})")
     for survivor in survivors:
         print(f"  {survivor}")
+    return len(survivors)
 
 
 def schema_test_command() -> list[str]:
@@ -267,9 +276,9 @@ def is_real_survivor(mutant: SchemaMutant) -> bool:
 
 def main() -> int:
     shutil.rmtree(SCRATCH_ROOT, ignore_errors=True)
-    run_mutmut(SCRATCH_ROOT / "mutmut")
-    real_survivors = run_schema_mutants(SCRATCH_ROOT / "schema")
-    return 1 if real_survivors else 0
+    mutmut_survivors = run_mutmut(SCRATCH_ROOT / "mutmut")
+    schema_survivors = run_schema_mutants(SCRATCH_ROOT / "schema")
+    return 1 if mutmut_survivors or schema_survivors else 0
 
 
 if __name__ == "__main__":

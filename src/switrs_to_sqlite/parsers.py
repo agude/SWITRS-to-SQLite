@@ -43,8 +43,7 @@ class CSVParser:
     _prepend_null: bool
     columns: list[tuple[str, ...]]
     _insert_sql: str
-    _resolved_indices: dict[str, int]
-    _ordered_indices: list[int]
+    _ordered_fields: list[tuple[Column, int]] | None
     _max_index: int
 
     def __init__(
@@ -69,9 +68,7 @@ class CSVParser:
         self.table_name = table_name
         self.has_primary_column = has_primary_column
         self._prepend_null = not has_primary_column
-        self._resolved_indices = {}
-        self._ordered_indices = []
-        self._max_index = 0
+        self._ordered_fields = None
 
         self.__datatype_convert = DATATYPE_MAP
 
@@ -109,21 +106,18 @@ class CSVParser:
         # Use the already-built mapping
         header_map = seen
 
-        # Resolve indices for parsing_table columns
-        # (col.header is already lowercase via __post_init__)
-        self._resolved_indices = {}
+        # Pair each column with its index once, so row parsing needs no header
+        # lookups (col.header is already lowercase via __post_init__)
+        ordered_fields: list[tuple[Column, int]] = []
         for col in self.parsing_table:
             if col.header not in header_map:
                 raise ValueError(f"Missing expected column: {col.header}")
-            self._resolved_indices[col.header] = header_map[col.header]
-
-        # Pre-calculate ordered indices aligned with parsing_table for faster
-        # row parsing (avoids dict lookup per column per row)
-        self._ordered_indices = [self._resolved_indices[col.header] for col in self.parsing_table]
+            ordered_fields.append((col, header_map[col.header]))
+        self._ordered_fields = ordered_fields
 
         # Pre-calculate max index for row extension (performance optimization:
         # avoid recalculating max() for every row in multi-million row files)
-        self._max_index = max(self._resolved_indices.values())
+        self._max_index = max(index for _, index in ordered_fields)
 
         return header_map
 
@@ -139,20 +133,20 @@ class CSVParser:
         Raises:
             RuntimeError: If resolve_indices has not been called first.
         """
-        if not self._resolved_indices:
+        if self._ordered_fields is None:
             raise RuntimeError("resolve_indices must be called before parsing rows")
 
-        extended_row = self.__extend_row(row)
-        return self.__set_values(extended_row)
+        extended_row = self._extend_row(row)
+        return self.__set_values(extended_row, self._ordered_fields)
 
-    def __set_values(self, row: list[str]) -> list[Any]:
+    def __set_values(self, row: list[str], ordered_fields: list[tuple[Column, int]]) -> list[Any]:
         """Build the values list for a single row, ready for SQL insertion."""
         values: list[Any] = []
 
         if self._prepend_null:
             values.append(None)
 
-        for col, idx in zip(self.parsing_table, self._ordered_indices, strict=True):
+        for col, idx in ordered_fields:
             dtype = self.__datatype_convert[col.sql_type]
             val = col.converter(row[idx], dtype, col.nulls)
             if col.mapping is not None:
@@ -163,23 +157,13 @@ class CSVParser:
 
     def __set_columns(self) -> None:
         """Creates a list of column names and types for the SQLite table."""
-        self.columns = []
-        is_first = True
-        for col in self.parsing_table:
-            entry: tuple[str, ...] = (col.name, col.sql_type.value)
+        self.columns = [(col.name, col.sql_type.value) for col in self.parsing_table]
 
-            # The first item is special, it is either the "PRIMARY KEY", or we
-            # need to add an ID column before it
-            if is_first:
-                if self.has_primary_column:
-                    entry = (col.name, col.sql_type.value, "PRIMARY KEY")
-                else:
-                    zeroth_id_column: tuple[str, ...] = ("id", "INTEGER", "PRIMARY KEY")
-                    self.columns.append(zeroth_id_column)
-                is_first = False
-
-            # Add the entry
-            self.columns.append(entry)
+        # The first column is the primary key, or an ID column goes before it
+        if self.has_primary_column:
+            self.columns[0] = (*self.columns[0], "PRIMARY KEY")
+        else:
+            self.columns.insert(0, ("id", "INTEGER", "PRIMARY KEY"))
 
         col_names = ", ".join(tup[0] for tup in self.columns)
         placeholders = ", ".join("?" * len(self.columns))
@@ -188,7 +172,7 @@ class CSVParser:
             f"INSERT{conflict} INTO {self.table_name} ({col_names}) VALUES ({placeholders})"
         )
 
-    def __extend_row(self, row: list[str]) -> list[str]:
+    def _extend_row(self, row: list[str]) -> list[str]:
         """Extend the length of the row attribute with NULL fields.
 
         Some rows in the CSV are incomplete and are missing columns at the end.
