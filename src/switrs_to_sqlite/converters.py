@@ -3,6 +3,9 @@
 from collections.abc import Collection
 from datetime import datetime
 
+SQLITE_MIN_INTEGER = -(2**63)
+SQLITE_MAX_INTEGER = 2**63 - 1
+
 
 def identity(
     val: str,
@@ -31,7 +34,8 @@ def convert(
 
     Returns:
         Returns dtype(val) if val is not in nulls, otherwise None.
-        If dtype(val) raises a ValueError, None is returned.
+        If dtype(val) raises a ValueError, or produces an integer SQLite
+        cannot store, None is returned.
     """
     # Strip spaces
     sval: str = val.strip()
@@ -40,12 +44,17 @@ def convert(
     if nulls is not None and sval in nulls:
         return None
 
-    if dtype is not None:
-        try:
-            return dtype(sval)
-        except ValueError:
-            return None
-    return sval
+    if dtype is None:
+        return sval
+
+    try:
+        converted = dtype(sval)
+    except ValueError:
+        return None
+
+    if isinstance(converted, int) and not SQLITE_MIN_INTEGER <= converted <= SQLITE_MAX_INTEGER:
+        return None
+    return converted
 
 
 def negative(
