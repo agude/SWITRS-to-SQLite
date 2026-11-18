@@ -52,6 +52,13 @@ def parser(parsing_table: tuple[Column, ...]) -> CSVParser:
     return _make_parser(parsing_table, has_primary_column=False)
 
 
+def test_parse_row_requires_headers(parsing_table: tuple[Column, ...]) -> None:
+    parser = CSVParser(parsing_table, "Test", has_primary_column=False)
+
+    with pytest.raises(RuntimeError, match="resolve_indices must be called"):
+        parser.parse_row(["9"])
+
+
 def test_extend_row_without_has_primary_column(
     parsing_table: tuple[Column, ...],
 ) -> None:
