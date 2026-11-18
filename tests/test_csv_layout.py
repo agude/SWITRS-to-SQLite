@@ -52,7 +52,8 @@ def collision_file_with_road(road: str) -> bytes:
     record = dict.fromkeys(COLLISION_HEADER, "")
     record.update(CASE_ID="1", PRIMARY_RD=road)
     text = io.StringIO(newline="")
-    writer = csv.DictWriter(text, fieldnames=COLLISION_HEADER, lineterminator="\n")
+    # Python 3.10 quotes a lone CR only when it is part of the line terminator.
+    writer = csv.DictWriter(text, fieldnames=COLLISION_HEADER, lineterminator="\r\n")
     writer.writeheader()
     writer.writerow(record)
     return text.getvalue().encode()

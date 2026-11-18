@@ -14,7 +14,8 @@ def test_extracted_rows_round_trip_special_characters(tmp_path: Path) -> None:
     ]
     source = tmp_path / "records.txt"
     with source.open("w", newline="", encoding="utf-8") as output:
-        writer = csv.writer(output, lineterminator="\n")
+        # Python 3.10 quotes a lone CR only when it is part of the line terminator.
+        writer = csv.writer(output, lineterminator="\r\n")
         writer.writerow(["FIRST", "SECOND", "THIRD"])
         writer.writerows(records)
 
