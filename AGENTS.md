@@ -1,7 +1,5 @@
 # AGENTS.md
 
-`GEMINI.md` is a symlink to this file.
-
 ## Context
 
 SWITRS-to-SQLite converts the California Highway Patrol's SWITRS CSV exports
@@ -27,8 +25,16 @@ just format       # ruff format + ruff check --fix (mutating)
 just type-check   # mypy, strict
 just test         # pytest with the 90% coverage gate
 just check        # everything CI runs: lint + type-check + test
+just proptest     # property tests with 20,000 randomized examples each
+just mutate       # mutmut plus schema declaration mutants, in .mutation/
 just hooks-install  # install bin/pre-commit.sh into this clone
 ```
+
+`just test` runs the property tests with a small derandomized profile.
+`proptest.yml` runs `just proptest` weekly and on pushes that change the
+properties or the workflow. `just mutate` is manual and takes about an hour. It
+fails when any mutmut mutant survives, or when a schema mutant that changes
+parsed values survives. CLI help text is excluded from mutation.
 
 ## Layout
 
@@ -37,7 +43,7 @@ just hooks-install  # install bin/pre-commit.sh into this clone
   and the CLI prints it for `--version`.
 - `tests/` — pytest suite; coverage must stay at or above 90%.
 - `scripts/` — maintenance helpers (golden-file generation, test-row
-  extraction). Type-checked along with the package.
+  extraction, mutation campaign). Type-checked along with the package.
 - `bin/pre-commit.sh` — the hook; installed by `just hooks-install`.
 
 ## `make_map.py` conventions

@@ -9,6 +9,7 @@ Usage:
 """
 
 import csv
+import io
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -123,7 +124,7 @@ def analyze_file(
     all_rows: list[list[str]] = []
     header: list[str] = []
 
-    with Path(filepath).open(encoding="utf-8", errors="replace") as f:
+    with Path(filepath).open(encoding="utf-8", errors="replace", newline="") as f:
         reader = csv.reader(f)
         header = next(reader)
 
@@ -249,15 +250,16 @@ def get_key_columns_for_data(data: dict[str, Any]) -> dict[str, int]:
     return VICTIM_KEY_COLUMNS
 
 
+def format_csv_row(row: list[str]) -> str:
+    """Serialize one row without its line terminator."""
+    output = io.StringIO(newline="")
+    csv.writer(output, lineterminator="\r\n").writerow(row)
+    return output.getvalue().removesuffix("\r\n")
+
+
 def extract_rows(data: dict[str, Any], row_indices: list[int]) -> list[str]:
     """Extract rows as CSV strings."""
-    rows = []
-    for idx in row_indices:
-        row = data["rows"][idx]
-        # Convert back to CSV format
-        csv_row = ",".join(f'"{val}"' if "," in val or '"' in val else val for val in row)
-        rows.append(csv_row)
-    return rows
+    return [format_csv_row(data["rows"][idx]) for idx in row_indices]
 
 
 def main() -> None:

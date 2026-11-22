@@ -1,7 +1,15 @@
 """Converter functions for transforming CSV values to database values."""
 
+import math
 from collections.abc import Collection
 from datetime import datetime
+
+SQLITE_MIN_INTEGER = -(2**63)
+SQLITE_MAX_INTEGER = 2**63 - 1
+
+
+def _is_ascii_digits(text: str) -> bool:
+    return text.isascii() and text.isdigit()
 
 
 def identity(
@@ -31,7 +39,8 @@ def convert(
 
     Returns:
         Returns dtype(val) if val is not in nulls, otherwise None.
-        If dtype(val) raises a ValueError, None is returned.
+        None is returned if dtype(val) raises a ValueError, or if a number is
+        not plain finite ASCII text that SQLite can store.
     """
     # Strip spaces
     sval: str = val.strip()
@@ -40,12 +49,23 @@ def convert(
     if nulls is not None and sval in nulls:
         return None
 
-    if dtype is not None:
-        try:
-            return dtype(sval)
-        except ValueError:
-            return None
-    return sval
+    if dtype is None:
+        return sval
+
+    # int() and float() also accept forms like 1_000 and non-ASCII digits.
+    if dtype is not str and not (sval.isascii() and "_" not in sval):
+        return None
+
+    try:
+        converted = dtype(sval)
+    except ValueError:
+        return None
+
+    if isinstance(converted, int) and not SQLITE_MIN_INTEGER <= converted <= SQLITE_MAX_INTEGER:
+        return None
+    if isinstance(converted, float) and not math.isfinite(converted):
+        return None
+    return converted
 
 
 def negative(
@@ -161,10 +181,9 @@ def cellphone_use_to_bool(
     if nulls is not None and sval in nulls:
         return None
 
-    CELLPHONE_IN_USE: dict[str, bool | None] = {
+    CELLPHONE_IN_USE: dict[str, bool] = {
         "B": True,
         "C": False,
-        "D": None,
         "1": True,
         "2": True,
         "3": False,
@@ -212,7 +231,8 @@ def convert_date(
     sval = val.strip()
     if nulls is not None and sval in nulls:
         return None
-    if len(sval) != 8:
+    # strptime alone also accepts unpadded forms like "202401 1".
+    if len(sval) != 8 or not _is_ascii_digits(sval):
         return None
     try:
         return datetime.strptime(sval, "%Y%m%d").date().isoformat()
@@ -225,16 +245,19 @@ def convert_time(
     dtype: type[int] | type[float] | type[str] | None = None,
     nulls: Collection[str] | None = None,
 ) -> str | None:
-    """Convert an HHMM time string to ISO 8601 format (HH:MM:SS)."""
+    """Convert an HHMM time string to ISO 8601 format (HH:MM:SS).
+
+    Values that are not clock times, including the 2500 "unknown" code, become
+    None.
+    """
     sval = val.strip()
     if nulls is not None and sval in nulls:
         return None
-    if not sval or sval == "2500":
-        return None
     # Source data is not always zero-padded (e.g. "900" instead of "0900")
-    if len(sval) == 3:
-        sval = "0" + sval
+    if len(sval) not in (3, 4) or not _is_ascii_digits(sval):
+        return None
     try:
-        return datetime.strptime(sval, "%H%M").time().isoformat()
+        return datetime.strptime(sval.zfill(4), "%H%M").time().isoformat()
+
     except ValueError:
         return None

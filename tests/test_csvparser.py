@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 
+from collections.abc import Callable
+
 import pytest
 
 from switrs_to_sqlite.converters import convert, string_to_bool
 from switrs_to_sqlite.datatypes import DataType
-from switrs_to_sqlite.parsers import CSVParser
+from switrs_to_sqlite.parsers import (
+    CSVParser,
+    make_collision_parser,
+    make_party_parser,
+    make_victim_parser,
+)
 from switrs_to_sqlite.schema import Column
 
 TEST_HEADER = ["first", "second", "third", "forth", "blank"]
@@ -50,6 +57,13 @@ def _make_parser(parsing_table: tuple[Column, ...], has_primary_column: bool) ->
 @pytest.fixture(scope="function")
 def parser(parsing_table: tuple[Column, ...]) -> CSVParser:
     return _make_parser(parsing_table, has_primary_column=False)
+
+
+def test_parse_row_requires_headers(parsing_table: tuple[Column, ...]) -> None:
+    parser = CSVParser(parsing_table, "Test", has_primary_column=False)
+
+    with pytest.raises(RuntimeError, match=r"^resolve_indices must be called before parsing rows$"):
+        parser.parse_row(["9"])
 
 
 def test_extend_row_without_has_primary_column(
@@ -155,3 +169,25 @@ def test_resolve_indices_raises_on_duplicate_headers(
 
     with pytest.raises(ValueError, match=r"Duplicate column header 'FIRST' at indices 0 and 4"):
         parser.resolve_indices(duplicate_header)
+
+
+def test_extend_row_pads_only_to_the_last_used_column(parser: CSVParser) -> None:
+    parser.resolve_indices([*TEST_HEADER, "unused"])
+
+    assert parser._extend_row(["a"]) == ["a", "", "", "", ""]
+
+
+def test_extend_row_returns_complete_rows_without_copying(parser: CSVParser) -> None:
+    complete_row = ["9", "a", "1.", "Y", ""]
+
+    assert parser._extend_row(complete_row) is complete_row
+
+
+@pytest.mark.parametrize(
+    ("make_parser", "has_primary_column"),
+    [(make_collision_parser, True), (make_party_parser, False), (make_victim_parser, False)],
+)
+def test_table_parsers_declare_their_key_style(
+    make_parser: Callable[[], CSVParser], has_primary_column: bool
+) -> None:
+    assert make_parser().has_primary_column is has_primary_column

@@ -28,6 +28,14 @@ type-check:
 test *args:
     uv run pytest -vv {{ args }}
 
+# Run property tests with the long Hypothesis profile
+proptest *args:
+    HYPOTHESIS_PROFILE=long uv run pytest tests/properties --no-cov {{ args }}
+
+# Run the mutation campaign: mutmut, then the schema declaration mutants
+mutate:
+    uv run --group mutation python scripts/mutation_campaign.py
+
 # Everything CI runs
 check: lint type-check test
 
@@ -37,7 +45,7 @@ build:
 
 # Remove build and cache artifacts
 clean:
-    rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache .mypy_cache
+    rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache .mypy_cache .mutation
 
 # Install the pre-commit hook into this clone
 hooks-install:

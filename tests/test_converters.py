@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+import pytest
+
 from switrs_to_sqlite.converters import (
     cellphone_use_to_bool,
     convert,
+    convert_date,
+    convert_time,
     county_city_location_to_county,
     negative,
     non_standard_str_to_bool,
@@ -168,3 +172,57 @@ def test_non_standard_str_to_bool() -> None:
     )
     for val, dtype, nulls, res in convert_vals:
         assert non_standard_str_to_bool(val, dtype, nulls) == res
+
+
+@pytest.mark.parametrize("value", [-(2**63), 2**63 - 1])
+def test_convert_keeps_integers_sqlite_can_store(value: int) -> None:
+    assert convert(str(value), int) == value
+
+
+@pytest.mark.parametrize("value", [-(2**63) - 1, 2**63, 10**20])
+def test_convert_nulls_integers_sqlite_cannot_store(value: int) -> None:
+    assert convert(str(value), int) is None
+
+
+@pytest.mark.parametrize("value", ["nan", "NaN", "inf", "-inf", "Infinity", "1e999"])
+def test_numeric_conversion_rejects_non_finite_values(value: str) -> None:
+    assert convert(value, float) is None
+    assert negative(value, float) is None
+
+
+@pytest.mark.parametrize("dtype", [int, float])
+@pytest.mark.parametrize("value", ["1_000", "\u0661\u0662", "\uff11\uff12"])
+def test_numeric_conversion_requires_plain_ascii_numbers(
+    dtype: type[int] | type[float], value: str
+) -> None:
+    assert convert(value, dtype) is None
+
+
+@pytest.mark.parametrize("value", ["a_b", "Café", "nan"])
+def test_text_conversion_keeps_number_like_rejects(value: str) -> None:
+    assert convert(value, str) == value
+
+
+@pytest.mark.parametrize(("value", "dtype", "expected"), [("+5", int, 5), ("1e3", float, 1000.0)])
+def test_numeric_conversion_keeps_standard_forms(
+    value: str, dtype: type[int] | type[float], expected: float
+) -> None:
+    assert convert(value, dtype) == expected
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["202401 1", "2024 101", "+2024011", "\u0662\u0660\u0662\u0664\u0660\u0661\u0660\u0661"],
+)
+def test_convert_date_requires_eight_ascii_digits(value: str) -> None:
+    assert convert_date(value) is None
+
+
+@pytest.mark.parametrize("value", ["1", "12", "1 5", "+930", "9 30", "\u0660\u0669\u0660\u0660"])
+def test_convert_time_requires_three_or_four_ascii_digits(value: str) -> None:
+    assert convert_time(value) is None
+
+
+@pytest.mark.parametrize(("value", "expected"), [("900", "09:00:00"), ("0900", "09:00:00")])
+def test_convert_time_accepts_padded_and_unpadded_hours(value: str, expected: str) -> None:
+    assert convert_time(value) == expected

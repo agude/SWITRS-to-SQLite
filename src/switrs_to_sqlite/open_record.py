@@ -3,10 +3,15 @@ from pathlib import Path
 from typing import TextIO
 
 _GZIP_MAGIC = b"\x1f\x8b"
+# utf-8-sig also reads files without a BOM.
+_RECORD_ENCODING = "utf-8-sig"
 
 
 def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
     """Open a Record file, detecting gzip by magic bytes.
+
+    Newlines are left untranslated, as the csv module requires, so line breaks
+    inside quoted fields are preserved.
 
     Args:
         file_name: The name of a file. Gzip files are detected by the
@@ -17,7 +22,6 @@ def open_record_file(file_name: str, errors: str | None = None) -> TextIO:
     with path.open("rb") as f:
         magic = f.read(2)
 
-    # Use utf-8-sig to automatically handle BOM if present
     if magic == _GZIP_MAGIC:
-        return gzip.open(file_name, "rt", encoding="utf-8-sig", errors=errors)
-    return path.open(encoding="utf-8-sig", errors=errors)
+        return gzip.open(file_name, "rt", encoding=_RECORD_ENCODING, errors=errors, newline="")
+    return path.open(encoding=_RECORD_ENCODING, errors=errors, newline="")

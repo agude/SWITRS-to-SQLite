@@ -1,0 +1,39 @@
+# The CI profile is derandomized, so it never tries new inputs. This job runs
+# the long, randomized property suite on a schedule, and on any branch that
+# changes the properties or this workflow.
+name: Property tests
+
+on:
+  push:
+    paths:
+      - ".github/workflows/proptest.yml"
+      - "tests/properties/**"
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  proptest:
+    runs-on: ubuntu-latest
+    name: Long property tests
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+
+      - name: Install dependencies
+        run: just sync
+
+      - name: Property tests
+        run: just proptest
