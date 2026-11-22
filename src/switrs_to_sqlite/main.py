@@ -48,6 +48,38 @@ class _RowCounter:
         self.count = 0
 
 
+def _csv_records(lines: Iterable[str]) -> Iterator[list[str]]:
+    """Yield CSV records, rejecting a quote that absorbs the lines after it.
+
+    Records are parsed leniently, as v5.1.0 parsed them, because CHP exports
+    contain unescaped quotes inside quoted fields, such as "O"NEILL ST". A
+    record that spans more than one line must also parse strictly. Otherwise
+    an unterminated quote could swallow the records that follow it. A
+    one-line record whose last field holds a line break also gets the strict
+    check, because that field was still open when the file ended.
+    """
+    consumed: list[str] = []
+
+    def tracked_lines() -> Iterator[str]:
+        for line in lines:
+            consumed.append(line)
+            yield line
+
+    reader = csv.reader(tracked_lines())
+    for record in reader:
+        if len(consumed) > 1 or (record and record[-1][-1:] in ("\n", "\r")):
+            first_line = reader.line_num - len(consumed) + 1
+            try:
+                for _ in csv.reader(consumed, strict=True):
+                    pass
+            except csv.Error as error:
+                raise csv.Error(
+                    f"malformed quoting in the record starting on line {first_line}: {error}"
+                ) from error
+        consumed.clear()
+        yield record
+
+
 def _parsed_rows(
     reader: Iterator[list[str]],
     row_parser: CSVParser,
@@ -162,8 +194,7 @@ def _load_record_file(
 ) -> None:
     """Insert every row of one record file into its table."""
     with open_record_file(file_name, errors=parse_errors) as f:
-        # Strict parsing stops a broken quote from silently absorbing later records.
-        reader = csv.reader(f, strict=True)
+        reader = _csv_records(f)
 
         try:
             header_row = next(reader)

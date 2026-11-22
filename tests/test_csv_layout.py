@@ -81,3 +81,45 @@ def test_record_line_endings_are_equivalent(tmp_path: Path, line_ending: str) ->
         ("1",),
         ("2",),
     ]
+
+
+def collision_line(**raw_fields: str) -> str:
+    """Join raw, already-quoted field text into one collision record line."""
+    fields = dict.fromkeys(COLLISION_HEADER, "")
+    fields.update(raw_fields)
+    return ",".join(fields[header] for header in COLLISION_HEADER)
+
+
+# Raw field text from the 20160924 and 20210604 CHP exports, paired with the
+# values v5.1.0 stored for it.
+UNESCAPED_QUOTE_ROADS = [
+    ('"O"NEILL ST"', 'ONEILL ST"'),
+    ('"RYAN"S GATE"', 'RYANS GATE"'),
+    ('""A" ST."', 'A" ST."'),
+    ('"I-5 N/B TO "Q ST E/B"', 'I-5 N/B TO Q ST E/B"'),
+]
+
+
+@pytest.mark.parametrize(("raw_road", "stored_road"), UNESCAPED_QUOTE_ROADS)
+def test_unescaped_quotes_parse_as_in_v5_1_0(
+    tmp_path: Path, raw_road: str, stored_road: str
+) -> None:
+    line = collision_line(CASE_ID="1", PRIMARY_RD=raw_road, SECONDARY_RD='"ELM ST"')
+    collisions = f"{COLLISIONS_HEADER_CSV}\n{line}\n".encode()
+
+    database = import_files(tmp_path, collisions, f"{PARTIES_HEADER_CSV}\n".encode())
+
+    assert fetch_all(database, "SELECT primary_road, secondary_road FROM collisions") == [
+        (stored_road, "ELM ST")
+    ]
+
+
+def test_escaped_quote_before_delimiter_joins_fields_as_in_v5_1_0(tmp_path: Path) -> None:
+    # CHP wrote 73' 0" as "73' 0"", which escapes the quote and leaves the field
+    # open through the next field's opening quote.
+    line = collision_line(CASE_ID="1", SECONDARY_RD='"73\' 0""', DISTANCE='"0.00"')
+    collisions = f"{COLLISIONS_HEADER_CSV}\n{line}\n".encode()
+
+    database = import_files(tmp_path, collisions, f"{PARTIES_HEADER_CSV}\n".encode())
+
+    assert fetch_all(database, "SELECT secondary_road FROM collisions") == [('73\' 0",0.00"',)]

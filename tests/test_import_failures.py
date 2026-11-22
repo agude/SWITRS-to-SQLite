@@ -46,8 +46,8 @@ def unterminated_quote(header: str) -> bytes:
     return f'{header}\n"1\n2\n'.encode()
 
 
-def text_after_closing_quote(header: str) -> bytes:
-    return f'{header}\n"1" street\n2\n'.encode()
+def quote_spanning_records(header: str) -> bytes:
+    return f'{header}\n"1\n2" street\n3\n'.encode()
 
 
 def write_inputs(
@@ -73,7 +73,7 @@ def write_inputs(
         corrupted_gzip,
         oversized_field,
         unterminated_quote,
-        text_after_closing_quote,
+        quote_spanning_records,
     ],
 )
 def test_bad_input_exits_cleanly_and_allows_a_rerun(
